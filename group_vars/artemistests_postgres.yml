@@ -1,0 +1,10 @@
+---
+##############################################################################
+# Artemis Configuration
+##############################################################################
+artemis_database_dbname: "Artemis"
+artemis_database_host: "artemis-postgres"
+artemis_database_username: "Artemis"
+artemis_database_type: postgresql
+artemis_database_port: 5432
+artemis_database_platform: "org.hibernate.dialect.PostgreSQLDialect"

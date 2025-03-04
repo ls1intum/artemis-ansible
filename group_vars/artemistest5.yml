@@ -1,0 +1,25 @@
+---
+##############################################################################
+# Commonly changed variables
+##############################################################################
+var_testserver_name: "artemis-test5"
+var_vm_name: "vmbhatotia174"
+artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest5').get('db_password') }}"
+artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest5').get('internal_admin') }}"
+artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest5').get('jhipster_jwt') }}"
+
+is_multinode_install: true
+artemis_node_count: 3
+node_id: 0 # This prevents that all nodes are scheduling. Result of `hash_behaviour = merge`
+broker:
+  username: "artemis"
+  password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest5').get('broker_password') }}"
+  url: "artemis-activemq-broker"
+
+artemis_jhipster_registry_usernamme: "admin"
+artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest5').get('registry_password') }}"
+artemis_eureka_urls: "http://{{ artemis_jhipster_registry_usernamme }}:{{ artemis_jhipster_registry_password }}@artemis-jhipster-registry:8761/eureka/"
+
+
+proxy_ssl_certificate_path: "/var/lib/rbg-cert/live/host:f:artemis-test-vm5.artemis.cit.tum.de.fullchain.pem"
+proxy_ssl_certificate_key_path: "/var/lib/rbg-cert/live/host:f:artemis-test-vm5.artemis.cit.tum.de.privkey.pem"

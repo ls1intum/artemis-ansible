@@ -1,0 +1,21 @@
+---
+
+- name: Setup Artemis Nodes
+  hosts: artemis_production_nodes
+
+  roles:
+    - role: ls1intum.artemis.storage_client
+      tags:
+        - storage
+      # NFS should only be mounted on the non-core nodes
+      when: inventory_hostname not in groups['artemis_production_core']
+
+    - role: ls1intum.artemis.artemis
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall
+      vars:
+        firewall_hostgroup: nodes
+
+    - role: ls1intum.artemis.legal
+      tags: legal

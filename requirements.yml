@@ -1,0 +1,18 @@
+roles:
+  - src: geerlingguy.docker
+
+  - src: geerlingguy.mysql
+    version: 3.5.0
+
+  - src: geerlingguy.postgresql
+
+  - src: mrlesmithjr.nfs-server
+
+  - src: mrlesmithjr.netplan
+
+  - src: tomereli.proxy
+
+collections:
+  - name: https://github.com/ls1intum/artemis-ansible-collection.git
+    type: git
+    version: main

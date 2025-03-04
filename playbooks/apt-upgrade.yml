@@ -1,0 +1,12 @@
+---
+
+- name: Setup Artemis Nodes
+  hosts: all
+
+  tasks:
+    - name: Update all packages to their latest version
+      become: true
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+        update_cache: true

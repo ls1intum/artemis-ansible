@@ -1,0 +1,13 @@
+---
+# IPv6 address (with CIDR!) which can be used to access the node - If left blank, ansible will use host facts to fill the address.
+wireguard_host_ipv6_address: "2a09:80c0:ac18:4680::13"
+
+# Address of the node inside the network.
+wireguard_interface_address: "fcfe:0:0:0:0:0:b:1"
+
+# Wireguard Keys - Autmatically generated!
+wireguard_pubkey: mNDx/4NejVo4x4U+h68hIx44irVarw9kqKreGb9BMn4=
+wireguard_privkey: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging-localci').get('wg_priv_broker') }}"
+
+# IPv4 Host address as a workaround for LS1ADMIN-37679 (Netzwerk-Config von Staging Local fixen)
+host_ipv4_address: "172.24.70.141/25"

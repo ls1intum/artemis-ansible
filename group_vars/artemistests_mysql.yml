@@ -1,0 +1,10 @@
+---
+##############################################################################
+# Artemis Configuration
+##############################################################################
+artemis_database_dbname: "Artemis"
+artemis_database_host: "artemis-mysql"
+artemis_database_username: "Artemis"
+artemis_database_type: mysql
+artemis_database_port: 3306
+artemis_database_platform: "org.hibernate.dialect.MySQLDialect"

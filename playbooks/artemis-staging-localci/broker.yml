@@ -1,0 +1,10 @@
+---
+
+- name: Setup Artemis Broker
+  hosts: artemis_staging_localci_broker
+
+  roles:
+    - role: ls1intum.artemis.broker
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall

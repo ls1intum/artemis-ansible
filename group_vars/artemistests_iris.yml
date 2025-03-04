@@ -1,0 +1,7 @@
+---
+##############################################################################
+# Iris Configuration
+##############################################################################
+iris:
+  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/pyris-test').get('url') }}"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/pyris-test').get('secret') }}"

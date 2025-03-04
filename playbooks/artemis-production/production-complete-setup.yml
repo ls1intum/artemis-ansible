@@ -1,0 +1,24 @@
+---
+# Cluster Network
+- import_playbook: production-network-setup.yml
+
+# Cluster Wireguard
+- import_playbook: production-wireguard.yml
+
+# Cluster Storage
+- import_playbook: production-storage.yml
+
+# Cluster Databse
+- import_playbook: production-db.yml
+
+# Cluster Broker
+- import_playbook: production-broker.yml
+
+# Cluster Registry
+- import_playbook: production-registry.yml
+
+# Cluster Proxy
+- import_playbook: production-proxy.yml
+
+# Cluster Artemis Nodes
+- import_playbook: production-nodes.yml

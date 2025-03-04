@@ -1,0 +1,17 @@
+- name: "Setup Jenkins"
+  hosts: jenkins-test.artemis.cit.tum.de
+  roles:
+    - role: geerlingguy.docker
+      become: true
+    - role: ls1intum.artemis.proxy
+      become: true
+      vars:
+        proxy_target_port: 8082
+        proxy_forward_ssh: false
+        proxy_generate_dh_param: false
+        servers:
+          - name: "_"
+            ssl_certificate_path: "/var/lib/rbg-cert/live/host:f:jenkins-test.artemis.cit.tum.de.fullchain.pem"
+            ssl_certificate_key_path: "/var/lib/rbg-cert/live/host:f:jenkins-test.artemis.cit.tum.de.privkey.pem"
+            default_server: true
+    - role: ls1intum.artemis.jenkins

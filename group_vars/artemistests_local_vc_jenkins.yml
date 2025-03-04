@@ -1,0 +1,21 @@
+---
+##############################################################################
+# TUM LocalVC Jenkins Configuration
+##############################################################################
+
+version_control:
+  localvc:
+    url: "{{ artemis_server_url }}"
+    build_agent_git_credentials:
+      user: "{{ lookup('hashi_vault', 'kv/data/artemis/common/jenkins-test').get('artemis-build-agent-git-username') }}"
+      password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/jenkins-test').get('artemis-build-agent-git-password') }}"
+
+continuous_integration:
+  jenkins:
+    url: "https://jenkins-test.artemis.cit.tum.de"
+    user: "{{ lookup('hashi_vault', 'kv/data/artemis/common/jenkins-test').get('jenkins_user') }}"
+    password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/jenkins-test').get('jenkins_password') }}"
+    secret_push_token: ""
+    vcs_credentials: "{{ lookup('hashi_vault', 'kv/data/artemis/common/jenkins-test').get('artemis-build-agent-git-id') }}"
+    artemis_auth_token_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/jenkins-test').get('artemis-authentication-token-key') }}"
+    artemis_auth_token_value: "{{ lookup('hashi_vault', 'kv/data/artemis/common/jenkins-test').get('artemis-authentication-token-value') }}"

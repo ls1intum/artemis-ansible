@@ -1,0 +1,20 @@
+---
+
+- name: Setup
+  hosts: artemis_production_db
+
+  roles:
+    - role: geerlingguy.mysql
+      become: true
+
+    - role: ls1intum.artemis.mysqld_exporter
+      become: true
+
+    - role: ls1intum.artemis.db_backup
+      tags: backup
+      vars:
+        artemis_database_backup_dir: /srv/artemis-db
+        artemis_database_backup_script_path: /opt/artemis-backup.sh
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall

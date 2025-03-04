@@ -1,0 +1,19 @@
+---
+##############################################################################
+# External Systems Configuration for the LocalCI/LocalVC Stack
+##############################################################################
+version_control:
+  localvc:
+    url: "{{ artemis_server_url }}"
+    ssh_key_path: /opt/artemis/data/artemis/ssh-keys
+    use_version_control_access_token: true
+    build_agent_use_ssh: true
+    ssh_url: "ssh://git@{{ var_testserver_name }}.artemis.cit.tum.de:7921/"
+
+artemis_ssh_key_path: "/tmp"
+
+continuous_integration:
+  localci:
+    url: "{{ artemis_server_url }}"
+    is_core_node: true
+    is_build_agent: true

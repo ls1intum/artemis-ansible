@@ -1,0 +1,59 @@
+---
+
+- name: Setup Artemis Load Balancer / Reverse Proxy
+  hosts: artemis_production_proxy
+  pre_tasks:
+    - name: Create certificate dir on proxy
+      ansible.builtin.file:
+        dest: "{{ proxy_certificate_base_path }}"
+        state: directory
+        mode: '0700'
+        owner: 'root'
+        group: 'root'
+      become: true
+
+    - name: Copy certificates to proxy
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_name }}"
+        mode: '0755'
+        owner: 'root'
+        group: 'root'
+      with_fileglob:
+        - "artemis_tum_de-certificates/artemis_tum_de.pem"
+      become: true
+
+
+    - name: Get the tum certificate key from vault
+      ansible.builtin.set_fact:
+        artemis_tum_cert_key: "{{ lookup('hashi_vault', 'kv/data/artemis/production/proxy').get('artemis_tum_de-key') }}"
+
+    - name: Write tum certificate key to file
+      ansible.builtin.copy:
+        content: "{{ artemis_tum_cert_key }}"
+        dest: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_key_name }}"
+        mode: '0755'
+        owner: 'root'
+        group: 'root'
+      become: true
+
+
+  roles:
+    - role: ls1intum.artemis.firewall
+      tags: firewall
+      vars:
+        firewall_hostgroup: proxy
+
+    - role: ls1intum.artemis.proxy
+      vars:
+        proxy_available_nodes:
+          - hostname: "[fcfe::a:1]"
+            weight: 3
+          - hostname: "[fcfe::a:2]"
+            weight: 1
+          - hostname: "[fcfe::a:3]"
+            weight: 1
+          - hostname: "[fcfe::a:4]"
+            weight: 1
+          - hostname: "[fcfe::a:8]"
+            weight: 3

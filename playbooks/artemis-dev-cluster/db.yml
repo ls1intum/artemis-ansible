@@ -1,0 +1,11 @@
+---
+
+- name: Setup
+  hosts: artemis_dev_cluster_db
+
+  roles:
+    - role: geerlingguy.mysql
+      become: true
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall

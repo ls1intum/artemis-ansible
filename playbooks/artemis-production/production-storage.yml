@@ -1,0 +1,10 @@
+---
+
+- name: Setup Artemis shared storage provider
+  hosts: artemis_production_storage
+
+  roles:
+    - role: ls1intum.artemis.storage_provider
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall

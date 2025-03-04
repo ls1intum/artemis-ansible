@@ -1,0 +1,7 @@
+---
+##############################################################################
+# Aeolus Configuration
+##############################################################################
+aeolus:
+  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/aeolus').get('url') }}"
+  token: "{{ lookup('hashi_vault', 'kv/data/artemis/common/aeolus').get('token') }}"

@@ -1,0 +1,28 @@
+---
+
+- name: Setup Artemis Registry
+  hosts: artemis_dev_cluster_registry
+
+  roles:
+    - role: ls1intum.artemis.registry
+
+    - role: ls1intum.artemis.broker
+      vars:
+        jdk_openjdk_version: 17
+        activemq_version: "2.39.0"
+
+    - role: ls1intum.artemis.redis
+
+    - role: ls1intum.artemis.proxy
+      tags: proxy
+      vars:
+        proxy_forward_ssh: false
+        proxy_generate_dh_param: false
+        proxy_ssl_certificate_path: "/etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem"
+        proxy_ssl_certificate_key_path: "/etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem"
+        proxy_target_port: 8761
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall
+      vars:
+        firewall_hostgroup: registry

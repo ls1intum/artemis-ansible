@@ -1,0 +1,10 @@
+---
+
+- name: Stop Artemis service on all nodes
+  hosts: artemis_production_nodes
+  tasks:
+    - name: Stop artemis service
+      become: true
+      ansible.builtin.service:
+        name: artemis
+        state: stopped

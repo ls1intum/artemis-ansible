@@ -1,0 +1,6 @@
+- name: Setup
+  hosts: artemistests
+
+  roles:
+    - role: ls1intum.artemis.artemis
+      tags: artemis

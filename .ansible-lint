@@ -1,0 +1,7 @@
+exclude_paths:
+  - ./roles
+
+skip_list:
+  - 'name[play]' # import_playbook for complete setups have no name
+  - 'package-latest' # playbooks/apt-upgrade.yml intentionally uses latest
+  - 'yaml[line-length]' # Deployment SSH keys are longer than the character limit
