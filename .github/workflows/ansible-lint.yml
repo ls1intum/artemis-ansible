@@ -13,4 +13,3 @@ jobs:
         uses: ansible/ansible-lint@main
         with:
           requirements_file: "requirements.yml"
-
