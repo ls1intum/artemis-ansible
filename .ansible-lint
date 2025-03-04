@@ -1,5 +1,6 @@
 exclude_paths:
   - ./roles
+  - ./.ansible
 
 skip_list:
   - 'name[play]' # import_playbook for complete setups have no name
