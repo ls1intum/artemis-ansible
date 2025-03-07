@@ -35,8 +35,8 @@ licenses:
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
-proxy_ssl_certificate_path: "/var/lib/rbg-cert/live/host:intum:{{ var_vm_name }}.fullchain.pem"
-proxy_ssl_certificate_key_path: "/var/lib/rbg-cert/live/host:intum:{{ var_vm_name }}.privkey.pem"
+proxy_ssl_certificate_path: "/var/lib/rbg-cert/live/fullchain.pem"
+proxy_ssl_certificate_key_path: "/var/lib/rbg-cert/live/privkey.pem"
 
 firewall_hostgroup: proxy   # For use of other iptables rules file
 
@@ -46,5 +46,5 @@ firewall_hostgroup: proxy   # For use of other iptables rules file
 artemis_create_deployment_user: true
 artemis_deployment_user_name: deployment
 artemis_deployment_user_uid: 1338
-artemis_deployment_user_public_key: "{{ lookup('hashi_vault', 'kv/data/artemis/test/{{ var_testserver_name }}').get('ssh_pub') }}"
+artemis_deployment_user_public_key: "{{ lookup('hashi_vault', 'kv/data/artemis/test/{0}'.format(var_testserver_name | replace('-', ''))).get('ssh_pub') }}"
 artemis_deployment_user_comment: "User to deploy artemis to this host"

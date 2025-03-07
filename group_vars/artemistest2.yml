@@ -8,10 +8,6 @@ artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artem
 artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest2').get('internal_admin') }}"
 artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest2').get('jhipster_jwt') }}"
 
-
-proxy_ssl_certificate_path: "/var/lib/rbg-cert/live/host:f:artemis-test-vm2.artemis.cit.tum.de.fullchain.pem"
-proxy_ssl_certificate_key_path: "/var/lib/rbg-cert/live/host:f:artemis-test-vm2.artemis.cit.tum.de.privkey.pem"
-
 athena:
   url: "https://athena-test1.ase.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest2').get('athena_secret') }}"

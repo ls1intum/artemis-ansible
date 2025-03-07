@@ -7,7 +7,3 @@ var_vm_name: "vmbhatotia177"
 artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest6').get('db_password') }}"
 artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest6').get('internal_admin') }}"
 artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest6').get('jhipster_jwt') }}"
-
-
-proxy_ssl_certificate_path: "/var/lib/rbg-cert/live/host:f:artemis-test-vm6.artemis.cit.tum.de.fullchain.pem"
-proxy_ssl_certificate_key_path: "/var/lib/rbg-cert/live/host:f:artemis-test-vm6.artemis.cit.tum.de.privkey.pem"

@@ -19,6 +19,3 @@ broker:
 artemis_jhipster_registry_usernamme: "admin"
 artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest7').get('registry_password') }}"
 artemis_eureka_urls: "http://{{ artemis_jhipster_registry_usernamme }}:{{ artemis_jhipster_registry_password }}@artemis-jhipster-registry:8761/eureka/"
-
-proxy_ssl_certificate_path: "/var/lib/rbg-cert/live/host:f:artemis-test-vm7.artemis.cit.tum.de.fullchain.pem"
-proxy_ssl_certificate_key_path: "/var/lib/rbg-cert/live/host:f:artemis-test-vm7.artemis.cit.tum.de.privkey.pem"
