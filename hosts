@@ -155,6 +155,7 @@ artemis_staging_localci_proxy
 ###############################
 [artemis_dev_cluster_nodes]
 artemis-dev-cluster-node[1:2].artemis.cit.tum.de
+artemis-dev-cluster-agent[1:5].artemis.cit.tum.de
 
 [artemis_dev_cluster_db]
 artemis-dev-cluster-db.artemis.cit.tum.de

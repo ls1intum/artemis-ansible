@@ -13,8 +13,6 @@ artemis_redis_client_name: "artemis-dev-cluster-node1"
 node_short_name: "artemis-node-1"
 node_display_name: "Artemis Node 1"
 
-host_ipv4_address: "172.24.88.80/25"
-
 continuous_integration:
   localci:
     is_core_node: true

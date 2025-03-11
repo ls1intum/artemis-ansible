@@ -3,7 +3,7 @@ is_testserver: true
 artemis_server_url: "https://artemis-dev-cluster.artemis.cit.tum.de"
 artemis_email: artemis-staging.dse@xcit.tum.de
 
-artemis_build_version: 7.9.0
+artemis_build_version: 7.10.4
 
 artemis_database_dbname: "Artemis"
 artemis_database_username: "Artemis"
@@ -51,6 +51,9 @@ redis:
   user: artemis
   username: artemis
   password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/dev-cluster').get('redis_password') }}"
+
+atlas:
+# More configuration options will be added in the future.
 
 ##############################################################################
 # Proxy Configuration

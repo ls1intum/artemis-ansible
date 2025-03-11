@@ -7,7 +7,7 @@
     - role: ls1intum.artemis.storage_client
       tags:
         - storage
-      when: inventory_hostname == groups['artemis_dev_cluster_nodes'][0]
+      when: inventory_hostname == groups['artemis_dev_cluster_nodes'][0] or inventory_hostname == groups['artemis_dev_cluster_nodes'][1]
 
     - role: ls1intum.artemis.artemis
       tags:
@@ -20,4 +20,4 @@
 
     - role: ls1intum.artemis.legal
       tags: legal
-      when: inventory_hostname == groups['artemis_dev_cluster_nodes'][0]
+      when: inventory_hostname == groups['artemis_dev_cluster_nodes'][0] or inventory_hostname == groups['artemis_dev_cluster_nodes'][1]

@@ -7,5 +7,3 @@ wireguard_interface_address: "fcfe:0:0:0:0:0:f:1"
 # Wireguard Keys - Autmatically generated!
 wireguard_pubkey: 84H/1EvahVb83I/kRnSgru8I2ABAxKnDs9d/fB9fCBk=
 wireguard_privkey: "{{ lookup('hashi_vault', 'kv/data/artemis/test/dev-cluster').get('wg_privkey_proxy') }}"
-
-host_ipv4_address: "172.24.88.79/25"
