@@ -7,5 +7,4 @@
 
     - role: ls1intum.artemis.artemis
       vars:
-        artemis_force_no_restart: true
-        only_update_artemis_config: true
+        update_artemis_config: true
