@@ -275,6 +275,17 @@ artemis_production_registry
 artemis_production_storage
 artemis_production_proxy
 
+[artemis_prod_like_common:children]
+artemis_production
+artemis_staging_localci
+
+[artemis_prod_like_core:children]
+artemis_production_core
+artemis_staging_localci_nodes_core
+
+[artemis_prod_like_mysql:children]
+artemis_production
+artemis_staging_localci
 
 [artemis_all:children]
 artemis_production
