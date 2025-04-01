@@ -7,7 +7,7 @@ mysql_packages:
   - mysql-common
   - mysql-server
   - python3-mysqldb
-mysql_bind_address: '{{ artemis_database_host }},localhost'
+mysql_bind_address: "{{ artemis_database_host }},localhost"
 
 # Performance
 mysql_key_buffer_size: "512M"

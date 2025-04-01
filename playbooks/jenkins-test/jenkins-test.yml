@@ -1,3 +1,4 @@
+---
 - name: "Setup Jenkins"
   hosts: jenkins-test.artemis.cit.tum.de
   roles:

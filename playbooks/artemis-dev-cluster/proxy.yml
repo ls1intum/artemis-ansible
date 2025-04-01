@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis Load Balancer / Reverse Proxy
   hosts: artemis_dev_cluster_proxy
 

@@ -38,7 +38,7 @@ licenses:
 proxy_ssl_certificate_path: "/var/lib/rbg-cert/live/fullchain.pem"
 proxy_ssl_certificate_key_path: "/var/lib/rbg-cert/live/privkey.pem"
 
-firewall_hostgroup: proxy   # For use of other iptables rules file
+firewall_hostgroup: proxy # For use of other iptables rules file
 
 ##############################################################################
 # Deployment User

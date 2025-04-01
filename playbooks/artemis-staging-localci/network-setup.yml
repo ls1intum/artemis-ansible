@@ -1,6 +1,4 @@
 ---
-
-
 - name: Setup Cluster Network and NAT on Nodes
   hosts: artemis_staging_localci_nodes
 
@@ -54,7 +52,6 @@
       http_proxy: "http://proxy.in.tum.de:8080"
       https_proxy: "http://proxy.in.tum.de:8080"
       become: true
-
 
 - name: Setup Proxy Network
   hosts: artemis-staging-localci-proxy.artemis.cit.tum.de

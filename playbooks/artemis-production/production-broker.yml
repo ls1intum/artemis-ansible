@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis Broker and Registry
   hosts: artemis_production_broker
 

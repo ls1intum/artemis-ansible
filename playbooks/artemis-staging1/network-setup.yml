@@ -1,6 +1,4 @@
 ---
-
-
 - name: Setup Cluster Network and NAT on Nodes
   hosts: artemis_staging1_nodes
 
@@ -55,7 +53,6 @@
       https_proxy: "http://proxy.in.tum.de:8080"
       become: true
 
-
 - name: Setup Proxy Network
   hosts: artemis_staging1_proxy
 
@@ -87,6 +84,5 @@
                 - to: default
                   via: 131.159.89.126
                 - to: default
-                  via:
-                    2a09:80c0:89::ffff:1
+                  via: 2a09:80c0:89::ffff:1
       tags: proxy

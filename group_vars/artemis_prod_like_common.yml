@@ -57,7 +57,7 @@ post_hog:
 enable_science_event_logging: true
 
 atlas:
-  # More configuration options will be added here in the future
+# More configuration options will be added here in the future
 
 ##############################################################################
 # Broker and Registry Configuration

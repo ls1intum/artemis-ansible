@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis Registry
   hosts: artemis_production_registry
 

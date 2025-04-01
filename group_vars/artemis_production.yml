@@ -21,12 +21,10 @@ mail:
   protocol: "smtp"
   ssl_trust: "postout.lrz.de"
 
-
 athena:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena').get('url') }}"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena').get('secret') }}"
   restricted_modules: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena').get('restricted_modules') }}"
-
 
 ##############################################################################
 # Proxy Configuration
