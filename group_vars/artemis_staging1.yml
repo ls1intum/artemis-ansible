@@ -1,0 +1,172 @@
+---
+is_testserver: true
+artemis_server_url: "https://staging1.artemis.cit.tum.de"
+artemis_email: artemis-staging.dse@xcit.tum.de
+
+artemis_version: 7.10.5
+
+artemis_database_dbname: "Artemis"
+artemis_database_username: "Artemis"
+artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging1').get('db_password') }}"
+
+artemis_internal_admin_user: artemis_admin
+artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging1').get('internal_admin') }}"
+
+artemis_repo_basepath: "/mnt/storage"
+artemis_legal_path: "/mnt/storage/legal"
+artemis_data_export_path: "/mnt/storage/data-exports"
+
+artemis_operator_name: "Technical University of Munich"
+artemis_operator_admin_name: "Stephan Krusche"
+
+##############################################################################
+# External Systems Configuration
+##############################################################################
+
+ldap:
+  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_url') }}"
+  user_dn: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_dn') }}"
+  base: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_base') }}"
+  password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_password') }}"
+
+version_control:
+  localvc:
+    url: "{{ artemis_server_url }}"
+    repo_storage_base_path: /mnt/storage/local-vcs-repos
+    ssh_key_path: /mnt/storage/ssh-keys
+    build_agent_use_ssh: true
+    ssh_url: "ssh://git@staging1.artemis.cit.tum.de:7921/"
+
+artemis_ssh_key_path: "/tmp"
+
+continuous_integration:
+  localci:
+    url: "{{ artemis_server_url }}"
+    concurrent_build_size: 3
+    image_cleanup:
+      enabled: true
+      expiry_days: 7
+      schedule_time: "0 0 3 * * *"
+
+lti:
+  oauth_secret: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging1').get('lti_secret') }}"
+
+apollon_url: "https://apollon.ase.in.tum.de/api/converter"
+
+athena:
+  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
+  restricted_modules: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('restricted_modules') }}"
+
+iris:
+  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('url') }}"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('secret') }}"
+
+post_hog:
+  host: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('url') }}"
+  token: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('secret') }}"
+
+enable_science_event_logging: true
+
+atlas:
+  # More configuration options will be added in the future.
+
+##############################################################################
+# Proxy Configuration
+##############################################################################
+proxy_generate_dh_param: false
+
+servers:
+  - name: "staging1.artemis.cit.tum.de"
+    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm121.cit.tum.de.fullchain.pem
+    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm121.cit.tum.de.privkey.pem
+    default_server: false
+
+redirects:
+  - name: "_"
+    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm121.cit.tum.de.fullchain.pem
+    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm121.cit.tum.de.privkey.pem
+    default_server: true
+    to: "{{ artemis_server_url }}"
+
+firewall_hostgroup: default
+proxy_forward_ssh: true
+
+##############################################################################
+# Broker and Registry Configuration
+##############################################################################
+is_multinode_install: true
+
+activemq_version: 2.40.0
+
+broker:
+  url: "[fcfe:0:0:0:0:0:b:1]" # Broker hostname (Only used in the Artemis role)
+  username: brokeruser
+  password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging1').get('broker_password') }}"
+
+registry:
+  url: "[fcfe:0:0:0:0:0:b:2]" # Registry hostname (Only used in the Artemis role)
+
+artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging1').get('jhipster_jwt') }}"
+artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging1').get('registry_password') }}"
+artemis_eureka_instance_id: "{{ node_id }}"
+
+registry_external_host: registry.staging1.artemis.cit.tum.de
+
+# MySQL Configuration
+##############################################################################
+artemis_database_encoding: utf8mb4
+artemis_database_collation: utf8mb4_unicode_ci
+artemis_database_host: "fcfe:0:0:0:0:0:d:1"
+
+mysql_packages:
+  - mysql-common
+  - mysql-server
+  - python3-mysqldb
+mysql_bind_address: '{{ artemis_database_host }},localhost'
+
+# Performance
+mysql_key_buffer_size: "512M"
+mysql_table_open_cache: "4000"
+mysql_sort_buffer_size: "4M"
+mysql_read_buffer_size: "1M"
+mysql_innodb_buffer_pool_size: "8G"
+mysql_max_connections: "2000"
+mysql_thread_cache_size: "256"
+mysql_max_allowed_packet: "512M"
+mysql_innodb_force_recovery: "0"
+mysql_character_set_server: "{{ artemis_database_encoding }}"
+mysql_collation_server: "{{ artemis_database_encoding }}"
+mysql_default_storage_engine: "INNODB"
+mysql_innodb_log_file_size: "512M"
+mysql_mysqldump_max_allowed_packet: "512M"
+mysql_isamchk_key_buffer: "16M"
+
+mysql_slow_query_log_enabled: false
+
+# Databases
+mysql_databases:
+  - name: "{{ artemis_database_dbname }}"
+    collation: "{{ artemis_database_collation }}"
+    encoding: "{{ artemis_database_encoding }}"
+
+# Users
+mysql_users:
+  - name: "{{ artemis_database_username }}"
+    host: "fcfe::a:%"
+    password: "{{ artemis_database_password }}"
+    priv: "*.*:ALL"
+  - name: "remoteAdmin"
+    host: "localhost"
+    password: "{{ artemis_database_password }}"
+    priv: "*.*:ALL"
+
+
+##############################################################################
+# Deployment User
+##############################################################################
+artemis_create_deployment_user: true
+artemis_deployment_user_name: deployment
+artemis_deployment_user_uid: 1338
+artemis_deployment_user_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVWewr0QYE6OoQm07DAwJsbP3LluUCvaCxIQynxxgQRrFbpxVTl99JYofkUuPPjFz6KTLcZwqVPz1gHNOyN2cRWg7KuIT/J/IQLT4dFPjcWYRPaMOMlCwGtF0IjlPh3TxGMhCpejcz6X4oF/IP7/a0SfBmydipf4/L1CwVGnblF4QS+2j0qAibUV1Aoi/u9q2ETnzaXbnaAsO6nF9Uf6ANPuyA71QHo7TSxlcOwR3QHjamhovFU0WXs9pEMb0kdaC7tE0wBsD0xVcIMbeaRh5kuSmCeKwel9hgUd5pJonyA7yuUlhE5KmagJc9x0j055KbwLjwKOE7ziarwbUyTLlM+D6TFQq5W/Z5mxj35NOjIkyxKk5iP1kXVPmAHxsyrXW18c89dq9wcpxk0xSvRyvcvl9Fy1AQlFMEvEg9mwGU5J1LUOqQ8QvFAOGisZ440S/NVdgE4C4aqdzWXEMsc/7U9jrG43poRWUXjJPL9ex9uBe8ZtHCZvuDIVP5TeudYYs= mtze@Cortana"
+artemis_deployment_user_comment: "User to deploy artemis to this host"
