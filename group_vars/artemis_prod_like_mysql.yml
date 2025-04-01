@@ -1,0 +1,49 @@
+---
+artemis_database_encoding: utf8mb4
+artemis_database_collation: utf8mb4_unicode_ci
+artemis_database_host: "fcfe:0:0:0:0:0:d:1"
+
+mysql_packages:
+  - mysql-common
+  - mysql-server
+  - python3-mysqldb
+mysql_bind_address: '{{ artemis_database_host }},localhost'
+
+# Performance
+mysql_key_buffer_size: "512M"
+mysql_table_open_cache: "4000"
+mysql_sort_buffer_size: "4M"
+mysql_read_buffer_size: "1M"
+mysql_innodb_buffer_pool_size: "10G"
+mysql_max_connections: "2000"
+mysql_thread_cache_size: "256"
+mysql_max_allowed_packet: "4G"
+mysql_innodb_force_recovery: "0"
+mysql_character_set_server: "{{ artemis_database_encoding }}"
+mysql_collation_server: "{{ artemis_database_encoding }}"
+mysql_default_storage_engine: "INNODB"
+mysql_innodb_log_file_size: "512M"
+mysql_mysqldump_max_allowed_packet: "512M"
+mysql_isamchk_key_buffer: "16M"
+
+# Slow query logging
+mysql_slow_query_log_enabled: true
+mysql_slow_query_log_file: "/var/lib/mysql/artemis-production-db-slow.log"
+mysql_slow_query_log_long_query_time: 5
+
+# Databases
+mysql_databases:
+  - name: "{{ artemis_database_dbname }}"
+    collation: "{{ artemis_database_collation }}"
+    encoding: "{{ artemis_database_encoding }}"
+
+# Users
+mysql_users:
+  - name: "{{ artemis_database_username }}"
+    host: "fcfe::a:%"
+    password: "{{ artemis_database_password }}"
+    priv: "*.*:ALL"
+  - name: "remoteAdmin"
+    host: "localhost"
+    password: "{{ artemis_database_password }}"
+    priv: "*.*:ALL"
