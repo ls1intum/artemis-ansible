@@ -77,10 +77,17 @@ atlas:
 proxy_generate_dh_param: false
 
 servers:
+  - name: "artemis-staging-localci.artemis.cit.tum.de"
+    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:artemis-staging-localci-proxy.artemis.cit.tum.de.fullchain.pem
+    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:artemis-staging-localci-proxy.artemis.cit.tum.de.privkey.pem
+    default_server: false
+
+redirects:
   - name: "_"
     ssl_certificate_path: /var/lib/rbg-cert/live/host:f:artemis-staging-localci-proxy.artemis.cit.tum.de.fullchain.pem
     ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:artemis-staging-localci-proxy.artemis.cit.tum.de.privkey.pem
     default_server: true
+    to: "{{ artemis_server_url }}"
 
 firewall_hostgroup: default
 proxy_forward_ssh: true
