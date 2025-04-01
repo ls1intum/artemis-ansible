@@ -2,6 +2,8 @@
 
 - name: Setup Artemis Nodes
   hosts: artemis_staging_localci_nodes
+  vars:
+    artemis_version: # Unset artemis_version to ignore the initial version in group_vars
 
   pre_tasks:
     - name: Check artemis_version is set
