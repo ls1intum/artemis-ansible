@@ -151,6 +151,7 @@ artemis_staging_localci_proxy
 
 ###############################
 # Artemis Staging 1
+###############################
 [artemis_staging1_core]
 node[1:3].staging1.artemis.cit.tum.de
 
