@@ -1,5 +1,4 @@
 ---
-
 - name: Start Artemis service
   hosts: artemis_staging_localci_nodes
   serial: 1

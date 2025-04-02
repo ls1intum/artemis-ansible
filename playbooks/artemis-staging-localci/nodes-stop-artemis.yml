@@ -1,5 +1,4 @@
 ---
-
 - name: Stop Artemis service
   hosts: artemis_staging_localci_nodes
   tasks:

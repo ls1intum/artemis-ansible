@@ -1,10 +1,8 @@
 ---
-
 - name: Setup Artemis Nodes
   hosts: artemistests artemis_staging_localci_nodes artemis_dev_cluster_nodes artemis_production_nodes
 
   roles:
-
     - role: ls1intum.artemis.artemis
       vars:
         artemis_force_no_restart: true

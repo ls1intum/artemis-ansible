@@ -1,6 +1,4 @@
 ---
-
-
 - name: Setup Cluster Network and Forward Proxy
   hosts: artemis_production:!artemis-production-proxy.artemis.in.tum.de:!artemis_production_nodes_ls1
 

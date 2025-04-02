@@ -1,5 +1,4 @@
 ---
-
 - name: Setup
   hosts: artemis_production_db
 

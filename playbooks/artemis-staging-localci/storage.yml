@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis shared storage provider
   hosts: artemis_staging_localci_storage
 

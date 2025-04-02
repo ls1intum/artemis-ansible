@@ -1,0 +1,24 @@
+---
+- name: Setup Artemis Registry
+  hosts: artemis_staging1_registry
+
+  roles:
+    - role: ls1intum.artemis.registry
+
+    - role: ls1intum.artemis.proxy
+      tags: proxy
+      vars:
+        proxy_forward_ssh: false
+        proxy_generate_dh_param: false
+        servers:
+          - name: "_"
+            default_server: true
+            ssl_certificate_path: "/var/lib/rbg-cert/live/host:f:asevm123.cit.tum.de.fullchain.pem"
+            ssl_certificate_key_path: "/var/lib/rbg-cert/live/host:f:asevm123.cit.tum.de.privkey.pem"
+        proxy_target_port: 8761
+        redirects: []
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall
+      vars:
+        firewall_hostgroup: registry

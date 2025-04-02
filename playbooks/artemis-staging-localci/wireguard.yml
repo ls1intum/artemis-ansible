@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Cluster Network
   hosts: artemis_staging_localci
 

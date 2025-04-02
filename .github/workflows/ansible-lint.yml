@@ -1,3 +1,4 @@
+---
 name: 🕵️‍♀️ Ansible Lint
 on:
   pull_request:
