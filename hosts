@@ -186,6 +186,32 @@ artemis_staging1_storage
 artemis_staging1_proxy
 
 ###############################
+# Artemis Dev Cluster
+###############################
+[artemis_dev_cluster_nodes]
+artemis-dev-cluster-node[1:2].artemis.cit.tum.de
+artemis-dev-cluster-agent[1:5].artemis.cit.tum.de
+
+[artemis_dev_cluster_db]
+artemis-dev-cluster-db.artemis.cit.tum.de
+
+[artemis_dev_cluster_registry]
+artemis-dev-cluster-registry.artemis.cit.tum.de uqn=artemis-dev-cluster-registry.artemis.cit.tum.de
+
+[artemis_dev_cluster_storage]
+artemis-dev-cluster-storage.artemis.cit.tum.de
+
+[artemis_dev_cluster_proxy]
+artemis-dev-cluster-proxy.artemis.cit.tum.de uqn=artemis-dev-cluster.artemis.cit.tum.de
+
+[artemis_dev_cluster:children]
+artemis_dev_cluster_nodes
+artemis_dev_cluster_db
+artemis_dev_cluster_registry
+artemis_dev_cluster_storage
+artemis_dev_cluster_proxy
+
+###############################
 # Artemis Production
 ###############################
 
