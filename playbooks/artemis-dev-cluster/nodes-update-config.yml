@@ -1,8 +1,0 @@
----
-- name: Setup Artemis Nodes
-  hosts: artemis_dev_cluster_nodes
-
-  roles:
-    - role: ls1intum.artemis.artemis
-      vars:
-        update_artemis_config: true
