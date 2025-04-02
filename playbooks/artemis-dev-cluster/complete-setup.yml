@@ -1,5 +1,4 @@
 ---
-
 # Cluster Wireguard
 - import_playbook: wireguard.yml
 

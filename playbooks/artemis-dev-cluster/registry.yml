@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis Registry
   hosts: artemis_dev_cluster_registry
 

@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis Load Balancer / Reverse Proxy
   hosts: artemis_production_proxy
   pre_tasks:
@@ -7,22 +6,21 @@
       ansible.builtin.file:
         dest: "{{ proxy_certificate_base_path }}"
         state: directory
-        mode: '0700'
-        owner: 'root'
-        group: 'root'
+        mode: "0700"
+        owner: "root"
+        group: "root"
       become: true
 
     - name: Copy certificates to proxy
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_name }}"
-        mode: '0755'
-        owner: 'root'
-        group: 'root'
+        mode: "0755"
+        owner: "root"
+        group: "root"
       with_fileglob:
         - "artemis_tum_de-certificates/artemis_tum_de.pem"
       become: true
-
 
     - name: Get the tum certificate key from vault
       ansible.builtin.set_fact:
@@ -32,11 +30,10 @@
       ansible.builtin.copy:
         content: "{{ artemis_tum_cert_key }}"
         dest: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_key_name }}"
-        mode: '0755'
-        owner: 'root'
-        group: 'root'
+        mode: "0755"
+        owner: "root"
+        group: "root"
       become: true
-
 
   roles:
     - role: ls1intum.artemis.firewall

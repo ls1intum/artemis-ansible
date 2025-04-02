@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis Nodes
   hosts: artemis_production_nodes
 
@@ -11,6 +10,11 @@
       when: inventory_hostname not in groups['artemis_production_core']
 
     - role: ls1intum.artemis.artemis
+      vars:
+        setup_system: true
+        update_artemis_config: true
+        download_artemis_application: true
+        restart_artemis: true
 
     - role: ls1intum.artemis.firewall
       tags: firewall

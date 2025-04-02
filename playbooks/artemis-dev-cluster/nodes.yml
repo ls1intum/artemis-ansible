@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis Nodes
   hosts: artemis_dev_cluster_nodes
 
@@ -12,6 +11,11 @@
     - role: ls1intum.artemis.artemis
       tags:
         - artemis
+      vars:
+        setup_system: true
+        update_artemis_config: true
+        download_artemis_application: true
+        restart_artemis: true
 
     - role: ls1intum.artemis.firewall
       tags: firewall

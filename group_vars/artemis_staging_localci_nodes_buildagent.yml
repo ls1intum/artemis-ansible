@@ -3,3 +3,9 @@
 continuous_integration:
   localci:
     is_build_agent: true
+    url: "{{ artemis_server_url }}"
+    concurrent_build_size: 3
+    image_cleanup:
+      enabled: true
+      expiry_days: 7
+      schedule_time: "0 0 3 * * *"

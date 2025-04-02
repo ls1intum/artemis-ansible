@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis Nodes
   hosts: all
 

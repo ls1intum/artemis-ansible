@@ -1,0 +1,88 @@
+---
+- name: Setup Cluster Network and NAT on Nodes
+  hosts: artemis_staging1_nodes
+
+  roles:
+    - role: mrlesmithjr.netplan
+      netplan_configuration:
+        network:
+          version: 2
+          ethernets:
+            ens192:
+              addresses:
+                - "{{ wireguard_host_ipv6_address }}/64"
+                - "{{ host_ipv4_address }}"
+              dhcp4-overrides:
+                use-routes: false
+              dhcp6-overrides:
+                use-routes: false
+              nameservers:
+                addresses:
+                  - 131.159.254.1
+              routes:
+                - to: 172.16.0.0/12
+                  via: 172.24.70.254
+                - to: 131.159.0.0/16
+                  via: 172.24.70.254
+                - to: default
+                  via: 172.24.70.250
+                - to: default
+                  via: "fd00::ffff:1"
+
+    - role: tomereli.proxy
+      http_proxy: "http://proxy.in.tum.de:8080"
+      https_proxy: "http://proxy.in.tum.de:8080"
+      become: true
+
+- name: Setup Cluster Network and Forward Proxy
+  hosts: artemis_staging1:!artemis_staging1_proxy:!artemis_staging1_nodes
+
+  roles:
+    - role: mrlesmithjr.netplan
+      netplan_configuration:
+        network:
+          version: 2
+          ethernets:
+            ens192:
+              addresses:
+                - "{{ wireguard_host_ipv6_address }}/64"
+              dhcp4: true
+
+    - role: tomereli.proxy
+      http_proxy: "http://proxy.in.tum.de:8080"
+      https_proxy: "http://proxy.in.tum.de:8080"
+      become: true
+
+- name: Setup Proxy Network
+  hosts: artemis_staging1_proxy
+
+  roles:
+    - role: mrlesmithjr.netplan
+      netplan_configuration:
+        network:
+          version: 2
+          ethernets:
+            ens192:
+              dhcp4: false
+              dhcp6: false
+              addresses:
+                - "{{ host_ipv4_address }}"
+                - "{{ wireguard_host_ipv6_address }}/64"
+            ens224:
+              addresses:
+                - 2a09:80c0:89::97/64
+                - 131.159.89.97/25
+              dhcp4: true
+              dhcp4-overrides:
+                use-routes: false
+
+              dhcp6: true
+              dhcp6-overrides:
+                use-routes: false
+
+              routes:
+                - to: default
+                  via: 131.159.89.126
+                - to: default
+                  via: 2a09:80c0:89::ffff:1
+      tags: proxy

@@ -1,5 +1,4 @@
 ---
-
 - name: Setup
   hosts: artemis_staging_localci_db
 

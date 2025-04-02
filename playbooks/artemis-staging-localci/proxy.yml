@@ -1,5 +1,4 @@
 ---
-
 - name: Setup Artemis Load Balancer / Reverse Proxy
   hosts: artemis_staging_localci_proxy
 

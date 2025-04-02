@@ -1,0 +1,18 @@
+---
+- name: Setup Artemis Nodes
+  hosts: artemis_production_nodes
+  vars:
+    artemis_version: # Unset artemis_version to ignore the initial version in group_vars
+
+  pre_tasks:
+    - name: Check artemis_version is set
+      ansible.builtin.fail:
+        msg: "artemis_version is not set. Please set artemis_version with ansible-playbook -e artemis_version=VERSION or -e artemis_version=/path/to/artemis.war"
+      when: artemis_version is undefined or artemis_version is none or artemis_version == ""
+
+  roles:
+    - role: ls1intum.artemis.artemis
+      vars:
+        update_artemis_config: true
+        download_artemis_application: true
+        restart_artemis: true

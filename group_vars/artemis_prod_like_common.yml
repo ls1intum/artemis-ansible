@@ -1,0 +1,88 @@
+---
+is_testserver: false
+
+artemis_database_dbname: "Artemis"
+artemis_database_username: "Artemis"
+
+artemis_internal_admin_user: artemis_admin
+
+artemis_repo_basepath: "/mnt/storage"
+artemis_legal_path: "/mnt/storage/legal"
+artemis_data_export_path: "/mnt/storage/data-exports"
+
+artemis_ssh_priv_key_value: "none"
+
+artemis_operator_name: "Technical University of Munich"
+artemis_operator_admin_name: "Stephan Krusche"
+
+artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('db_password') }}"
+
+artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('internal_admin') }}"
+
+##############################################################################
+# External Systems Configuration
+##############################################################################
+
+lti:
+  oauth_secret: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('lti_secret') }}"
+
+ldap:
+  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_url') }}"
+  user_dn: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_dn') }}"
+  base: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_base') }}"
+  password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_password') }}"
+
+version_control:
+  localvc:
+    url: "{{ artemis_server_url }}"
+    repo_storage_base_path: /mnt/storage/localvc
+    ssh_key_path: /mnt/storage/ssh-keys
+    build_agent_use_ssh: true
+    ssh_url: "{{ var_artemis_localvc_ssh_url }}"
+
+artemis_ssh_key_path: "/tmp"
+
+apollon_url: "https://apollon.ase.in.tum.de/api/converter"
+
+iris:
+  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('url') }}"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('secret') }}"
+  rate_limit: 25
+  rate_limit_timeframe_hours: 3
+
+post_hog:
+  host: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('url') }}"
+  token: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('secret') }}"
+
+enable_science_event_logging: true
+
+atlas:
+# More configuration options will be added here in the future
+
+##############################################################################
+# Broker and Registry Configuration
+##############################################################################
+
+is_multinode_install: true
+
+broker:
+  url: "[fcfe:0:0:0:0:0:b:1]" # Broker hostname (Only used in the Artemis role)
+  username: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('broker_user') }}"
+  password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('broker_password') }}"
+
+registry:
+  url: "[fcfe:0:0:0:0:0:b:2]" # Registry hostname (Only used in the Artemis role)
+
+artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('jhipster_jwt') }}"
+artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('registry_password') }}"
+artemis_eureka_instance_id: "{{ node_id }}"
+
+##############################################################################
+# Deployment User
+##############################################################################
+
+artemis_create_deployment_user: true
+artemis_deployment_user_name: deployment
+artemis_deployment_user_uid: 1338
+artemis_deployment_user_public_key: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('ssh_pub') }}"
+artemis_deployment_user_comment: "User to deploy artemis to this host"
