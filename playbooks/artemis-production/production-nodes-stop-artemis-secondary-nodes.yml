@@ -1,6 +1,6 @@
 ---
 - name: Stop Artemis service on secondary nodes
-  hosts: artemis_production_nodes:!artemis-production-node1.artemis.in.tum.de
+  hosts: artemis_production_nodes:!node1.prod.artemis.cit.tum.de
   tasks:
     - name: Stop artemis service
       become: true
