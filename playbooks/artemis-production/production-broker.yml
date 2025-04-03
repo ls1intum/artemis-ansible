@@ -5,15 +5,7 @@
   roles:
     - role: ls1intum.artemis.broker
 
-    - role: ls1intum.artemis.proxy
-      vars:
-        proxy_forward_ssh: false
-        proxy_generate_dh_param: false
-        proxy_ssl_certificate_path: /var/lib/rbg-cert/live/host:intum:vmbhatotia104.fullchain.pem
-        proxy_ssl_certificate_key_path: /var/lib/rbg-cert/live/host:intum:vmbhatotia104.privkey.pem
-        proxy_target_port: 8761
-
     - role: ls1intum.artemis.firewall
       tags: firewall
       vars:
-        firewall_hostgroup: broker
+        firewall_hostgroup: default
