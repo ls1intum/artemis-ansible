@@ -48,7 +48,7 @@ redirects:
     ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.fullchain.pem
     ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.privkey.pem
     default_server: true
-    to: "{{ artemis_server_url}}"
+    to: "{{ artemis_server_url }}"
 
 firewall_hostgroup: default
 proxy_forward_ssh: true
