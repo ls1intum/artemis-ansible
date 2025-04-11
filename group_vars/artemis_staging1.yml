@@ -12,6 +12,8 @@ artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/stagi
 artemis_internal_admin_user: artemis_admin
 artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging1').get('internal_admin') }}"
 
+artemis_passkey_enabled: true
+
 artemis_repo_basepath: "/mnt/storage"
 artemis_legal_path: "/mnt/storage/legal"
 artemis_data_export_path: "/mnt/storage/data-exports"
