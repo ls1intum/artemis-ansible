@@ -14,6 +14,7 @@
       vars:
         artemis_database_backup_dir: /srv/artemis-db
         artemis_database_backup_script_path: /opt/artemis-backup.sh
+        artemis_database_backup_retention: 3
 
     - role: ls1intum.artemis.firewall
       tags: firewall
