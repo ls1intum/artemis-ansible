@@ -1,0 +1,27 @@
+---
+- name: Setup Artemis Nodes
+  hosts: artemis_dev_cluster_nodes
+
+  roles:
+    - role: ls1intum.artemis.storage_client
+      tags:
+        - storage
+      when: inventory_hostname == groups['artemis_dev_cluster_nodes'][0] or inventory_hostname == groups['artemis_dev_cluster_nodes'][1]
+
+    - role: ls1intum.artemis.artemis
+      tags:
+        - artemis
+      vars:
+        setup_system: true
+        update_artemis_config: true
+        download_artemis_application: true
+        restart_artemis: true
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall
+      vars:
+        firewall_hostgroup: nodes
+
+    - role: ls1intum.artemis.legal
+      tags: legal
+      when: inventory_hostname == groups['artemis_dev_cluster_nodes'][0] or inventory_hostname == groups['artemis_dev_cluster_nodes'][1]

@@ -1,0 +1,23 @@
+---
+# IPv6 address (with CIDR!) which can be used to access the node - If left blank, ansible will use host facts to fill the address.
+wireguard_host_ipv6_address: "2a09:80c0:89::95"
+
+# Address of the node inside the network.
+wireguard_interface_address: "fcfe:0:0:0:0:0:affe:5"
+
+# Wireguard Keys - Autmatically generated!
+wireguard_pubkey: Ef/AfV7Q09AV2VgAANNq4E+v1mpKPMeNM0DyZAuY9Vs=
+wireguard_privkey: "{{ lookup('hashi_vault', 'kv/data/artemis/test/dev-cluster').get('wg_privkey_agent5') }}"
+
+node_id: 7
+
+artemis_redis_client_name: "artemis-dev-cluster-agent5"
+node_short_name: "artemis-agent-5"
+node_display_name: "Artemis Build Agent 5"
+
+continuous_integration:
+  localci:
+    is_build_agent: true
+    concurrent_build_size: 6
+
+artemis_ssh_key_path: "/opt/artemis/ssh-keys"
