@@ -9,6 +9,8 @@ var_artemis_localvc_ssh_url: "ssh://git@artemis-staging-integrated-code-lifecycl
 
 registry_external_host: artemis-staging-localci-registry.artemis.cit.tum.de
 
+artemis_passkey_enabled: true
+
 ##############################################################################
 # External Systems Configuration
 ##############################################################################
