@@ -2,7 +2,7 @@
 continuous_integration:
   localci:
     is_build_agent: true
-    concurrent_build_size: 2
+    concurrent_build_size: 6
     image_cleanup:
       enabled: true
       expiry_days: 7
