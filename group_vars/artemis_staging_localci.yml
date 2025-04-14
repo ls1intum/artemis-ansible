@@ -11,6 +11,8 @@ registry_external_host: artemis-staging-localci-registry.artemis.cit.tum.de
 
 artemis_passkey_enabled: true
 
+is_testserver: true
+
 ##############################################################################
 # External Systems Configuration
 ##############################################################################
