@@ -289,5 +289,6 @@ artemis_staging_localci
 [artemis_all:children]
 artemis_production
 artemis_staging_localci
+artemis_dev_cluster
 artemistests
 artemis_infrastructure
