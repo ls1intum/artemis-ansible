@@ -1,4 +1,6 @@
 ---
+artemis_passkey_enabled: true
+
 continuous_integration:
   localci:
     is_core_node: true
