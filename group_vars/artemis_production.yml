@@ -42,7 +42,7 @@ servers:
     ssl_certificate_path: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_name }}"
     ssl_certificate_key_path: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_key_name }}"
     default_server: true
-  - name: "artemis.ase.cs.tum.edu "
+  - name: "artemis.ase.cs.tum.edu"
     ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.fullchain.pem
     ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.privkey.pem
     default_server: false
