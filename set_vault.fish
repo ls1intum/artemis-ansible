@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x VAULT_ADDR "https://vault.ase.cit.tum.de"
+set -x VAULT_ADDR "https://vault.aet.cit.tum.de"
 set -x OBJC_DISABLE_INITIALIZE_FORK_SAFETY "YES"
 
 set VAULT_LOGIN_OUTPUT (vault login --method=oidc role=itg-artemis-admin | string escape)
