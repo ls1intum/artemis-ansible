@@ -43,3 +43,5 @@ redirects:
 
 firewall_hostgroup: default
 proxy_forward_ssh: true
+
+artemis_deployment_user_name: bamboo
