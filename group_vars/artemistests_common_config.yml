@@ -24,7 +24,7 @@ artemis_ssh_priv_key_value: ""
 use_docker: true
 artemis_system_ram_proportion: 0.6 # Limit Artemis to 60% RAM (also runs DB on same VM)
 
-apollon_url: "https://apollon.ase.in.tum.de/api/converter"
+apollon_url: "https://apollon.ase.in.tum.de"
 
 artemis_operator_name: "Technical University of Munich"
 artemis_operator_admin_name: "Stephan Krusche"
