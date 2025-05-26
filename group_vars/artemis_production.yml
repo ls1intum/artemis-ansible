@@ -13,14 +13,6 @@ registry_external_host: registry.prod.artemis.cit.tum.de
 # External Systems Configuration
 ##############################################################################
 
-mail:
-  hostname: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_host') }}"
-  port: "587"
-  username: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_user') }}"
-  password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_password') }}"
-  protocol: "smtp"
-  ssl_trust: "postout.lrz.de"
-
 athena:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena').get('url') }}"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena').get('secret') }}"
