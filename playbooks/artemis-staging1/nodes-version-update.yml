@@ -1,6 +1,7 @@
 ---
 - name: Setup Artemis Nodes
   hosts: artemis_staging1_nodes
+  gather_facts: false
   vars:
     artemis_version: # Unset artemis_version to ignore the initial version in group_vars
 
@@ -13,6 +14,5 @@
   roles:
     - role: ls1intum.artemis.artemis
       vars:
-        update_artemis_config: true
         download_artemis_application: true
         restart_artemis: true
