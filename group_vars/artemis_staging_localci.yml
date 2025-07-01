@@ -15,7 +15,7 @@ is_testserver: true
 # External Systems Configuration
 ##############################################################################
 
-artemis_email: artemis-staging.dse@xcit.tum.de
+artemis_email: artemis-staging.aet@xcit.tum.de
 
 athena:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
