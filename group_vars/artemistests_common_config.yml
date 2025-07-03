@@ -35,6 +35,14 @@ lti:
 licenses:
   matlab: "28000@mlm1.rbg.tum.de"
 
+helios:
+  environment_name: "{{ var_testserver_name }}.artemis.cit.tum.de"
+  endpoints:
+    - url: "https://helios.aet.cit.tum.de/api/environments/status"
+      secret_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/helios').get('prod_secret_key') }}"
+    - url: "https://helios-staging.aet.cit.tum.de/api/environments/status"
+      secret_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/helios').get('staging_secret_key') }}"
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
