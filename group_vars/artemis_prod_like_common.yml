@@ -96,3 +96,11 @@ artemis_deployment_user_name: deployment
 artemis_deployment_user_uid: 1338
 artemis_deployment_user_public_key: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('ssh_pub') }}"
 artemis_deployment_user_comment: "User to deploy artemis to this host"
+
+
+##############################################################################
+# Other Configuration
+##############################################################################
+
+# Lower the entropy bits to fix a bug with TSAN and MSAN C exercises
+entropy_bits_override: 30
