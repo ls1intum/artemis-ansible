@@ -9,6 +9,7 @@ theia:
       C: "c-latest"
     javascript:
       Javascript: "javascript-latest"
+      TheiaLite: "theia-lite-latest"
     ocaml:
       Ocaml: "ocaml-latest"
     python:
