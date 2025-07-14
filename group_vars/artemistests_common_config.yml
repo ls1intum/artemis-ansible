@@ -43,6 +43,11 @@ helios:
     - url: "https://helios-staging.aet.cit.tum.de/api/environments/status"
       secret_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/helios').get('staging_secret_key') }}"
 
+sharing:
+  url: "https://dev-exchange.codeability-austria.uibk.ac.at/"
+  apikey: "{{ lookup('hashi_vault', 'kv/data/artemis/common/sharing').get('apikey') }}"
+  actionname: "TestExport to Artemis@helios.aet.cit.tum.de"
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
