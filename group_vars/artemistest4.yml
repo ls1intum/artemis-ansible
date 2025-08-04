@@ -3,7 +3,6 @@
 # Commonly changed variables
 ##############################################################################
 var_testserver_name: "artemis-test4"
-var_vm_name: "vmbhatotia176"
 artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest4').get('db_password') }}"
 artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest4').get('internal_admin') }}"
 artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest4').get('jhipster_jwt') }}"
