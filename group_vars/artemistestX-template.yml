@@ -4,6 +4,5 @@
 ##############################################################################
 is_testserver: true
 var_testserver_name: "artemis-testX"
-var_vm_name: "vmbhatotiaX"
 artemis_database_password: "TODO"
 artemis_internal_admin_password: "TODO"
