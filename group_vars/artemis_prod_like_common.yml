@@ -9,6 +9,7 @@ artemis_internal_admin_user: artemis_admin
 artemis_repo_basepath: "/mnt/storage"
 artemis_legal_path: "/mnt/storage/legal"
 artemis_data_export_path: "/mnt/storage/data-exports"
+artemis_tmp_directory: "/opt/artemis/tmp"
 
 artemis_ssh_priv_key_value: "none"
 
