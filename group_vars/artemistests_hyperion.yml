@@ -1,0 +1,13 @@
+---
+##############################################################################
+# Hyperion Profile Activation + Spring AI Azure OpenAI Configuration
+# Define 'hyperion: {}' to enable the spring profile. Configure model under spring_ai.
+##############################################################################
+hyperion: {}
+
+spring_ai:
+  azure_openai:
+    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_api_key') }}"
+    endpoint: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_endpoint') }}"
+    deployment_name: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_deployment_name') }}"
+    temperature: 1.0
