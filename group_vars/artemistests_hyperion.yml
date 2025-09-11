@@ -3,7 +3,7 @@
 # Hyperion Profile Activation + Spring AI Azure OpenAI Configuration
 # Define 'hyperion: {}' to enable the spring profile. Configure model under spring_ai.
 ##############################################################################
-hyperion: {}
+artemis_hyperion_enabled: true
 
 spring_ai:
   azure_openai:
