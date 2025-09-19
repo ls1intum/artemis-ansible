@@ -13,6 +13,7 @@ artemis_branch: develop
 artemis_internal_admin_user: artemis_admin
 artemis_passkey_enabled: true
 artemis_repo_basepath: "/opt/artemis/data"
+artemis_tmp_directory: "/tmp"
 
 push_notification_relay: "https://hermes-sandbox.artemis.cit.tum.de"
 
