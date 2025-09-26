@@ -9,6 +9,7 @@ artemis_internal_admin_user: artemis_admin
 artemis_repo_basepath: "/mnt/storage"
 artemis_legal_path: "/mnt/storage/legal"
 artemis_data_export_path: "/mnt/storage/data-exports"
+artemis_tmp_directory: "/opt/artemis/tmp"
 
 artemis_ssh_priv_key_value: "none"
 
@@ -34,6 +35,14 @@ ldap:
   base: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_base') }}"
   password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_password') }}"
 
+mail:
+  hostname: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_host') }}"
+  port: "587"
+  username: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_user') }}"
+  password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_password') }}"
+  protocol: "smtp"
+  ssl_trust: "postout.lrz.de"
+
 version_control:
   localvc:
     url: "{{ artemis_server_url }}"
@@ -44,7 +53,7 @@ version_control:
 
 artemis_ssh_key_path: "/tmp"
 
-apollon_url: "https://apollon.ase.in.tum.de/api/converter"
+apollon_url: "https://apollon.ase.in.tum.de"
 
 iris:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('url') }}"
@@ -88,3 +97,11 @@ artemis_deployment_user_name: deployment
 artemis_deployment_user_uid: 1338
 artemis_deployment_user_public_key: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('ssh_pub') }}"
 artemis_deployment_user_comment: "User to deploy artemis to this host"
+
+
+##############################################################################
+# Other Configuration
+##############################################################################
+
+# Lower the entropy bits to fix a bug with TSAN and MSAN C exercises
+entropy_bits_override: 30

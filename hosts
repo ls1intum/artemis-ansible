@@ -36,6 +36,7 @@ artemistest1
 artemistest2
 artemistest3
 artemistest4
+artemistest5
 artemistest6
 artemistest7
 artemistest9
@@ -96,6 +97,18 @@ artemistest9
 artemistest10
 
 [artemistests_atlas:children]
+artemistest1
+artemistest2
+artemistest3
+artemistest4
+artemistest5
+artemistest6
+# artemistest7
+artemistest8
+artemistest9
+artemistest10
+
+[artemistests_hyperion:children]
 artemistest1
 artemistest2
 artemistest3
@@ -277,18 +290,22 @@ artemis_production_proxy
 [artemis_prod_like_common:children]
 artemis_production
 artemis_staging_localci
+artemis_staging1
 
 [artemis_prod_like_core:children]
 artemis_production_core
 artemis_staging_localci_nodes_core
+artemis_staging1_core
 
 [artemis_prod_like_mysql:children]
 artemis_production
 artemis_staging_localci
+artemis_staging1
 
 [artemis_all:children]
 artemis_production
 artemis_staging_localci
+artemis_staging1
 artemis_dev_cluster
 artemistests
 artemis_infrastructure

@@ -5,7 +5,7 @@
 node_id: 1
 is_testserver: true
 artemis_server_url: "https://{{ var_testserver_name }}.artemis.cit.tum.de"
-artemis_email: "{{ var_testserver_name }}.dse@xcit.tum.de"
+artemis_email: "{{ var_testserver_name }}.aet@xcit.tum.de"
 
 artemis_version: develop
 artemis_branch: develop
@@ -13,6 +13,7 @@ artemis_branch: develop
 artemis_internal_admin_user: artemis_admin
 artemis_passkey_enabled: true
 artemis_repo_basepath: "/opt/artemis/data"
+artemis_tmp_directory: "/tmp"
 
 push_notification_relay: "https://hermes-sandbox.artemis.cit.tum.de"
 
@@ -24,6 +25,8 @@ artemis_ssh_priv_key_value: ""
 use_docker: true
 artemis_system_ram_proportion: 0.6 # Limit Artemis to 60% RAM (also runs DB on same VM)
 
+apollon_url: "https://apollon.ase.in.tum.de"
+
 artemis_operator_name: "Technical University of Munich"
 artemis_operator_admin_name: "Stephan Krusche"
 
@@ -32,6 +35,19 @@ lti:
 
 licenses:
   matlab: "28000@mlm1.rbg.tum.de"
+
+helios:
+  environment_name: "{{ var_testserver_name }}.artemis.cit.tum.de"
+  endpoints:
+    - url: "https://helios.aet.cit.tum.de/api/environments/status"
+      secret_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/helios').get('prod_secret_key') }}"
+    - url: "https://helios-staging.aet.cit.tum.de/api/environments/status"
+      secret_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/helios').get('staging_secret_key') }}"
+
+sharing:
+  url: "https://dev-exchange.codeability-austria.uibk.ac.at/"
+  apikey: "{{ lookup('hashi_vault', 'kv/data/artemis/common/sharing').get('apikey') }}"
+  actionname: "TestExport to Artemis@helios.aet.cit.tum.de"
 
 ##############################################################################
 # Proxy Configuration

@@ -13,14 +13,6 @@ registry_external_host: registry.prod.artemis.cit.tum.de
 # External Systems Configuration
 ##############################################################################
 
-mail:
-  hostname: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_host') }}"
-  port: "587"
-  username: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_user') }}"
-  password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_password') }}"
-  protocol: "smtp"
-  ssl_trust: "postout.lrz.de"
-
 athena:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena').get('url') }}"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena').get('secret') }}"
@@ -41,13 +33,14 @@ servers:
   - name: "artemis.tum.de"
     ssl_certificate_path: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_name }}"
     ssl_certificate_key_path: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_key_name }}"
-    default_server: false
-  - name: "_"
-    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.fullchain.pem
-    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.privkey.pem
     default_server: true
 
-redirects: []
+redirects:
+  - name: "artemis.ase.in.tum.de artemis.in.tum.de artemis.ase.cit.tum.de proxy.prod.artemis.cit.tum.de artemis.cs.tum.edu proxy-internal.prod.artemis.cit.tum.de prod.artemis.cit.tum.de asevm91.cit.tum.de artemis.cit.tum.de"
+    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.fullchain.pem
+    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.privkey.pem
+    default_server: false
+    to: "{{ artemis_server_url }}"
 
 firewall_hostgroup: default
 proxy_forward_ssh: true

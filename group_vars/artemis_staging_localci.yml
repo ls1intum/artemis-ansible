@@ -9,7 +9,7 @@ var_artemis_localvc_ssh_url: "ssh://git@artemis-staging-integrated-code-lifecycl
 
 registry_external_host: artemis-staging-localci-registry.artemis.cit.tum.de
 
-artemis_passkey_enabled: true
+is_testserver: true
 
 is_testserver: true
 
@@ -17,7 +17,7 @@ is_testserver: true
 # External Systems Configuration
 ##############################################################################
 
-artemis_email: artemis-staging.dse@xcit.tum.de
+artemis_email: artemis-staging.aet@xcit.tum.de
 
 athena:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
@@ -45,3 +45,5 @@ redirects:
 
 firewall_hostgroup: default
 proxy_forward_ssh: true
+
+artemis_deployment_user_name: bamboo
