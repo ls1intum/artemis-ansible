@@ -89,6 +89,16 @@ artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'kv/data/artemis/'
 artemis_eureka_instance_id: "{{ node_id }}"
 
 ##############################################################################
+# Sentry Configuration
+##############################################################################
+sentry:
+  dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
+  environment: prod
+  enable_db_tracing: true
+  traces_sample_rate: 0.2
+  send_default_pii: true
+
+##############################################################################
 # Deployment User
 ##############################################################################
 

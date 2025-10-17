@@ -58,6 +58,16 @@ proxy_ssl_certificate_key_path: "/var/lib/rbg-cert/live/privkey.pem"
 firewall_hostgroup: proxy # For use of other iptables rules file
 
 ##############################################################################
+# Sentry Configuration
+##############################################################################
+sentry:
+  dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
+  environment: "{{ var_testserver_name }}"
+  enable_db_tracing: true
+  traces_sample_rate: 1.0
+  send_default_pii: true
+
+##############################################################################
 # Deployment User
 ##############################################################################
 artemis_create_deployment_user: true
