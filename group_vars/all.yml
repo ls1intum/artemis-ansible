@@ -8,3 +8,11 @@ mysql_exporter_password: "{{ lookup('hashi_vault', 'kv/data/artemis/production/p
 mysql_disable_log_bin: true
 
 artemis_email: "artemis@xcit.tum.de"
+
+artemis_internal_ip_allowlist:
+  - "131.159.88.0/24" # il01_4
+  - "2a09:80c0:88::/64" # il01_4
+  - "131.159.89.0/25" # il01_7
+  - "2a09:80c0:89::/64" # il01_7
+  - "131.159.89.128/25" # il01_8
+  - "2a09:80c0:89:1::/64" # il01_8
