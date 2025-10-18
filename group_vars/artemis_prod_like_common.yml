@@ -70,6 +70,15 @@ enable_science_event_logging: true
 atlas:
 # More configuration options will be added here in the future
 
+artemis_hyperion_enabled: true
+
+spring_ai:
+  azure_openai:
+    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_api_key') }}"
+    endpoint: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_endpoint') }}"
+    deployment_name: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_deployment_name') }}"
+    temperature: 1.0
+
 ##############################################################################
 # Broker and Registry Configuration
 ##############################################################################

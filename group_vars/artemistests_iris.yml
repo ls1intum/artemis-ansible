@@ -5,3 +5,7 @@
 iris:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/pyris-test').get('url') }}"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/pyris-test').get('secret') }}"
+
+nebula:
+  url: "https://test.nebula.artemis.cit.tum.de"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('test_secret') }}"
