@@ -18,6 +18,10 @@ athena:
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena').get('secret') }}"
   restricted_modules: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena').get('restricted_modules') }}"
 
+nebula:
+  url: "https://prod.nebula.artemis.cit.tum.de"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('prod_secret') }}"
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
