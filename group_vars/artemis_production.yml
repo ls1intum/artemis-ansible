@@ -22,6 +22,8 @@ nebula:
   url: "https://prod.nebula.artemis.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('prod_secret') }}"
 
+tum_live_base_url: "https://tum.live/api/v2"
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
