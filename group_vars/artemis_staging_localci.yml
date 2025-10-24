@@ -45,3 +45,10 @@ firewall_hostgroup: default
 proxy_forward_ssh: true
 
 artemis_deployment_user_name: bamboo
+
+##############################################################################
+# Sentry Env-specific Configuration
+##############################################################################
+sentry:
+  environment: staging
+  traces_sample_rate: 1.0
