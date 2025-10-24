@@ -16,6 +16,7 @@ artemis_repo_basepath: "/opt/artemis/data"
 artemis_tmp_directory: "/tmp"
 
 push_notification_relay: "https://hermes-sandbox.artemis.cit.tum.de"
+tum_live_base_url: "https://tum.live/api/v2"
 
 artemis_ssh_key_password:
 artemis_ssh_key_path: # "/opt/artemis/sshkeys"
@@ -56,6 +57,16 @@ proxy_ssl_certificate_path: "/var/lib/rbg-cert/live/fullchain.pem"
 proxy_ssl_certificate_key_path: "/var/lib/rbg-cert/live/privkey.pem"
 
 firewall_hostgroup: proxy # For use of other iptables rules file
+
+##############################################################################
+# Sentry Configuration
+##############################################################################
+sentry:
+  dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
+  environment: "{{ var_testserver_name }}"
+  enable_db_tracing: true
+  traces_sample_rate: 1.0
+  send_default_pii: true
 
 ##############################################################################
 # Deployment User

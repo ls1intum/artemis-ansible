@@ -70,6 +70,15 @@ enable_science_event_logging: true
 atlas:
 # More configuration options will be added here in the future
 
+artemis_hyperion_enabled: true
+
+spring_ai:
+  azure_openai:
+    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_api_key') }}"
+    endpoint: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_endpoint') }}"
+    deployment_name: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_deployment_name') }}"
+    temperature: 1.0
+
 ##############################################################################
 # Broker and Registry Configuration
 ##############################################################################
@@ -87,6 +96,14 @@ registry:
 artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('jhipster_jwt') }}"
 artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('registry_password') }}"
 artemis_eureka_instance_id: "{{ node_id }}"
+
+##############################################################################
+# Sentry Common Configuration
+##############################################################################
+sentry:
+  dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
+  enable_db_tracing: true
+  send_default_pii: true
 
 ##############################################################################
 # Deployment User

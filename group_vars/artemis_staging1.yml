@@ -35,6 +35,10 @@ athena:
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
   restricted_modules: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('restricted_modules') }}"
 
+nebula:
+  url: "https://test.nebula.artemis.cit.tum.de"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('test_secret') }}"
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
@@ -64,3 +68,10 @@ activemq_version: 2.40.0
 
 broker:
   username: brokeruser
+
+##############################################################################
+# Sentry Env-specific Configuration
+##############################################################################
+sentry:
+  environment: staging1
+  traces_sample_rate: 1.0
