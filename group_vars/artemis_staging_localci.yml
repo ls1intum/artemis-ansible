@@ -54,5 +54,5 @@ artemis_deployment_user_name: bamboo
 # Sentry Env-specific Configuration
 ##############################################################################
 sentry:
-  environment: staging
+  environment: staging_localci
   traces_sample_rate: 1.0
