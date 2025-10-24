@@ -16,4 +16,4 @@ roles:
 collections:
   - name: https://github.com/ls1intum/artemis-ansible-collection.git
     type: git
-    version: main
+    version: redis-support
