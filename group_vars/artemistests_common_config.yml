@@ -50,6 +50,10 @@ sharing:
   apikey: "{{ lookup('hashi_vault', 'kv/data/artemis/common/sharing').get('apikey') }}"
   actionname: "TestExport to Artemis@helios.aet.cit.tum.de"
 
+artemis_rate_limit:
+  account_management_rpm: 5
+  authentication_rpm: 30
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
