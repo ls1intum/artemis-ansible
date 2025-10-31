@@ -7,3 +7,6 @@
       tags: artemis
       vars:
         setup_system: true
+
+    - role: ls1intum.artemis.legal
+      tags: legal

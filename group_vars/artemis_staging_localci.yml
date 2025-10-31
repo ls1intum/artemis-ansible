@@ -22,6 +22,10 @@ athena:
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
   restricted_modules: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('restricted_modules') }}"
 
+nebula:
+  url: "https://test.nebula.artemis.cit.tum.de"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('test_secret') }}"
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
@@ -50,5 +54,5 @@ artemis_deployment_user_name: bamboo
 # Sentry Env-specific Configuration
 ##############################################################################
 sentry:
-  environment: staging
+  environment: staging_localci
   traces_sample_rate: 1.0

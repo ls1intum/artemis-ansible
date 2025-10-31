@@ -16,6 +16,7 @@ artemis_repo_basepath: "/opt/artemis/data"
 artemis_tmp_directory: "/tmp"
 
 push_notification_relay: "https://hermes-sandbox.artemis.cit.tum.de"
+tum_live_base_url: "https://tum.live/api/v2"
 
 artemis_ssh_key_password:
 artemis_ssh_key_path: # "/opt/artemis/sshkeys"
