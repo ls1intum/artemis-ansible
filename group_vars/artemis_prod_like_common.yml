@@ -102,7 +102,6 @@ artemis_eureka_instance_id: "{{ node_id }}"
 ##############################################################################
 sentry:
   dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
-  enable_db_tracing: true
   send_default_pii: true
 
 ##############################################################################

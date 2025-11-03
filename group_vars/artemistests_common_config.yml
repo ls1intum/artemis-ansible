@@ -50,6 +50,10 @@ sharing:
   apikey: "{{ lookup('hashi_vault', 'kv/data/artemis/common/sharing').get('apikey') }}"
   actionname: "TestExport to Artemis@helios.aet.cit.tum.de"
 
+artemis_rate_limit:
+  account_management_rpm: 5
+  authentication_rpm: 30
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
@@ -64,7 +68,6 @@ firewall_hostgroup: proxy # For use of other iptables rules file
 sentry:
   dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
   environment: "{{ var_testserver_name }}"
-  enable_db_tracing: true
   traces_sample_rate: 1.0
   send_default_pii: true
 
