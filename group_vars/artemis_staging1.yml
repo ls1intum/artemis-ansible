@@ -20,7 +20,6 @@ version_control:
     repo_storage_base_path: /mnt/storage/local-vcs-repos
     ssh_url: "ssh://git@staging1.artemis.cit.tum.de:7921/"
 
-
 continuous_integration:
   localci:
     url: "{{ artemis_server_url }}"
@@ -38,6 +37,8 @@ athena:
 nebula:
   url: "https://test.nebula.artemis.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('test_secret') }}"
+
+tum_live_base_url: "https://tum.live/api/v2"
 
 ##############################################################################
 # Proxy Configuration
