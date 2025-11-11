@@ -68,7 +68,9 @@ post_hog:
 enable_science_event_logging: true
 
 atlas:
-# More configuration options will be added here in the future
+  enabled: true
+  atlasml:
+    enabled: false
 
 artemis_hyperion_enabled: true
 
