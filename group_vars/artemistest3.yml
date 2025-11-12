@@ -23,3 +23,10 @@ athena:
   url: "https://athena-test1.ase.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest3').get('athena_secret') }}"
   restricted_modules: "module_text_llm,module_programming_llm,module_modeling_llm"
+
+atlas:
+  enabled: true
+  atlasml:
+    enabled: false
+    base-url: atlasml-test1.ase.cit.tum.de
+    auth-token: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest3').get('atlasml_auth_token') }}"
