@@ -3,4 +3,4 @@
 # Atlas Configuration
 ##############################################################################
 atlas:
-  # More configuration options will be added in the future.
+  enabled: true
