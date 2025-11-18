@@ -126,6 +126,9 @@ artemistest9
 [artemis_infrastructure]
 jenkins-test.artemis.cit.tum.de
 
+[hermes]
+hermes.artemis.cit.tum.de
+
 ###############################
 # Artemis Staging LocalCI
 ###############################
