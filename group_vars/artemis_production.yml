@@ -59,17 +59,17 @@ sentry:
   traces_sample_rate: 0.2
 
 theia:
- portal_url: https://theia.artemis.cit.tum.de
- images:
-   java:
-     Java-17: "java-17-latest"
-   c:
-     C: "c-latest"
-   javascript:
-     Javascript: "javascript-latest"
-   ocaml:
-     Ocaml: "ocaml-latest"
-   python:
-     Python: "python-latest"
-   rust:
-     Rust: "rust-latest"
+  portal_url: https://theia.artemis.cit.tum.de
+  images:
+    java:
+      Java-17: "java-17-latest"
+    c:
+      C: "c-latest"
+    javascript:
+      Javascript: "javascript-latest"
+    ocaml:
+      Ocaml: "ocaml-latest"
+    python:
+      Python: "python-latest"
+    rust:
+      Rust: "rust-latest"
