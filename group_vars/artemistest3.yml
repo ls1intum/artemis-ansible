@@ -27,6 +27,6 @@ athena:
 atlas:
   enabled: true
   atlasml:
-    enabled: false
+    enabled: true
     base-url: atlasml-test1.ase.cit.tum.de
     auth-token: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest3').get('atlasml_auth_token') }}"
