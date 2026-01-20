@@ -1,0 +1,101 @@
+---
+artemis_server_url: "https://staging2.artemis.cit.tum.de"
+
+artemis_version: 8.7.2
+
+var_vault_group: "test/staging2"
+
+registry_external_host: registry.staging2.artemis.cit.tum.de
+
+is_testserver: true
+
+##############################################################################
+# External Systems Configuration
+##############################################################################
+
+artemis_email: artemis-staging.aet@xcit.tum.de
+
+version_control:
+  localvc:
+    repo_storage_base_path: /mnt/storage/local-vcs-repos
+    ssh_url: "ssh://git@staging2.artemis.cit.tum.de:7921/"
+
+continuous_integration:
+  localci:
+    url: "{{ artemis_server_url }}"
+    concurrent_build_size: 3
+    image_cleanup:
+      enabled: true
+      expiry_days: 7
+      schedule_time: "0 0 3 * * *"
+
+athena:
+  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
+  restricted_modules: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('restricted_modules') }}"
+
+nebula:
+  url: "https://test.nebula.artemis.cit.tum.de"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('test_secret') }}"
+
+tum_live_base_url: "https://tum.live/api/v2"
+
+##############################################################################
+# Proxy Configuration
+##############################################################################
+proxy_generate_dh_param: false
+
+servers:
+  - name: "staging2.artemis.cit.tum.de"
+    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm133.cit.tum.de.fullchain.pem
+    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm133.cit.tum.de.privkey.pem
+    default_server: false
+
+redirects:
+  - name: "_"
+    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm133.cit.tum.de.fullchain.pem
+    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm133.cit.tum.de.privkey.pem
+    default_server: true
+    to: "{{ artemis_server_url }}"
+
+firewall_hostgroup: default
+proxy_forward_ssh: true
+
+##############################################################################
+# Broker and Registry Configuration
+##############################################################################
+
+activemq_version: 2.44.0
+
+broker:
+  username: brokeruser
+
+redis:
+  host: "fcfe:0:0:0:0:0:b:3"
+  port: 6379
+  user: artemis
+  username: artemis
+  password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('redis_password') }}"
+
+##############################################################################
+# Sentry Env-specific Configuration
+##############################################################################
+sentry:
+  environment: staging2
+  traces_sample_rate: 1.0
+
+theia:
+  portal_url: https://theia-staging.artemis.cit.tum.de
+  images:
+    java:
+      Java-17: "java-17-latest"
+    c:
+      C: "c-latest"
+    javascript:
+      Javascript: "javascript-latest"
+    ocaml:
+      Ocaml: "ocaml-latest"
+    python:
+      Python: "python-latest"
+    rust:
+      Rust: "rust-latest"

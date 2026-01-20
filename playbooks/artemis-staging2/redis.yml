@@ -1,0 +1,6 @@
+---
+- name: Setup
+  hosts: artemis_staging2_redis
+
+  roles:
+    - role: /Users/benjaminschmitz/Development/artemis-ansible-collection/roles/redis # ls1intum.artemis.redis
