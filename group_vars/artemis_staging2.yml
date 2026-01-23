@@ -73,7 +73,6 @@ broker:
 redis:
   host: "fcfe:0:0:0:0:0:b:3"
   port: 6379
-  user: artemis
   username: artemis
   password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('redis_password') }}"
 

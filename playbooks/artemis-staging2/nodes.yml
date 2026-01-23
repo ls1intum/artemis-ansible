@@ -9,7 +9,7 @@
       # NFS should only be mounted on the core nodes
       when: inventory_hostname in groups['artemis_staging2_core']
 
-    - role: /Users/benjaminschmitz/Development/artemis-ansible-collection/roles/artemis # ls1intum.artemis.artemis
+    - role: ls1intum.artemis.artemis
       tags:
         - artemis
       vars:
