@@ -6,6 +6,6 @@ host_ipv4_address: 172.24.70.155/25
 # Address of the node inside the network.
 wireguard_interface_address: "fcfe:0:0:0:0:0:b:1"
 
-# Wireguard Keys - Autmatically generated!
+# Wireguard Keys - Automatically generated!
 wireguard_pubkey: 97/uBkLow4trHKXKsl0LLVf7jR6qZnc8llKOw5OFAkE=
 wireguard_privkey: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging2').get('wg_privkey_broker') }}"
