@@ -5,7 +5,7 @@ wireguard_host_ipv6_address: "2a09:80c0:ac18:4680::8"
 # Address of the node inside the network.
 wireguard_interface_address: "fcfe:0:0:0:0:0:a:2"
 
-# Wireguard Keys - Autmatically generated!
+# Wireguard Keys - Automatically generated!
 wireguard_pubkey: 1Auj27Cvq4QD9ECovzyE1nQw76i6mrWjHBezABEN0UU=
 wireguard_privkey: "{{ lookup('hashi_vault', 'kv/data/artemis/test/staging-localci').get('wg_priv_node2') }}"
 
