@@ -1,0 +1,14 @@
+---
+- name: Start Artemis service
+  hosts: artemis_staging2_nodes
+  serial: 1
+  tasks:
+    - name: Start artemis service
+      become: true
+      ansible.builtin.service:
+        name: artemis
+        state: started
+
+    - name: Wait for 20 seconds
+      ansible.builtin.pause:
+        seconds: 20

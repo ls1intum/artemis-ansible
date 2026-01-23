@@ -1,0 +1,6 @@
+---
+- name: Setup
+  hosts: artemis_staging2_redis
+
+  roles:
+    - role: ls1intum.artemis.redis

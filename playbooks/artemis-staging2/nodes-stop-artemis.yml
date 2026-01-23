@@ -1,0 +1,9 @@
+---
+- name: Stop Artemis service
+  hosts: artemis_staging2_nodes
+  tasks:
+    - name: Stop artemis service
+      become: true
+      ansible.builtin.service:
+        name: artemis
+        state: stopped
