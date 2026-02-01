@@ -23,7 +23,7 @@ version_control:
 continuous_integration:
   localci:
     url: "{{ artemis_server_url }}"
-    concurrent_build_size: 3
+    concurrent_build_size: 2
     image_cleanup:
       enabled: true
       expiry_days: 7
