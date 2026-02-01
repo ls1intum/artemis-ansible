@@ -61,6 +61,11 @@ redirects:
 firewall_hostgroup: default
 proxy_forward_ssh: true
 
+# IPs exempt from git rate limiting (benchmark servers)
+proxy_rate_limit_exempt_ips:
+  - ip: "131.159.89.112"
+    comment: "Benchmark server"
+
 ##############################################################################
 # Broker and Registry Configuration
 ##############################################################################
