@@ -30,6 +30,9 @@ tum_live_base_url: "https://tum.live/api/v2"
 
 proxy_generate_dh_param: false
 
+# Disable health checks initially - enable after staging verification
+proxy_health_check_enabled: false
+
 # Special TUM certificate config
 proxy_certificate_base_path: /opt/certs
 proxy_tum_certificate_key_name: artemis_tum_de-key.pem
