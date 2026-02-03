@@ -127,7 +127,8 @@ artemistest9
 jenkins-test.artemis.cit.tum.de
 
 [hermes]
-hermes.artemis.cit.tum.de
+hermes-prod.artemis.cit.tum.de var_hermes_environment=production hermes_apns_prod_environment=true
+hermes-staging.artemis.cit.tum.de var_hermes_environment=test hermes_apns_prod_environment=false
 
 ###############################
 # Artemis Staging LocalCI
