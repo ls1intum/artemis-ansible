@@ -23,7 +23,7 @@ version_control:
 continuous_integration:
   localci:
     url: "{{ artemis_server_url }}"
-    concurrent_build_size: 3
+    concurrent_build_size: 2
     image_cleanup:
       enabled: true
       expiry_days: 7
@@ -60,6 +60,11 @@ redirects:
 
 firewall_hostgroup: default
 proxy_forward_ssh: true
+
+# IPs exempt from git rate limiting (benchmark servers)
+proxy_rate_limit_exempt_ips:
+  - ip: "131.159.89.112"
+    comment: "Benchmark server"
 
 ##############################################################################
 # Broker and Registry Configuration

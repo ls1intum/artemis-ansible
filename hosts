@@ -201,6 +201,47 @@ artemis_staging1_registry
 artemis_staging1_storage
 artemis_staging1_proxy
 
+
+###############################
+# Artemis Staging 2
+###############################
+[artemis_staging2_core]
+node[1:3].staging2.artemis.cit.tum.de
+
+[artemis_staging2_agents]
+agent0[1:3].staging2.artemis.cit.tum.de
+
+[artemis_staging2_nodes:children]
+artemis_staging2_core
+artemis_staging2_agents
+
+[artemis_staging2_db]
+db.staging2.artemis.cit.tum.de
+
+[artemis_staging2_broker]
+broker.staging2.artemis.cit.tum.de
+
+[artemis_staging2_registry]
+registry.staging2.artemis.cit.tum.de
+
+[artemis_staging2_redis]
+redis.staging2.artemis.cit.tum.de
+
+[artemis_staging2_storage]
+storage.staging2.artemis.cit.tum.de
+
+[artemis_staging2_proxy]
+proxy.staging2.artemis.cit.tum.de
+
+[artemis_staging2:children]
+artemis_staging2_nodes
+artemis_staging2_db
+artemis_staging2_broker
+artemis_staging2_registry
+artemis_staging2_redis
+artemis_staging2_storage
+artemis_staging2_proxy
+
 ###############################
 # Artemis Production
 ###############################
@@ -268,20 +309,24 @@ artemis_production_proxy
 artemis_production
 artemis_staging_localci
 artemis_staging1
+artemis_staging2
 
 [artemis_prod_like_core:children]
 artemis_production_core
 artemis_staging_localci_nodes_core
 artemis_staging1_core
+artemis_staging2_core
 
 [artemis_prod_like_mysql:children]
 artemis_production
 artemis_staging_localci
 artemis_staging1
+artemis_staging2
 
 [artemis_all:children]
 artemis_production
 artemis_staging_localci
 artemis_staging1
+artemis_staging2
 artemistests
 artemis_infrastructure

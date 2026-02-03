@@ -3,7 +3,7 @@ roles:
   - src: geerlingguy.docker
 
   - src: geerlingguy.mysql
-    version: 5.0.1
+    version: 6.2.0
 
   - src: geerlingguy.postgresql
 
