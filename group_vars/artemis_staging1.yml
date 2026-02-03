@@ -40,6 +40,8 @@ nebula:
 
 tum_live_base_url: "https://tum.live/api/v2"
 
+push_notification_relay: "https://hermes-prod.artemis.cit.tum.de"
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
