@@ -11,3 +11,8 @@ spring_ai:
     endpoint: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_endpoint') }}"
     deployment_name: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_deployment_name') }}"
     temperature: 1.0
+
+artemis_llm_cost:
+  gpt-5-mini:
+    input_cost_per_million_eur: 0.23
+    output_cost_per_million_eur: 1.84
