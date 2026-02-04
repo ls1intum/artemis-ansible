@@ -1,0 +1,16 @@
+---
+- name: Setup
+  hosts: hermes
+
+  roles:
+    - role: ls1intum.artemis.hermes
+      vars:
+        setup_system: true
+        hermes_version: latest
+        hermes_apns_certificate_path: artemis-ios-apns-prod.p12
+        hermes_apns_certificate_password: "{{ lookup('hashi_vault', 'kv/data/artemis/{0}/hermes'.format(var_hermes_environment)).get('apns_certificate_password') }}"
+        hermes_apns_certificate_content: "{{ lookup('hashi_vault', 'kv/data/artemis/{0}/hermes'.format(var_hermes_environment)).get('apns_certificate_base64') }}"
+        hermes_google_application_credentials_json_path: artemis.json
+        hermes_google_application_credentials_content: "{{ lookup('hashi_vault', 'kv/data/artemis/{0}/hermes'.format(var_hermes_environment)).get('google_certificate') }}"
+        hermes_working_directory: /opt/hermes
+        hermes_port: 17333

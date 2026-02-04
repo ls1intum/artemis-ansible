@@ -40,6 +40,8 @@ nebula:
 
 tum_live_base_url: "https://tum.live/api/v2"
 
+push_notification_relay: "https://hermes-prod.artemis.cit.tum.de"
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
@@ -75,6 +77,8 @@ redis:
   port: 6379
   username: artemis
   password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('redis_password') }}"
+
+artemis_redis_client_name: "artemis-{{ node_id }}"
 
 ##############################################################################
 # Sentry Env-specific Configuration
