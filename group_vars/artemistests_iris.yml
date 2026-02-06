@@ -9,3 +9,5 @@ iris:
 nebula:
   url: "https://test.nebula.artemis.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('test_secret') }}"
+
+artemis_local_llm_deployment_enabled: true
