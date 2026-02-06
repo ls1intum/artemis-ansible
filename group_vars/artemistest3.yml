@@ -25,7 +25,7 @@ athena:
   restricted_modules: "module_text_llm,module_programming_llm,module_modeling_llm"
 
 theia:
-  portal_url: https://test3.theia-test.artemis.cit.tum.de
+  portal_url: https://theia-staging.artemis.cit.tum.de
   images:
     java:
       Java-17: "java-17-latest"

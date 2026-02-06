@@ -1,6 +1,6 @@
 ---
 theia:
-  portal_url: https://test1.theia-test.artemis.cit.tum.de
+  portal_url: https://theia-staging.artemis.cit.tum.de
 
   images:
     java:
