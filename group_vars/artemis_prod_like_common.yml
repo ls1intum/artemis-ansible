@@ -61,6 +61,8 @@ iris:
   rate_limit: 25
   rate_limit_timeframe_hours: 3
 
+artemis_local_llm_deployment_enabled: true
+
 post_hog:
   host: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('url') }}"
   token: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('secret') }}"
