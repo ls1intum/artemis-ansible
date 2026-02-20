@@ -42,6 +42,8 @@ tum_live_base_url: "https://tum.live/api/v2"
 
 push_notification_relay: "https://hermes-prod.artemis.cit.tum.de"
 
+enable_science_event_logging: true
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
@@ -84,6 +86,8 @@ artemis_redis_client_name: "artemis-{{ node_id }}"
 # Sentry Env-specific Configuration
 ##############################################################################
 sentry:
+  dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
+  send_default_pii: true
   environment: staging2
   traces_sample_rate: 1.0
 

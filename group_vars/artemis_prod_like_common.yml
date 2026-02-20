@@ -61,11 +61,11 @@ iris:
   rate_limit: 25
   rate_limit_timeframe_hours: 3
 
+artemis_local_llm_deployment_enabled: true
+
 post_hog:
   host: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('url') }}"
   token: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('secret') }}"
-
-enable_science_event_logging: true
 
 atlas:
   enabled: true
@@ -98,13 +98,6 @@ registry:
 artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('jhipster_jwt') }}"
 artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('registry_password') }}"
 artemis_eureka_instance_id: "{{ node_id }}"
-
-##############################################################################
-# Sentry Common Configuration
-##############################################################################
-sentry:
-  dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
-  send_default_pii: true
 
 ##############################################################################
 # Deployment User

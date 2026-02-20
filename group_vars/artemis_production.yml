@@ -51,13 +51,6 @@ redirects:
 firewall_hostgroup: default
 proxy_forward_ssh: true
 
-##############################################################################
-# Sentry Env-specific Configuration
-##############################################################################
-sentry:
-  environment: prod
-  traces_sample_rate: 0.2
-
 theia:
   portal_url: https://theia.artemis.cit.tum.de
   images:
