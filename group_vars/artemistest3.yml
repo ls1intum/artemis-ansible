@@ -39,3 +39,9 @@ theia:
       Python: "python-latest"
     rust:
       Rust: "rust-latest"
+
+atlas:
+  atlasml:
+    enabled: true
+    base_url: "https://atlasml-test1.aet.cit.tum.de"
+    auth_token: "{{ lookup('hashi_vault', 'kv/data/artemis/test/atlasml-test').get('auth-token') }}"
