@@ -121,6 +121,9 @@ artemistest9
 artemistest10
 
 [artemistests_theia:children]
+artemistest1
+artemistest2
+artemistest3
 artemistest9
 
 [artemis_infrastructure]
