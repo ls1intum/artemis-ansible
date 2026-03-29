@@ -14,3 +14,4 @@ continuous_integration:
   jenkins_stateless:
     url: "https://artemis-jenkins-connector.artemis.cit.tum.de"
     artemis_auth_token_value: "{{ lookup('hashi_vault', 'kv/data/artemis/common/jenkins-test').get('artemis-authentication-token-value') }}"
+    vcs_credentials: "{{ lookup('hashi_vault', 'kv/data/artemis/common/jenkins-test').get('artemis-build-agent-git-id') }}"
