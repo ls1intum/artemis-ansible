@@ -53,7 +53,7 @@ version_control:
 
 artemis_ssh_key_path: "/tmp"
 
-apollon_url: "https://apollon.ase.in.tum.de"
+apollon_url: "https://apollon.aet.cit.tum.de"
 
 iris:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('url') }}"
