@@ -53,7 +53,7 @@ version_control:
 
 artemis_ssh_key_path: "/tmp"
 
-apollon_url: "https://apollon.ase.in.tum.de"
+apollon_url: "https://apollon.aet.cit.tum.de"
 
 iris:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('url') }}"
@@ -76,7 +76,7 @@ artemis_hyperion_enabled: true
 
 spring_ai:
   azure_openai:
-    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_api_key') }}"
+    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_api_key_prod') }}"
     endpoint: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_endpoint') }}"
     deployment_name: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_deployment_name') }}"
     temperature: 1.0
