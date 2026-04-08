@@ -84,6 +84,14 @@ artemistest3
 artemistest5
 # artemistest7
 
+[artemistests_weaviate:children]
+artemistest1
+artemistest2
+artemistest3
+artemistest4
+artemistest5
+artemistest6
+
 [artemistests_ldap:children]
 artemistest1
 artemistest2
