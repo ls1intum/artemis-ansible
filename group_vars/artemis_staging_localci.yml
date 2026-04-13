@@ -35,7 +35,7 @@ weaviate:
   collection_prefix: "Artemis_staging_localci_"
   vectorizer_module: text2vec-openai
   open_ai_embedding_model: "Qwen/Qwen3-Embedding-8B"
-  open_ai_base_url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/logos-staging').get('url') }}"
+  open_ai_base_url: https://logos.aet.cit.tum.de:8080/
   gpu_api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/logos-staging').get('api_key') }}"
   api_key: "{{ lookup('hashi_vault', 'kv/data/itg/services/services_ase/weaviate-test').get('api_key') }}"
 

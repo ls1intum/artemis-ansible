@@ -26,8 +26,8 @@ weaviate:
   collection_prefix: "Artemis_prod_"
   vectorizer_module: text2vec-openai
   open_ai_embedding_model: "Qwen/Qwen3-Embedding-8B"
-  open_ai_base_url: "{{ lookup('hashi_vault', 'kv/data/artemis/production/logos').get('url') }}"
-  gpu_api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/production/logos').get('api_key') }}"
+  open_ai_base_url: https://logos.aet.cit.tum.de:8080/
+  gpu_api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/production/nodes').get('logos_api_key') }}"
   api_key: "{{ lookup('hashi_vault', 'kv/data/itg/services/services_ase/weaviate').get('api_key') }}"
 
 tum_live_base_url: "https://tum.live/api/v2"
