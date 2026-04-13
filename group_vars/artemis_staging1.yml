@@ -38,10 +38,6 @@ nebula:
   url: "https://test.nebula.artemis.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('test_secret') }}"
 
-tum_live_base_url: "https://tum.live/api/v2"
-
-push_notification_relay: "https://hermes-prod.artemis.cit.tum.de"
-
 enable_science_event_logging: true
 
 ##############################################################################
