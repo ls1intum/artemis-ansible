@@ -31,6 +31,9 @@ artemis-test-vm9.artemis.cit.tum.de
 [artemistest10]
 artemis-test10.artemis.cit.tum.de
 
+[artemistestmigration]
+artemis-test-migration.artemis.cit.tum.de
+
 [artemistests:children]
 artemistest1
 artemistest2
@@ -52,6 +55,7 @@ artemistest7
 artemistest8
 artemistest9
 artemistest10
+artemistestmigration
 
 [artemistests_mysql:children]
 artemistest1
@@ -59,6 +63,7 @@ artemistest2
 artemistest5
 artemistest7
 artemistest9
+artemistestmigration
 
 [artemistests_postgres:children]
 artemistest3
@@ -73,6 +78,7 @@ artemistest3
 artemistest4
 artemistest7
 artemistest9
+artemistestmigration
 
 [artemistests_local_vc_jenkins:children]
 artemistest5
@@ -97,6 +103,7 @@ artemistest6
 artemistest8
 artemistest9
 artemistest10
+artemistestmigration
 
 [artemistests_atlas:children]
 artemistest1
