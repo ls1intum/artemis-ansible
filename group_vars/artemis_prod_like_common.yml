@@ -26,6 +26,8 @@ artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + 
 # External Systems Configuration
 ##############################################################################
 
+push_notification_relay: "https://hermes-prod.artemis.cit.tum.de"
+
 lti:
   oauth_secret: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('lti_secret') }}"
 
@@ -73,6 +75,8 @@ atlas:
     enabled: false
 
 artemis_hyperion_enabled: true
+
+tum_live_base_url: "https://tum.live/api/v2"
 
 spring_ai:
   azure_openai:

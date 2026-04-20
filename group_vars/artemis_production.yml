@@ -30,8 +30,6 @@ weaviate:
   gpu_api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/production/nodes').get('logos_api_key') }}"
   api_key: "{{ lookup('hashi_vault', 'kv/data/itg/services/services_ase/weaviate').get('api_key') }}"
 
-tum_live_base_url: "https://tum.live/api/v2"
-
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
