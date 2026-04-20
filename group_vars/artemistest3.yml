@@ -19,6 +19,8 @@ artemis_jhipster_registry_usernamme: "admin"
 artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest3').get('registry_password') }}"
 artemis_eureka_urls: "http://{{ artemis_jhipster_registry_usernamme }}:{{ artemis_jhipster_registry_password }}@artemis-jhipster-registry:8761/eureka/"
 
+weaviate_collection_prefix: "Artemis_ts3_"
+
 athena:
   url: "https://athena-test1.ase.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest3').get('athena_secret') }}"
