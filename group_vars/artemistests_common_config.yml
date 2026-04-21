@@ -31,6 +31,8 @@ apollon_url: "https://apollon.aet.cit.tum.de"
 artemis_operator_name: "Technical University of Munich"
 artemis_operator_admin_name: "Stephan Krusche"
 
+artemis_global_search_enabled: true
+
 lti:
   oauth_secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/lti').get('oauth_secret') }}"
 
