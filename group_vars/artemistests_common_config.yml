@@ -56,6 +56,14 @@ artemis_rate_limit:
   account_management_rpm: 5
   authentication_rpm: 30
 
+deimos:
+  llm:
+    base_url: https://gpu.aet.cit.tum.de
+    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/deimos').get('llm_api_key') }}"
+    model: openai/gpt-oss-120b
+    completions_path: /api/chat/completions
+    temperature: 0.3
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
