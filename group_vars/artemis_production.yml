@@ -17,6 +17,19 @@ nebula:
   url: "https://prod.nebula.artemis.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('prod_secret') }}"
 
+weaviate:
+  enabled: true
+  http_host: weaviate-prod.aet.cit.tum.de
+  http_port: 443
+  grpc_port: 50051
+  scheme: https
+  collection_prefix: "Artemis_prod_"
+  vectorizer_module: text2vec-openai
+  open_ai_embedding_model: "Qwen/Qwen3-Embedding-8B"
+  open_ai_base_url: https://logos.aet.cit.tum.de:8080/
+  gpu_api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/production/nodes').get('logos_api_key') }}"
+  api_key: "{{ lookup('hashi_vault', 'kv/data/itg/services/services_ase/weaviate').get('api_key') }}"
+
 ##############################################################################
 # Proxy Configuration
 ##############################################################################

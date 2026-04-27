@@ -85,6 +85,8 @@ spring_ai:
     deployment_name: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_deployment_name') }}"
     temperature: 1.0
 
+artemis_global_search_enabled: true
+
 ##############################################################################
 # Broker and Registry Configuration
 ##############################################################################
