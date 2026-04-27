@@ -31,6 +31,8 @@ apollon_url: "https://apollon.aet.cit.tum.de"
 artemis_operator_name: "Technical University of Munich"
 artemis_operator_admin_name: "Stephan Krusche"
 
+artemis_global_search_enabled: true
+
 lti:
   oauth_secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/lti').get('oauth_secret') }}"
 
@@ -53,6 +55,14 @@ helios:
 artemis_rate_limit:
   account_management_rpm: 5
   authentication_rpm: 30
+
+deimos:
+  llm:
+    base_url: https://gpu.aet.cit.tum.de
+    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/deimos').get('llm_api_key') }}"
+    model: openai/gpt-oss-120b
+    completions_path: /api/chat/completions
+    temperature: 0.3
 
 ##############################################################################
 # Proxy Configuration
