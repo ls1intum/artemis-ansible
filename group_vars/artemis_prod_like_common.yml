@@ -26,6 +26,8 @@ artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + 
 # External Systems Configuration
 ##############################################################################
 
+push_notification_relay: "https://hermes-prod.artemis.cit.tum.de"
+
 lti:
   oauth_secret: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('lti_secret') }}"
 
@@ -53,7 +55,7 @@ version_control:
 
 artemis_ssh_key_path: "/tmp"
 
-apollon_url: "https://apollon.ase.in.tum.de"
+apollon_url: "https://apollon.aet.cit.tum.de"
 
 iris:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('url') }}"
@@ -74,12 +76,16 @@ atlas:
 
 artemis_hyperion_enabled: true
 
+tum_live_base_url: "https://tum.live/api/v2"
+
 spring_ai:
   azure_openai:
-    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_api_key') }}"
+    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_api_key_prod') }}"
     endpoint: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_endpoint') }}"
     deployment_name: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_deployment_name') }}"
     temperature: 1.0
+
+artemis_global_search_enabled: true
 
 ##############################################################################
 # Broker and Registry Configuration

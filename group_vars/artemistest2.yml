@@ -7,7 +7,12 @@ artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artem
 artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest2').get('internal_admin') }}"
 artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest2').get('jhipster_jwt') }}"
 
+weaviate_collection_prefix: "Artemis_ts2_"
+
 athena:
   url: "https://athena-test1.ase.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest2').get('athena_secret') }}"
   restricted_modules: "module_text_llm,module_programming_llm,module_modeling_llm"
+
+theia:
+  portal_url: https://test2.theia-test.artemis.cit.tum.de/
