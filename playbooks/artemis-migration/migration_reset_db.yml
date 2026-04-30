@@ -1,0 +1,7 @@
+---
+- name: Migration tester
+  hosts: artemis-test-migration.artemis.cit.tum.de
+
+  roles:
+    - role: ls1intum.artemis.migration_tester
+      become: true
