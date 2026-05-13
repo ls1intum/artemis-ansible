@@ -10,7 +10,7 @@ artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistes
 weaviate_collection_prefix: "Artemis_ts2_"
 
 athena:
-  url: "https://athena-test1.ase.cit.tum.de"
+  url: "https://athena-test1.aet.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest2').get('athena_secret') }}"
   restricted_modules: "module_text_llm,module_programming_llm,module_modeling_llm"
 
