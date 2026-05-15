@@ -9,3 +9,9 @@ continuous_integration:
       enabled: true
       expiry_days: 7
       schedule_time: "0 0 3 * * *"
+    # Canary: enable the per-agent dependency cache here first so any rollout regressions surface on
+    # staging before the production agents (ls1 + rbg) pick up the same config. Read-write so the
+    # first submission warms the cache; flip to read-only later if/when a trusted warm-up exists.
+    build_container_cache:
+      maven: /var/cache/artemis-buildagent/m2
+      gradle: /var/cache/artemis-buildagent/gradle

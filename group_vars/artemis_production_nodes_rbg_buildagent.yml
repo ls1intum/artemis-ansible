@@ -7,3 +7,9 @@ continuous_integration:
       enabled: true
       expiry_days: 7
       schedule_time: "0 0 3 * * *"
+    # Maven/Gradle dependency caches bind-mounted into every build container so submissions reuse
+    # a per-agent cache instead of re-downloading from Maven Central (avoids HTTP 429 throttling).
+    # Left in read-write mode for now; flip read_only to true once a trusted warm-up flow is in place.
+    build_container_cache:
+      maven: /var/cache/artemis-buildagent/m2
+      gradle: /var/cache/artemis-buildagent/gradle
