@@ -5,6 +5,13 @@ continuous_integration:
     is_build_agent: true
     # Per-agent Maven/Gradle dep cache (RW): submissions reuse the cache instead of re-resolving
     # from Maven Central. See programming-exercise-adjustments#caching-bind-mounts for the RO trade-off.
+    #
+    # cleanup_cron is staggered per agent: minute = (N - 1) × 3 where N is the trailing number in the
+    # hostname (agent01 → minute 0, agent02 → minute 3, agent03 → minute 6, ...). This avoids all
+    # agents draining for cache cleanup at the same moment; the cluster degrades to (N − draining)/N
+    # capacity rather than blocking every queued build. 05:xx UTC was chosen because it falls outside
+    # business hours for our audience.
     build_container_cache:
       maven: /var/cache/artemis-buildagent/m2
       gradle: /var/cache/artemis-buildagent/gradle
+      cleanup_cron: "0 {{ (inventory_hostname.split('.')[0] | regex_search('([0-9]+)$') | int - 1) * 3 }} 5 * * *"
