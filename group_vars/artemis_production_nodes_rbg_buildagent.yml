@@ -7,3 +7,11 @@ continuous_integration:
       enabled: true
       expiry_days: 7
       schedule_time: "0 0 3 * * *"
+    # Per-agent Maven/Gradle dep cache (RW): avoids Maven Central 429s. RO mode requires a warm-up
+    # flow we don't have yet; see programming-exercise-adjustments#caching-bind-mounts.
+    # cleanup_cron stagger: minute = (N − 1) × 3 from the agent's trailing hostname digit
+    # (agent01 → 0, agent20 → 57). With 20 agents in this group, last drain starts at 05:57 UTC.
+    build_container_cache:
+      maven: /var/cache/artemis-buildagent/m2
+      gradle: /var/cache/artemis-buildagent/gradle
+      cleanup_cron: "0 {{ (inventory_hostname.split('.')[0] | regex_search('([0-9]+)$') | int - 1) * 3 }} 5 * * *"
