@@ -3,3 +3,8 @@
 continuous_integration:
   localci:
     is_build_agent: true
+    # Per-agent Maven/Gradle dep cache (RW): submissions reuse the cache instead of re-resolving
+    # from Maven Central. See programming-exercise-adjustments#caching-bind-mounts for the RO trade-off.
+    build_container_cache:
+      maven: /var/cache/artemis-buildagent/m2
+      gradle: /var/cache/artemis-buildagent/gradle
