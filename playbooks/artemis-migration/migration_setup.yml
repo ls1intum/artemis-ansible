@@ -1,0 +1,12 @@
+---
+- name: Migration tester
+  hosts: artemis-test-migration.artemis.cit.tum.de
+
+  roles:
+    - role: ls1intum.artemis.artemis
+      tags: artemis
+      vars:
+        setup_system: true
+
+    - role: ls1intum.artemis.legal
+      tags: legal

@@ -1,0 +1,14 @@
+---
+##############################################################################
+# Commonly changed variables
+##############################################################################
+var_testserver_name: "artemis-test-migration"
+artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistestmigration').get('db_password') }}"
+artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistestmigration').get('internal_admin') }}"
+artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistestmigration').get('jhipster_jwt') }}"
+
+artemis_database_temp_container_name: artemis-temp-db
+artemis_database_container_name: artemis-db
+
+mysql_base: mysql:8.0.45
+mysql_baked: artemis_db

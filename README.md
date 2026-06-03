@@ -107,7 +107,9 @@ ansible-playbook playbooks/<server>/nodes-version-update.yml -e artemis_version=
 ansible-playbook playbooks/artemis-production/production-nodes-version-update.yml -e artemis_version=<version> # For production
 ```
 
-The `<version>` variable can be set to a specific [GitHub release version](https://github.com/ls1intum/Artemis/releases) (e.g., `8.0.0`) or to an absolute path to a local Artemis executable (e.g., `/home/user/Artemis.war`).
+The `<version>` variable can be set to a specific [GitHub release tag](https://github.com/ls1intum/Artemis/releases) — either 3-segment (`9.1.2`) or 2-segment (`9.2`) — or to an absolute path to a local Artemis executable (e.g., `/home/user/Artemis.war`).
+
+> **YAML quoting (important for 2-segment tags):** when recording a 2-segment version inside a `group_vars` or `host_vars` file, always quote it: `artemis_version: "9.2"`. Without quotes YAML parses `9.2` as a float and `9.10` silently becomes `9.1`. Passing `-e artemis_version=9.2` on the command line (`key=value` form) is string-safe, but inline JSON/YAML-form extra-vars (`-e '{"artemis_version": 9.2}'`) still need explicit quoting.
 
 ### Updating Artemis Configuration on a Host
 

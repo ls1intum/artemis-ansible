@@ -15,7 +15,7 @@ artemis_passkey_enabled: true
 artemis_repo_basepath: "/opt/artemis/data"
 artemis_tmp_directory: "/tmp"
 
-push_notification_relay: "https://hermes-sandbox.artemis.cit.tum.de"
+push_notification_relay: "https://hermes-staging.artemis.cit.tum.de"
 tum_live_base_url: "https://tum.live/api/v2"
 
 artemis_ssh_key_password:
@@ -26,10 +26,12 @@ artemis_ssh_priv_key_value: ""
 use_docker: true
 artemis_system_ram_proportion: 0.6 # Limit Artemis to 60% RAM (also runs DB on same VM)
 
-apollon_url: "https://apollon.ase.in.tum.de"
+apollon_url: "https://apollon.aet.cit.tum.de"
 
 artemis_operator_name: "Technical University of Munich"
 artemis_operator_admin_name: "Stephan Krusche"
+
+artemis_global_search_enabled: true
 
 lti:
   oauth_secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/lti').get('oauth_secret') }}"
@@ -53,6 +55,14 @@ helios:
 artemis_rate_limit:
   account_management_rpm: 5
   authentication_rpm: 30
+
+deimos:
+  llm:
+    base_url: https://gpu.aet.cit.tum.de
+    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/deimos').get('llm_api_key') }}"
+    model: openai/gpt-oss-120b
+    completions_path: /api/chat/completions
+    temperature: 0.3
 
 ##############################################################################
 # Proxy Configuration
