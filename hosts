@@ -82,6 +82,8 @@ artemistestmigration
 
 [artemistests_local_vc_jenkins:children]
 artemistest5
+
+[artemistests_local_vc_hades:children]
 artemistest6
 
 [artemistests_iris:children]
