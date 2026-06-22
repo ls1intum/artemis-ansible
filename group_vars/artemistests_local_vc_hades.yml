@@ -1,6 +1,6 @@
 ---
 ##############################################################################
-# TUM LocalVC Jenkins Stateless Configuration
+# TUM LocalVC Hades Configuration
 ##############################################################################
 
 version_control:
