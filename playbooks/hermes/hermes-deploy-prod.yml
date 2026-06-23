@@ -1,0 +1,8 @@
+---
+- name: Deploy Hermes Prod
+  hosts: hermes-prod.artemis.cit.tum.de
+
+  roles:
+    - role: ls1intum.artemis.hermes
+      vars:
+        setup_system: false
