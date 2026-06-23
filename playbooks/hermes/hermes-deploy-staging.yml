@@ -1,5 +1,5 @@
 ---
-- name: Setup
+- name: Deploy Hermes Staging
   hosts: hermes-staging.artemis.cit.tum.de
 
   roles:

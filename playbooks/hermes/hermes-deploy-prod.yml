@@ -1,5 +1,5 @@
 ---
-- name: Setup
+- name: Deploy Hermes Prod
   hosts: hermes-prod.artemis.cit.tum.de
 
   roles:
