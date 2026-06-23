@@ -6,3 +6,4 @@
     - role: ls1intum.artemis.hermes
       vars:
         setup_system: false
+        hermes_working_directory: /opt/hermes
