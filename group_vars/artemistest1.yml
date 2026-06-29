@@ -24,4 +24,3 @@ weaviate_collection_prefix: "Artemis_ts1_"
 athena:
   url: "https://athena-test1.aet.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest1').get('athena_secret') }}"
-  restricted_modules: "module_text_llm,module_programming_llm,module_modeling_llm"

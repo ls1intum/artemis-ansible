@@ -20,7 +20,6 @@ artemis_email: artemis-staging.aet@xcit.tum.de
 athena:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
-  restricted_modules: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('restricted_modules') }}"
 
 nebula:
   url: "https://test.nebula.artemis.cit.tum.de"
