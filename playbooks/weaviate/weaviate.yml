@@ -1,0 +1,33 @@
+---
+
+- name: Setup Weaviate
+  hosts: weaviate
+  roles:
+
+    - role: geerlingguy.docker
+      become: true
+      tags: specifics
+      vars:
+        docker_install_compose: true
+
+    - role: ls1intum.artemis.weaviate
+      tags: weaviate
+      vars:
+        weaviate_domain: "{{ inventory_hostname }}"
+        weaviate_build_version: "1.37.2"
+        weaviate_api_user: weaviate_admin
+        weaviate_api_key: "{{ lookup('hashi_vault', 'kv/data/itg/services/services_ase/{0}'.format(var_instance_name)).get('api_key') }}"
+        letsencrypt_email: "ls1.itg@in.tum.de"
+        weaviate_allowed_ips: "172.24.152.0/24,2a09:80c0:ac18:9800::/64,131.159.89.0/25,2a09:80c0:89::/64,131.159.89.128/25,2a09:80c0:89:1::/64,127.0.0.0/8,::1,192.168.0.0/16,172.24.70.0/25,2a09:80c0:ac18:4600::/64,172.24.70.128/25,2a09:80c0:ac18:4680::/64" # VPN, il01_7, il01_8, localhost, docker network, il01_2, il01_6
+
+        weaviate_traefik_cpu_limit: "1"
+        weaviate_traefik_memory_limit: "512M"
+
+        weaviate_cpu_limit: "6"
+        weaviate_memory_limit: "12G"
+
+        weaviate_multi2vec_cpu_limit: "3"
+        weaviate_multi2vec_memory_limit: "6G"
+
+        weaviate_enable_automated_backups: true
+        weaviate_backup_schedule: "0 2 * * *"
