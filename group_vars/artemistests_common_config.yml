@@ -58,10 +58,10 @@ artemis_rate_limit:
 
 deimos:
   llm:
-    base_url: https://gpu.aet.cit.tum.de
+    base_url: https://logos.aet.cit.tum.de/v1
     api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/deimos').get('llm_api_key') }}"
     model: openai/gpt-oss-120b
-    completions_path: /api/chat/completions
+    completions_path: /chat/completions
     temperature: 0.3
 
 ##############################################################################
