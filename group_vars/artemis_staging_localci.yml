@@ -27,7 +27,7 @@ nebula:
 
 weaviate:
   enabled: true
-  http_host: weaviate-staging.aet.cit.tum.de
+  http_host: weaviate-staging.artemis.cit.tum.de
   http_port: 443
   grpc_port: 50051
   scheme: https
