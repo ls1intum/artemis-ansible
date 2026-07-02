@@ -1,5 +1,6 @@
 ---
 artemis_passkey_enabled: true
+artemis_passkey_require_for_administrator_features: true
 
 continuous_integration:
   localci:
