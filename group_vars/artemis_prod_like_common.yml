@@ -28,9 +28,6 @@ artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + 
 
 push_notification_relay: "https://hermes-prod.artemis.cit.tum.de"
 
-lti:
-  oauth_secret: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('lti_secret') }}"
-
 ldap:
   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_url') }}"
   user_dn: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_dn') }}"
