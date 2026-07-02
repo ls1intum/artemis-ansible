@@ -2,6 +2,8 @@
 roles:
   - src: geerlingguy.docker
 
+  - src: geerlingguy.certbot
+
   - src: geerlingguy.mysql
     version: 6.2.0
 
