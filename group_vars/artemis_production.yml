@@ -40,21 +40,16 @@ weaviate:
 
 proxy_generate_dh_param: false
 
-# Special TUM certificate config
-proxy_certificate_base_path: /opt/certs
-proxy_tum_certificate_key_name: artemis_tum_de-key.pem
-proxy_tum_certificate_name: artemis_tum_de.pem
-
 servers:
   - name: "artemis.tum.de"
-    ssl_certificate_path: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_name }}"
-    ssl_certificate_key_path: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_key_name }}"
+    ssl_certificate_path: /etc/letsencrypt/live/artemis.tum.de/fullchain.pem
+    ssl_certificate_key_path: /etc/letsencrypt/live/artemis.tum.de/privkey.pem
     default_server: true
 
 redirects:
-  - name: "artemis.ase.in.tum.de artemis.in.tum.de artemis.ase.cit.tum.de proxy.prod.artemis.cit.tum.de artemis.cs.tum.edu proxy-internal.prod.artemis.cit.tum.de prod.artemis.cit.tum.de asevm91.cit.tum.de artemis.cit.tum.de"
-    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.fullchain.pem
-    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm91.cit.tum.de.privkey.pem
+  - name: "artemis.ase.in.tum.de artemis.in.tum.de artemis.ase.cit.tum.de proxy.prod.artemis.cit.tum.de artemis.cs.tum.edu prod.artemis.cit.tum.de artemis.cit.tum.de"
+    ssl_certificate_path: /etc/letsencrypt/live/artemis.tum.de/fullchain.pem
+    ssl_certificate_key_path: /etc/letsencrypt/live/artemis.tum.de/privkey.pem
     default_server: false
     to: "{{ artemis_server_url }}"
 

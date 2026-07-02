@@ -2,40 +2,30 @@
 - name: Setup Artemis Load Balancer / Reverse Proxy
   hosts: artemis_production_proxy
   pre_tasks:
-    - name: Create certificate dir on proxy
-      ansible.builtin.file:
-        dest: "{{ proxy_certificate_base_path }}"
-        state: directory
-        mode: "0700"
-        owner: "root"
-        group: "root"
-      become: true
-
-    - name: Copy certificates to proxy
-      ansible.builtin.copy:
-        src: "{{ item }}"
-        dest: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_name }}"
-        mode: "0755"
-        owner: "root"
-        group: "root"
-      with_fileglob:
-        - "artemis_tum_de-certificates/artemis_tum_de.pem"
-      become: true
-
-    - name: Get the tum certificate key from vault
-      ansible.builtin.set_fact:
-        artemis_tum_cert_key: "{{ lookup('hashi_vault', 'kv/data/artemis/production/proxy').get('artemis_tum_de-key') }}"
-
-    - name: Write tum certificate key to file
-      ansible.builtin.copy:
-        content: "{{ artemis_tum_cert_key }}"
-        dest: "{{ proxy_certificate_base_path }}/{{ proxy_tum_certificate_key_name }}"
-        mode: "0755"
-        owner: "root"
-        group: "root"
+    - name: Install certbot nginx plugin
+      ansible.builtin.package:
+        name: python3-certbot-nginx
+        state: present
+      tags: certbot
       become: true
 
   roles:
+    - role: geerlingguy.certbot
+      become: true
+      tags: certbot
+      vars:
+        certbot_auto_renew: true
+        certbot_auto_renew_hour: "3"
+        certbot_auto_renew_minute: "30"
+        certbot_auto_renew_user: root
+        certbot_auto_renew_options: "--quiet"
+        certbot_create_if_missing: true
+        certbot_admin_email: "{{ artemis_email }}"
+        certbot_certs:
+          - domains: "{{ (servers | map(attribute='name') | map('split', ' ') | flatten | list) + (redirects | map(attribute='name') | map('split', ' ') | flatten | list) }}"
+        certbot_create_standalone_stop_services:
+        certbot_create_command: "{{ certbot_script }} certonly --nginx --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
+
     - role: ls1intum.artemis.firewall
       tags: firewall
       vars:
