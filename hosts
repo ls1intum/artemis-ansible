@@ -158,42 +158,6 @@ weaviate-test.artemis.cit.tum.de var_instance_name=weaviate-test
 weaviate-staging.artemis.cit.tum.de var_instance_name=weaviate-test
 
 ###############################
-# Artemis Staging LocalCI
-###############################
-[artemis_staging_localci_nodes_core]
-artemis-staging-localci-node-[1:2].artemis.cit.tum.de
-
-[artemis_staging_localci_nodes_buildagent]
-artemis-staging-localci-node-[3:5].artemis.cit.tum.de
-
-[artemis_staging_localci_nodes:children]
-artemis_staging_localci_nodes_core
-artemis_staging_localci_nodes_buildagent
-
-[artemis_staging_localci_db]
-artemis-staging-localci-db.artemis.cit.tum.de
-
-[artemis_staging_localci_broker]
-artemis-staging-localci-broker.artemis.cit.tum.de
-
-[artemis_staging_localci_registry]
-artemis-staging-localci-registry.artemis.cit.tum.de
-
-[artemis_staging_localci_storage]
-artemis-staging-localci-storage.artemis.cit.tum.de
-
-[artemis_staging_localci_proxy]
-artemis-staging-localci-proxy.artemis.cit.tum.de
-
-[artemis_staging_localci:children]
-artemis_staging_localci_nodes
-artemis_staging_localci_db
-artemis_staging_localci_broker
-artemis_staging_localci_registry
-artemis_staging_localci_storage
-artemis_staging_localci_proxy
-
-###############################
 # Artemis Staging 1
 ###############################
 [artemis_staging1_core]
@@ -335,25 +299,21 @@ artemis_production_proxy
 
 [artemis_prod_like_common:children]
 artemis_production
-artemis_staging_localci
 artemis_staging1
 artemis_staging2
 
 [artemis_prod_like_core:children]
 artemis_production_core
-artemis_staging_localci_nodes_core
 artemis_staging1_core
 artemis_staging2_core
 
 [artemis_prod_like_mysql:children]
 artemis_production
-artemis_staging_localci
 artemis_staging1
 artemis_staging2
 
 [artemis_all:children]
 artemis_production
-artemis_staging_localci
 artemis_staging1
 artemis_staging2
 artemistests
