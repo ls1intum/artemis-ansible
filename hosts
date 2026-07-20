@@ -115,6 +115,9 @@ artemistest9
 artemistest10
 artemistestmigration
 
+[artemistests_oidc:children]
+artemistest5
+
 [artemistests_atlas:children]
 artemistest1
 artemistest2
