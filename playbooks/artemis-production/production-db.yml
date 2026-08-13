@@ -4,6 +4,7 @@
 
   roles:
     - role: geerlingguy.mysql
+      tags: mysql
       become: true
 
     - role: ls1intum.artemis.mysqld_exporter

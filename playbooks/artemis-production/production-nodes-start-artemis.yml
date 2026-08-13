@@ -1,6 +1,6 @@
 ---
 - name: Start Artemis service on primary node
-  hosts: node1.prod.artemis.cit.tum.de
+  hosts: node1.production.artemis.cit.tum.de
   tasks:
     - name: Start artemis service
       become: true

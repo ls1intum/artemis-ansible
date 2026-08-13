@@ -32,6 +32,7 @@
         firewall_hostgroup: proxy
 
     - role: ls1intum.artemis.proxy
+      tags: proxy
       vars:
         proxy_available_nodes:
           - hostname: "[fcfe::a:1]"

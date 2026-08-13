@@ -238,56 +238,31 @@ artemis_staging2_proxy
 # Artemis Production
 ###############################
 
-[artemis_production_nodes_rbg_core]
-node[1:4].prod.artemis.cit.tum.de
+[artemis_production_core]
+node[1:4].production.artemis.cit.tum.de
 
-[artemis_production_nodes_rbg_buildagent]
-agent0[1:9].prod.artemis.cit.tum.de
-agent[10:20].prod.artemis.cit.tum.de
-
-[artemis_production_nodes_ls1_core]
-# TODO
-
-[artemis_production_nodes_ls1_buildagent]
-# TODO
-
-[artemis_production_nodes_rbg:children]
-artemis_production_nodes_rbg_buildagent
-artemis_production_nodes_rbg_core
-
-[artemis_production_nodes_ls1:children]
-artemis_production_nodes_ls1_buildagent
-artemis_production_nodes_ls1_core
-
-[artemis_production_core:children]
-artemis_production_nodes_rbg_core
-artemis_production_nodes_ls1_core
-
-[artemis_production_buildagent:children]
-artemis_production_nodes_rbg_buildagent
-artemis_production_nodes_ls1_buildagent
+[artemis_production_buildagent]
+agent0[1:9].production.artemis.cit.tum.de
+agent[10:20].production.artemis.cit.tum.de
 
 [artemis_production_nodes:children]
-artemis_production_nodes_rbg_core
-artemis_production_nodes_rbg_buildagent
-artemis_production_nodes_ls1_buildagent
-artemis_production_nodes_ls1_core
+artemis_production_core
+artemis_production_buildagent
 
 [artemis_production_db]
-db.prod.artemis.cit.tum.de
+db.production.artemis.cit.tum.de
 
 [artemis_production_broker]
-broker.prod.artemis.cit.tum.de
+broker.production.artemis.cit.tum.de
 
 [artemis_production_registry]
-registry.prod.artemis.cit.tum.de
+registry.production.artemis.cit.tum.de
 
 [artemis_production_storage]
-storage.prod.artemis.cit.tum.de
+storage.production.artemis.cit.tum.de
 
 [artemis_production_proxy]
-proxy.prod.artemis.cit.tum.de
-
+proxy.production.artemis.cit.tum.de
 
 [artemis_production:children]
 artemis_production_nodes
