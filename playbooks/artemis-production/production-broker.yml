@@ -4,6 +4,7 @@
 
   roles:
     - role: ls1intum.artemis.broker
+      tags: broker
 
     - role: ls1intum.artemis.firewall
       tags: firewall

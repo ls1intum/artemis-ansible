@@ -1,13 +1,14 @@
 ---
 # IPv6 address (with CIDR!) which can be used to access the node - If left blank, ansible will use host facts to fill the address.
-wireguard_host_ipv6_address: 2a09:80c0:ac18:4600::68
-host_ipv4_address: 172.24.70.68
+wireguard_host_ipv6_address: 2a09:80c0:ac18:4600::25
+host_ipv4_address: 172.24.70.25
+
 # Address of the node inside the network.
 wireguard_interface_address: "fcfe:0:0:0:0:0:affe:12"
 
 # Wireguard Keys - Automatically generated!
-wireguard_pubkey: hfzhStf4iinqK8TUe0WbkA8HoLRyHB7GEEND4//J+kE=
-wireguard_privkey: "{{ lookup('hashi_vault', 'kv/data/artemis/production/nodes').get('wg_priv_agent12') }}"
+wireguard_pubkey: uo344zMPBFwloTV5E0ibjlQfzSj5uT8BUk/hP5gH6RM=
+wireguard_privkey: "{{ lookup('hashi_vault', 'artemis/data/production/wireguard').get('privkey_agent12') }}"
 
 node_id: 1012
 node_short_name: artemis-build-agent-12
