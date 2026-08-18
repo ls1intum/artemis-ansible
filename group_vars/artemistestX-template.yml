@@ -1,8 +1,0 @@
----
-##############################################################################
-# Commonly changed variables
-##############################################################################
-is_testserver: true
-var_testserver_name: "artemis-testX"
-artemis_database_password: "TODO"
-artemis_internal_admin_password: "TODO"

@@ -3,11 +3,7 @@
 # Iris Configuration
 ##############################################################################
 iris:
-  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/pyris-test').get('url') }}"
-  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/pyris-test').get('secret') }}"
-
-nebula:
-  url: "https://test.nebula.artemis.cit.tum.de"
-  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('test_secret') }}"
+  url: "https://pyris-test.artemis.cit.tum.de"
+  secret: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('iris_secret') }}"
 
 artemis_local_llm_deployment_enabled: true

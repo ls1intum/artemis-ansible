@@ -2,34 +2,22 @@
 # Artemis Tests
 ###############################
 [artemistest1]
-artemis-test-vm1.artemis.cit.tum.de
+artemis-test1.artemis.cit.tum.de
 
 [artemistest2]
-artemis-test-vm2.artemis.cit.tum.de
+artemis-test2.artemis.cit.tum.de
 
 [artemistest3]
-artemis-test-vm3.artemis.cit.tum.de
+artemis-test3.artemis.cit.tum.de
 
 [artemistest4]
-artemis-test-vm4.artemis.cit.tum.de
+artemis-test4.artemis.cit.tum.de
 
 [artemistest5]
-artemis-test-vm5.artemis.cit.tum.de
+artemis-test5.artemis.cit.tum.de
 
 [artemistest6]
-artemis-test-vm6.artemis.cit.tum.de
-
-[artemistest7]
-artemis-test7.artemis.cit.tum.de
-
-[artemistest8]
-artemis-test8.artemis.cit.tum.de
-
-[artemistest9]
-artemis-test-vm9.artemis.cit.tum.de
-
-[artemistest10]
-artemis-test10.artemis.cit.tum.de
+artemis-test6.artemis.cit.tum.de
 
 [artemistestmigration]
 artemis-test-migration.artemis.cit.tum.de
@@ -41,8 +29,6 @@ artemistest3
 artemistest4
 artemistest5
 artemistest6
-artemistest7
-artemistest9
 
 [artemistests_common_config:children]
 artemistest1
@@ -51,40 +37,30 @@ artemistest3
 artemistest4
 artemistest5
 artemistest6
-artemistest7
-artemistest8
-artemistest9
-artemistest10
 artemistestmigration
 
 [artemistests_mysql:children]
-artemistest1
-artemistest2
-artemistest5
-artemistest7
-artemistest9
 artemistestmigration
 
 [artemistests_postgres:children]
+artemistest1
+artemistest2
 artemistest3
 artemistest4
+artemistest5
 artemistest6
-artemistest8
 
 [artemistests_local_vc_ci:children]
 artemistest1
 artemistest2
 artemistest3
 artemistest4
-artemistest7
-artemistest9
+artemistest5
+artemistest6
 artemistestmigration
 
-[artemistests_local_vc_jenkins:children]
-artemistest5
-
-[artemistests_local_vc_hades:children]
-artemistest6
+[artemistests_ldap:children]
+artemistestmigration
 
 [artemistests_iris:children]
 artemistest1
@@ -92,7 +68,15 @@ artemistest2
 artemistest3
 artemistest4
 artemistest5
-# artemistest7
+artemistest6
+
+[artemistests_hyperion:children]
+artemistest1
+artemistest2
+artemistest3
+artemistest4
+artemistest5
+artemistest6
 
 [artemistests_weaviate:children]
 artemistest1
@@ -102,18 +86,14 @@ artemistest4
 artemistest5
 artemistest6
 
-[artemistests_ldap:children]
+[artemistests_oidc:children]
 artemistest1
 artemistest2
 artemistest3
 artemistest4
 artemistest5
 artemistest6
-# artemistest7
-artemistest8
-artemistest9
-artemistest10
-artemistestmigration
+
 
 [artemistests_atlas:children]
 artemistest1
@@ -122,28 +102,14 @@ artemistest3
 artemistest4
 artemistest5
 artemistest6
-# artemistest7
-artemistest8
-artemistest9
-artemistest10
 
-[artemistests_hyperion:children]
+[artemistests_theia:children]
 artemistest1
 artemistest2
 artemistest3
 artemistest4
 artemistest5
 artemistest6
-# artemistest7
-artemistest8
-artemistest9
-artemistest10
-
-[artemistests_theia:children]
-artemistest1
-artemistest2
-artemistest3
-artemistest9
 
 [artemis_infrastructure]
 jenkins-test.artemis.cit.tum.de
