@@ -3,15 +3,7 @@
 # TUM Ldap Configuration
 ##############################################################################
 ldap:
-  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_url') }}"
-  user_dn: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_dn') }}"
-  base: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_base') }}"
-  password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_password') }}"
-
-mail:
-  hostname: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_host') }}"
-  port: "587"
-  username: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_user') }}"
-  password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_password') }}"
-  protocol: "smtp"
-  ssl_trust: "postout.lrz.de"
+  url: "ldaps://iauth.tum.de:636"
+  user_dn: "cn=TUINI01-Artemis,ou=bindDNs,ou=iauth,dc=tum,dc=de"
+  base: "ou=users,ou=data,ou=prod,ou=iauth,dc=tum,dc=de"
+  password: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('ldap_password') }}"

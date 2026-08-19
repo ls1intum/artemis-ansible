@@ -1,0 +1,21 @@
+---
+##############################################################################
+# OIDC / TUM Login Configuration
+##############################################################################
+
+artemis_oidc:
+  enabled: true
+  button_label: "TUM Login"
+  client_id: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('oidc_client_id') }}"
+  client_secret: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('oidc_client_secret') }}"
+  issuer_uri: "https://tumidp.lrz.de/idp/shibboleth"
+  authorization_uri: "https://login.tum.de/idp/profile/oidc/authorize"
+  token_uri: "https://login.tum.de/idp/profile/oidc/token"
+  user_info_uri: "https://login.tum.de/idp/profile/oidc/userinfo"
+  jwk_set_uri: "https://login.tum.de/idp/profile/oidc/keyset"
+  mappings:
+    username: "preferred_username"
+    matriculation_number: "matriculation_number"
+    first_name: "given_name"
+    last_name: "family_name"
+    email: "email"

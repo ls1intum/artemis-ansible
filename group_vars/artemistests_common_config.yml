@@ -34,7 +34,7 @@ artemis_operator_admin_name: "Stephan Krusche"
 artemis_global_search_enabled: true
 
 lti:
-  oauth_secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/lti').get('oauth_secret') }}"
+  oauth_secret: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('lti_oauth_secret') }}"
 
 licenses:
   matlab: "28000@mlm1.rbg.tum.de"
@@ -43,14 +43,9 @@ helios:
   environment_name: "{{ var_testserver_name }}.artemis.cit.tum.de"
   endpoints:
     - url: "https://helios.aet.cit.tum.de/api/environments/status"
-      secret_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/helios').get('prod_secret_key') }}"
+      secret_key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('helios_prod_secret') }}"
     - url: "https://helios-staging.aet.cit.tum.de/api/environments/status"
-      secret_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/helios').get('staging_secret_key') }}"
-
-# sharing:
-#   url: "https://dev-exchange.codeability-austria.uibk.ac.at/"
-#   apikey: "{{ lookup('hashi_vault', 'kv/data/artemis/common/sharing').get('apikey') }}"
-#   actionname: "TestExport to Artemis@helios.aet.cit.tum.de"
+      secret_key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('helios_test_secret') }}"
 
 artemis_rate_limit:
   account_management_rpm: 5
@@ -59,10 +54,18 @@ artemis_rate_limit:
 deimos:
   llm:
     base_url: https://logos.aet.cit.tum.de/v1
-    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/deimos').get('llm_api_key') }}"
+    api_key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('deimos_llm_key') }}"
     model: openai/gpt-oss-120b
     completions_path: /chat/completions
     temperature: 0.3
+
+mail:
+  hostname: "postout.lrz.de"
+  port: "587"
+  username: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('mail_username') }}"
+  password: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('mail_password') }}"
+  protocol: "smtp"
+  ssl_trust: "postout.lrz.de"
 
 ##############################################################################
 # Proxy Configuration
@@ -87,5 +90,4 @@ sentry:
 artemis_create_deployment_user: true
 artemis_deployment_user_name: deployment
 artemis_deployment_user_uid: 1338
-artemis_deployment_user_public_key: "{{ lookup('hashi_vault', 'kv/data/artemis/test/{0}'.format(var_testserver_name | replace('-', ''))).get('ssh_pub') }}"
 artemis_deployment_user_comment: "User to deploy artemis to this host"
