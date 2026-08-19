@@ -15,7 +15,4 @@ athena:
 
 llm_api_key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistest2').get('llm_api_key') }}"
 
-theia:
-  portal_url: https://test2.theia-test.artemis.cit.tum.de/
-
 artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINUQrP34jW6Dq2MQRFHZyAxRzp+2u3L0YqZvtj0B3tOJ artemis@xcit.tum.de"
