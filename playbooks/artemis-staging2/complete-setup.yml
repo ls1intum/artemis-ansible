@@ -14,9 +14,6 @@
 # Cluster Broker
 - import_playbook: broker.yml
 
-# Cluster Registry
-- import_playbook: registry.yml
-
 # Cluster Proxy
 - import_playbook: proxy.yml
 

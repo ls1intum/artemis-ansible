@@ -171,9 +171,6 @@ db.staging2.artemis.cit.tum.de
 [artemis_staging2_broker]
 broker.staging2.artemis.cit.tum.de
 
-[artemis_staging2_registry]
-registry.staging2.artemis.cit.tum.de
-
 [artemis_staging2_redis]
 redis.staging2.artemis.cit.tum.de
 
@@ -187,7 +184,6 @@ proxy.staging2.artemis.cit.tum.de
 artemis_staging2_nodes
 artemis_staging2_db
 artemis_staging2_broker
-artemis_staging2_registry
 artemis_staging2_redis
 artemis_staging2_storage
 artemis_staging2_proxy
