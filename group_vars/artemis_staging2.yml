@@ -5,7 +5,13 @@ artemis_version: 8.7.2
 
 var_vault_group: "test/staging2"
 
-registry_external_host: registry.staging2.artemis.cit.tum.de
+# No JHipster registry on staging2. Eureka exists in Artemis only to locate Hazelcast members, and this
+# environment runs the Redis distributed data provider, so nothing reads the registry: the application forces
+# eureka.client.enabled=false and spring.cloud.discovery.enabled=false whenever the provider is Redis.
+# Overriding registry.url from artemis_prod_like_common.yml leaves artemis_eureka_urls empty, so no registry
+# address is rendered into the node configuration either.
+registry:
+  url: null
 
 is_testserver: true
 
