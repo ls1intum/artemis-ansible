@@ -10,11 +10,42 @@ mysql_packages:
 mysql_bind_address: "{{ artemis_database_host }},localhost"
 
 # Performance
-mysql_key_buffer_size: "512M"
+# The key buffer caches MyISAM indexes only, and every table in every environment is InnoDB, so this
+# was 512 MB of memory reserved at startup and never read from. Kept at the documented minimum rather
+# than removed, because the server allocates a small key cache regardless.
+mysql_key_buffer_size: "32M"
 mysql_table_open_cache: "4000"
 mysql_sort_buffer_size: "4M"
 mysql_read_buffer_size: "1M"
-mysql_innodb_buffer_pool_size: "10G"
+# InnoDB reads and writes go straight to disk instead of through the operating system's page cache.
+# Without this, every hot data page is held twice: once in the buffer pool and once in the page cache.
+# That duplicate copy is what makes a large pool actively harmful rather than merely wasteful, because
+# the kernel can end up paging out anonymous pool memory to keep a file-backed copy of the same data.
+# Setting this is also what makes the share below safe to raise.
+mysql_innodb_flush_method: "O_DIRECT"
+
+# Every database host here is on SSD, but the flusher was budgeting for a single spinning disk, which is
+# what the 200 default assumes. Load testing found a host whose disk sat near fully busy at a third of
+# its CPU, which is a flusher falling behind rather than a disk running out.
+mysql_innodb_io_capacity: "2000"
+mysql_innodb_io_capacity_max: "4000"
+
+# Sized from the database host's own memory rather than hardcoded. One fixed value was shared by every
+# environment in this group, whose hosts differ in size by a factor of four, so a literal is wrong
+# somewhere by construction.
+#
+# A plain percentage is not enough either. What mysqld costs on top of its pool is close to a fixed
+# amount rather than a share, covering buffer pool control structures, per-connection buffers, thread
+# stacks, the log buffer, the doublewrite buffer and internal temporary tables. That is a small fraction
+# of a large host and a large fraction of a small one, so a single percentage either starves the big
+# host or drowns the small one.
+#
+# Hence a percentage with a floor. 70% suits a dedicated database host now that O_DIRECT means the page
+# cache is not holding a second copy of the same pages, and the reserve keeps the smaller hosts out of
+# swap where the percentage alone would not. The percentage governs the large hosts, the reserve
+# protects the small ones, and an environment that needs something different can override this in its
+# own group_vars.
+mysql_innodb_buffer_pool_size: "{{ [ (ansible_memtotal_mb * 0.7) | int, (ansible_memtotal_mb - 1800) | int ] | min }}M"
 mysql_max_connections: "2000"
 mysql_thread_cache_size: "256"
 mysql_max_allowed_packet: "4G"
