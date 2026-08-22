@@ -47,6 +47,13 @@ mysql_innodb_io_capacity_max: "4000"
 # own group_vars.
 mysql_innodb_buffer_pool_size: "{{ [ (ansible_memtotal_mb * 0.7) | int, (ansible_memtotal_mb - 1800) | int ] | min }}M"
 mysql_max_connections: "2000"
+
+# Every pooled connection caches its own prepared statements on the server, so the ceiling has to cover
+# pool size times cache size across all nodes, not per node. The 16382 default is below that for any
+# realistic cluster, and exceeding it makes the server evict statements the driver still believes it
+# holds, so they are silently re-prepared. Profiling saw one prepare for every 8.7 executes because of
+# this. Each prepared statement costs a small amount of server memory, so a generous ceiling is cheap.
+mysql_max_prepared_stmt_count: "65536"
 mysql_thread_cache_size: "256"
 mysql_max_allowed_packet: "4G"
 mysql_innodb_force_recovery: "0"
