@@ -54,6 +54,15 @@ mysql_max_connections: "2000"
 # holds, so they are silently re-prepared. Profiling saw one prepare for every 8.7 executes because of
 # this. Each prepared statement costs a small amount of server memory, so a generous ceiling is cheap.
 mysql_max_prepared_stmt_count: "65536"
+
+# Flush the redo log to the operating system on every commit, and fsync it once a second, rather than
+# fsyncing on every commit. Measured on staging: a commit costs 1.50 ms at the default of 1, against
+# roughly 0.1 ms at 2, and Artemis commits about four times per request, so this is around 5.6 ms per
+# request. A rollback, by comparison, costs 0.058 ms, so commits are essentially the whole cost.
+# What is given up: up to one second of committed transactions is lost if the machine or the operating
+# system fails. A crash of mysqld alone loses nothing, because the redo log has already been handed to
+# the operating system. There is no binary log here, so there is no replica to fall out of step.
+mysql_innodb_flush_log_at_trx_commit: "{{ artemis_database_flush_log_at_trx_commit | default(2) }}"
 mysql_thread_cache_size: "256"
 mysql_max_allowed_packet: "4G"
 mysql_innodb_force_recovery: "0"
