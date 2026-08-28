@@ -13,6 +13,9 @@ athena:
   url: "https://athena-test1.aet.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'artemis/data/test/artemistest2').get('athena_secret') }}"
 
+theia:
+  portal_url: https://test2.eduide.student.k8s.aet.cit.tum.de
+
 llm_api_key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistest2').get('llm_api_key') }}"
 
 artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINUQrP34jW6Dq2MQRFHZyAxRzp+2u3L0YqZvtj0B3tOJ artemis@xcit.tum.de"
