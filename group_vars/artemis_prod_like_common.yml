@@ -16,11 +16,11 @@ artemis_ssh_priv_key_value: "none"
 artemis_operator_name: "Technical University of Munich"
 artemis_operator_admin_name: "Stephan Krusche"
 
-artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('db_password') }}"
-artemis_remote_admin_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('db_remoteadmin_password') }}"
-artemis_remote_admin_ro_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('db_remoteadmin_ro_password') }}"
+artemis_database_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('db_password') }}"
+artemis_remote_admin_database_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('db_remoteadmin_password') }}"
+artemis_remote_admin_ro_database_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('db_remoteadmin_ro_password') }}"
 
-artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('internal_admin') }}"
+artemis_internal_admin_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('internal_admin') }}"
 
 ##############################################################################
 # External Systems Configuration
@@ -29,16 +29,16 @@ artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + 
 push_notification_relay: "https://hermes-prod.artemis.cit.tum.de"
 
 ldap:
-  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_url') }}"
-  user_dn: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_dn') }}"
-  base: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_base') }}"
-  password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/ldap').get('ldap_password') }}"
+  url: "ldaps://iauth.tum.de:636"
+  user_dn: "cn=TUINI01-Artemis,ou=bindDNs,ou=iauth,dc=tum,dc=de"
+  base: "ou=users,ou=data,ou=prod,ou=iauth,dc=tum,dc=de"
+  password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('ldap_password') }}"
 
 mail:
-  hostname: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_host') }}"
+  hostname: "postout.lrz.de"
   port: "587"
-  username: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_user') }}"
-  password: "{{ lookup('hashi_vault', 'kv/data/artemis/common/mail').get('mail_password') }}"
+  username: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('mail_username') }}"
+  password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('mail_password') }}"
   protocol: "smtp"
   ssl_trust: "postout.lrz.de"
 
@@ -49,27 +49,21 @@ version_control:
     ssh_key_path: /mnt/storage/ssh-keys
     build_agent_use_ssh: true
     ssh_url: "{{ var_artemis_localvc_ssh_url }}"
+    build_agent_git_credentials:
+      user: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('localvc_build_agent_user') }}"
+      password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('localvc_build_agent_password') }}"
 
 artemis_ssh_key_path: "/tmp"
 
 apollon_url: "https://apollon.aet.cit.tum.de"
 
 iris:
-  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('url') }}"
-  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/iris').get('secret') }}"
+  url: "https://pyris-prod.artemis.cit.tum.de"
+  secret: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('iris_secret') }}"
   rate_limit: 25
   rate_limit_timeframe_hours: 3
 
 artemis_local_llm_deployment_enabled: true
-
-post_hog:
-  host: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('url') }}"
-  token: "{{ lookup('hashi_vault', 'kv/data/artemis/common/post_hog').get('secret') }}"
-
-atlas:
-  enabled: true
-  atlasml:
-    enabled: false
 
 artemis_hyperion_enabled: true
 
@@ -77,12 +71,12 @@ tum_live_base_url: "https://tum.live/api/v2"
 
 spring_ai:
   azure_openai:
-    api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_api_key_prod') }}"
-    endpoint: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_endpoint') }}"
-    deployment_name: "{{ lookup('hashi_vault', 'kv/data/artemis/common/hyperion').get('azure_openai_deployment_name') }}"
+    api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('azure_openai_apikey') }}"
+    endpoint: "https://ase-se01.openai.azure.com/"
+    deployment_name: "gpt-5.4-mini"
     temperature: 1.0
 
-artemis_global_search_enabled: true
+artemis_global_search_enabled: false
 
 ##############################################################################
 # Broker and Registry Configuration
@@ -92,14 +86,14 @@ is_multinode_install: true
 
 broker:
   url: "[fcfe:0:0:0:0:0:b:1]" # Broker hostname (Only used in the Artemis role)
-  username: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('broker_user') }}"
-  password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('broker_password') }}"
+  username: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('broker_username') }}"
+  password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('broker_password') }}"
 
 registry:
   url: "[fcfe:0:0:0:0:0:b:2]" # Registry hostname (Only used in the Artemis role)
 
-artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('jhipster_jwt') }}"
-artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('registry_password') }}"
+artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('jhipster_jwt') }}"
+artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('registry_password') }}"
 artemis_eureka_instance_id: "{{ node_id }}"
 
 ##############################################################################
@@ -116,7 +110,7 @@ sentry:
 artemis_create_deployment_user: true
 artemis_deployment_user_name: deployment
 artemis_deployment_user_uid: 1338
-artemis_deployment_user_public_key: "{{ lookup('hashi_vault', 'kv/data/artemis/' + var_vault_group).get('ssh_pub') }}"
+artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPNnP9Eew/8keXo5+3tc0cP1GsRYizBG69tK+7ozAdgj artemis@xcit.tum.de"
 artemis_deployment_user_comment: "User to deploy artemis to this host"
 
 

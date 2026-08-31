@@ -3,8 +3,12 @@
 # Commonly changed variables
 ##############################################################################
 var_testserver_name: "artemis-test6"
-artemis_database_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest6').get('db_password') }}"
-artemis_internal_admin_password: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest6').get('internal_admin') }}"
-artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'kv/data/artemis/test/artemistest6').get('jhipster_jwt') }}"
+artemis_database_password: "{{ lookup('hashi_vault', 'artemis/data/test/artemistest6').get('db_password') }}"
+artemis_internal_admin_password: "{{ lookup('hashi_vault', 'artemis/data/test/artemistest6').get('internal_admin') }}"
+artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'artemis/data/test/artemistest6').get('jhipster_jwt') }}"
 
 weaviate_collection_prefix: "Artemis_ts6_"
+
+llm_api_key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistest6').get('llm_api_key') }}"
+
+artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINUQrP34jW6Dq2MQRFHZyAxRzp+2u3L0YqZvtj0B3tOJ artemis@xcit.tum.de"

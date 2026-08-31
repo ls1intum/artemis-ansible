@@ -1,7 +1,5 @@
 ---
 theia:
-  portal_url: https://theia-staging.artemis.cit.tum.de
-
   images:
     java:
       Java-17: "java-17-latest"
