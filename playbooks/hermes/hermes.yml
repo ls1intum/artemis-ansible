@@ -7,10 +7,11 @@
       vars:
         setup_system: true
         hermes_version: latest
-        hermes_apns_certificate_path: artemis-ios-apns-prod.p12
-        hermes_apns_certificate_password: "{{ lookup('hashi_vault', 'kv/data/artemis/{0}/hermes'.format(var_hermes_environment)).get('apns_certificate_password') }}"
-        hermes_apns_certificate_content: "{{ lookup('hashi_vault', 'kv/data/artemis/{0}/hermes'.format(var_hermes_environment)).get('apns_certificate_base64') }}"
+        hermes_apns_token_key_path: artemis-ios-apns-prod.p8
+        hermes_apns_team_id: "{{ lookup('hashi_vault', 'artemis/data/{0}/hermes'.format(var_hermes_environment)).get('apns_team_id') }}"
+        hermes_apns_key_id: "{{ lookup('hashi_vault', 'artemis/data/{0}/hermes'.format(var_hermes_environment)).get('apns_key_id') }}"
+        hermes_apns_token_key_content: "{{ lookup('hashi_vault', 'artemis/data/{0}/hermes'.format(var_hermes_environment)).get('apns_token_key_base64') }}"
         hermes_google_application_credentials_json_path: artemis.json
-        hermes_google_application_credentials_content: "{{ lookup('hashi_vault', 'kv/data/artemis/{0}/hermes'.format(var_hermes_environment)).get('google_certificate') }}"
+        hermes_google_application_credentials_content: "{{ lookup('hashi_vault', 'artemis/data/{0}/hermes'.format(var_hermes_environment)).get('google_certificate') }}"
         hermes_working_directory: /opt/hermes
         hermes_port: 17333
