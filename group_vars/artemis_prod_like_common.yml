@@ -78,6 +78,10 @@ spring_ai:
 
 artemis_global_search_enabled: false
 
+artemis_rate_limit:
+  account_management_rpm: 5
+  authentication_rpm: 30
+
 ##############################################################################
 # Broker and Registry Configuration
 ##############################################################################
