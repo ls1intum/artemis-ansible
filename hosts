@@ -117,7 +117,7 @@ hermes-staging.artemis.cit.tum.de var_hermes_environment=test hermes_apns_prod_e
 [weaviate]
 weaviate-prod.artemis.cit.tum.de var_instance_name=weaviate
 weaviate-test.artemis.cit.tum.de var_instance_name=weaviate-test
-weaviate-staging.artemis.cit.tum.de var_instance_name=weaviate-test
+weaviate-staging.artemis.cit.tum.de var_instance_name=weaviate-staging
 
 ###############################
 # Artemis Staging 1
