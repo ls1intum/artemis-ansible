@@ -141,6 +141,9 @@ broker.staging1.artemis.cit.tum.de
 [artemis_staging1_registry]
 registry.staging1.artemis.cit.tum.de
 
+[artemis_staging1_redis]
+redis.staging1.artemis.cit.tum.de
+
 [artemis_staging1_storage]
 storage.staging1.artemis.cit.tum.de
 
@@ -152,6 +155,7 @@ artemis_staging1_nodes
 artemis_staging1_db
 artemis_staging1_broker
 artemis_staging1_registry
+artemis_staging1_redis
 artemis_staging1_storage
 artemis_staging1_proxy
 
@@ -242,6 +246,8 @@ artemis_staging2_core
 
 [artemis_prod_like_mysql:children]
 artemis_production
+
+[artemis_prod_like_postgres:children]
 artemis_staging1
 artemis_staging2
 

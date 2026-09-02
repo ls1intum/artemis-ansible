@@ -71,10 +71,11 @@ tum_live_base_url: "https://tum.live/api/v2"
 
 spring_ai:
   azure_openai:
-    api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('azure_openai_apikey') }}"
-    endpoint: "https://ase-se01.openai.azure.com/"
+    api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
+    endpoint: "https://logos.aet.cit.tum.de/v1"
     deployment_name: "gpt-5.4-mini"
     temperature: 1.0
+    microsoft_foundry: false
 
 artemis_global_search_enabled: false
 

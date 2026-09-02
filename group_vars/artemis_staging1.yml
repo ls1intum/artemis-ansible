@@ -1,7 +1,7 @@
 ---
 artemis_server_url: "https://staging1.artemis.cit.tum.de"
 
-artemis_version: 7.10.5
+artemis_version: 9.9.1
 
 var_vault_group: "test/staging1"
 
@@ -29,13 +29,10 @@ continuous_integration:
       expiry_days: 7
       schedule_time: "0 0 3 * * *"
 
-athena:
-  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
-  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
-
-nebula:
-  url: "https://test.nebula.artemis.cit.tum.de"
-  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/nebula').get('test_secret') }}"
+# TODO
+#athena:
+#  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
+#  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
 
 weaviate:
   enabled: true
@@ -47,10 +44,8 @@ weaviate:
   vectorizer_module: text2vec-openai
   open_ai_embedding_model: "Qwen/Qwen3-Embedding-8B"
   open_ai_base_url: https://logos.aet.cit.tum.de:8080/
-  gpu_api_key: "{{ lookup('hashi_vault', 'kv/data/artemis/common/logos').get('staging_api_key') }}"
-  api_key: "{{ lookup('hashi_vault', 'kv/data/itg/services/services_ase/weaviate-test').get('api_key') }}"
-
-enable_science_event_logging: true
+  gpu_api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
+  api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('weaviate_apikey') }}"
 
 ##############################################################################
 # Proxy Configuration
@@ -59,14 +54,14 @@ proxy_generate_dh_param: false
 
 servers:
   - name: "staging1.artemis.cit.tum.de"
-    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm121.cit.tum.de.fullchain.pem
-    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm121.cit.tum.de.privkey.pem
+    ssl_certificate_path: /etc/pira-client/live/host:f:aetvm165.cit.tum.de.fullchain.pem
+    ssl_certificate_key_path: /etc/pira-client/live/host:f:aetvm165.cit.tum.de.privkey.pem
     default_server: false
 
 redirects:
   - name: "_"
-    ssl_certificate_path: /var/lib/rbg-cert/live/host:f:asevm121.cit.tum.de.fullchain.pem
-    ssl_certificate_key_path: /var/lib/rbg-cert/live/host:f:asevm121.cit.tum.de.privkey.pem
+    ssl_certificate_path: /etc/pira-client/live/host:f:aetvm165.cit.tum.de.fullchain.pem
+    ssl_certificate_key_path: /etc/pira-client/live/host:f:aetvm165.cit.tum.de.privkey.pem
     default_server: true
     to: "{{ artemis_server_url }}"
 
@@ -86,7 +81,7 @@ proxy_rate_limit_exempt_ips:
 # Broker and Registry Configuration
 ##############################################################################
 
-activemq_version: 2.40.0
+activemq_version: 2.44.0
 
 broker:
   username: brokeruser
