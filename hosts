@@ -186,7 +186,7 @@ redis.staging2.artemis.cit.tum.de
 storage.staging2.artemis.cit.tum.de
 
 [artemis_staging2_proxy]
-proxy-internal.staging2.artemis.cit.tum.de
+proxy.staging2.artemis.cit.tum.de
 
 [artemis_staging2:children]
 artemis_staging2_nodes
