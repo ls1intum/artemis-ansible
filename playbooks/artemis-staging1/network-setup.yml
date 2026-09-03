@@ -87,6 +87,6 @@
                   via: 2a09:80c0:89::ffff:1
 
               nameservers:
-                addresses: [ 131.159.254.1, 131.159.254.2 ]
-                search: [ aet.cit.tum.de ]
+                addresses: [131.159.254.1, 131.159.254.2]
+                search: [aet.cit.tum.de]
       tags: proxy
