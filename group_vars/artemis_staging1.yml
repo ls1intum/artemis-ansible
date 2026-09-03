@@ -9,6 +9,8 @@ registry_external_host: registry.staging1.artemis.cit.tum.de
 
 is_testserver: true
 
+artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFSjFr1XgsOLhYyT4XtuOFwwOglHDEGYYmWApCv6fvVK artemis@xcit.tum.de"
+
 ##############################################################################
 # External Systems Configuration
 ##############################################################################

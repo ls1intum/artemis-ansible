@@ -49,6 +49,10 @@ version_control:
     ssh_key_path: /mnt/storage/ssh-keys
     build_agent_use_ssh: true
     ssh_url: "{{ var_artemis_localvc_ssh_url }}"
+    # Only enable together with proxy_ssh_proxy_protocol on the proxy; lists the proxy's internal
+    # wireguard address, which is the same across all prod-like environments (see host_vars/proxy.*.yml).
+    ssh_proxy_protocol_trusted_sources:
+      - "fcfe:0:0:0:0:0:f:1"
 
 
 artemis_ssh_key_path: "/tmp"
@@ -113,7 +117,6 @@ sentry:
 artemis_create_deployment_user: true
 artemis_deployment_user_name: deployment
 artemis_deployment_user_uid: 1338
-artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPNnP9Eew/8keXo5+3tc0cP1GsRYizBG69tK+7ozAdgj artemis@xcit.tum.de"
 artemis_deployment_user_comment: "User to deploy artemis to this host"
 
 
