@@ -30,9 +30,9 @@ continuous_integration:
       schedule_time: "0 0 3 * * *"
 
 # TODO
-#athena:
-#  url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
-#  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
+# athena:
+#   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
+#   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
 
 weaviate:
   enabled: true
