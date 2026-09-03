@@ -9,6 +9,8 @@ var_artemis_localvc_ssh_url: "ssh://git@artemis.tum.de:7921/"
 
 registry_external_host: registry.production.artemis.cit.tum.de
 
+artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPNnP9Eew/8keXo5+3tc0cP1GsRYizBG69tK+7ozAdgj artemis@xcit.tum.de"
+
 ##############################################################################
 # External Systems Configuration
 ##############################################################################

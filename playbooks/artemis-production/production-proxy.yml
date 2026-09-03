@@ -43,3 +43,4 @@
             weight: 1
           - hostname: "[fcfe::a:4]"
             weight: 1
+        proxy_ssh_proxy_protocol: true
