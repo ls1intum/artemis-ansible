@@ -13,8 +13,8 @@
         servers:
           - name: "_"
             default_server: true
-            ssl_certificate_path: "/var/lib/rbg-cert/live/host:f:asevm123.cit.tum.de.fullchain.pem"
-            ssl_certificate_key_path: "/var/lib/rbg-cert/live/host:f:asevm123.cit.tum.de.privkey.pem"
+            ssl_certificate_path: "/etc/pira-client/live/host:f:aetvm167.cit.tum.de.fullchain.pem"
+            ssl_certificate_key_path: "/etc/pira-client/live/host:f:aetvm167.cit.tum.de.privkey.pem"
         proxy_target_port: 8761
         redirects: []
 

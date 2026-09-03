@@ -3,7 +3,7 @@
   hosts: artemis_staging1_db
 
   roles:
-    - role: geerlingguy.mysql
+    - role: geerlingguy.postgresql
       become: true
 
     - role: ls1intum.artemis.firewall

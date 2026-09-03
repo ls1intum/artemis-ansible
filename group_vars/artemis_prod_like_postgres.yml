@@ -1,0 +1,250 @@
+---
+artemis_database_type: postgresql
+artemis_database_port: 5432
+artemis_database_encoding: UTF8
+artemis_database_host: "fcfe:0:0:0:0:0:d:1"
+
+# 4 core nodes with a HikariCP pool of 30 each, plus a small margin. 30 is the default of the
+# Artemis role's artemis_database_max_pool_size, so raising the pool there means raising this too.
+# Declared here because max_connections and work_mem both derive from it, and a work_mem sized against a different ceiling
+# than the server enforces is how a host ends up promising more sort memory than it has.
+artemis_database_max_connections: 125
+
+# md5 is only still the role default for backwards compatibility. Every client here is either the
+# JDBC driver or psql, both of which speak SCRAM, and PostgreSQL stores SCRAM hashes by default
+# since 14, so there is no reason to keep the weaker method in pg_hba.conf.
+postgresql_auth_method: "scram-sha-256"
+
+# Still required even though no collation is set below: the role's own default for lc_collate and
+# lc_ctype is en_US.UTF-8, and CREATE DATABASE fails if that locale was never generated.
+postgresql_locales:
+  - "en_US.UTF-8"
+
+##############################################################################
+# postgresql.conf
+##############################################################################
+# Values follow pgtune for a web workload on SSD. Anything pgtune lists that already equals the
+# server default (default_statistics_target, checkpoint_completion_target, wal_buffers,
+# password_encryption) is left out rather than restated, and io_method is left out because it only
+# exists in PostgreSQL 18 while this role installs the version the distribution ships.
+#
+# The role reads unix_socket_directories and log_directory back out of this list, so both entries
+# have to stay here even though they only repeat the role defaults.
+postgresql_global_config_options:
+  - option: unix_socket_directories
+    value: '{{ postgresql_unix_socket_directories | join(",") }}'
+  - option: log_directory
+    value: 'log'
+
+  - option: listen_addresses
+    value: "{{ artemis_database_host }},localhost"
+  - option: port
+    value: "{{ artemis_database_port }}"
+
+  # Postgres forks a backend process per connection, so connections cost far more here than the 2000
+  # the MySQL config allowed with its thread cache. Artemis reaches the database through per-node
+  # HikariCP pools, which is what actually bounds concurrency, so this only has to cover those pools
+  # plus the admin and backup sessions. If it stops fitting, a pooler in front of the database is the
+  # answer rather than a larger number here, because work_mem is charged per sort against it.
+  #
+  # Note that this is the total, not the number available to Artemis: superuser_reserved_connections
+  # holds back 3 slots, so 122 are open to the nodes. Four fully saturated pools of 30 leave 2 of
+  # those free, which is enough for remoteAdmin and the backup dump but not for much beside them.
+  - option: max_connections
+    value: "{{ artemis_database_max_connections }}"
+
+  # Memory, sized from the database host's own memory rather than hardcoded. One fixed value was
+  # shared by every environment in this group, whose hosts differ in size by a factor of four, so a
+  # literal is wrong somewhere by construction. These shares reproduce pgtune's numbers on a 16 GB
+  # host and scale with the smaller ones.
+  #
+  # The share is much lower than the 70% the MySQL config used, and deliberately so. That number
+  # only worked because O_DIRECT took the kernel page cache out of the picture and made the buffer
+  # pool the single cache. Postgres has no supported equivalent: it always reads and writes through
+  # the page cache and relies on it as its second tier, so handing shared_buffers most of the
+  # machine would not enlarge the total cache, it would move memory from a cache the kernel can
+  # share and evict into one it cannot.
+  - option: shared_buffers
+    value: "{{ (ansible_memtotal_mb * 0.25) | int }}MB"
+
+  # Not an allocation. This is the planner's estimate of how much of the database the shared buffers
+  # and the page cache together hold, and it is what makes the planner willing to pick an index scan
+  # on a large table instead of falling back to a sequential scan.
+  - option: effective_cache_size
+    value: "{{ (ansible_memtotal_mb * 0.75) | int }}MB"
+
+  # Per sort or hash node, not per connection, and one statement can open several. The budget is
+  # what is left once shared_buffers is deducted, divided across the connection ceiling above.
+  - option: work_mem
+    value: "{{ ((ansible_memtotal_mb * 0.75) / (artemis_database_max_connections * 3)) | int }}MB"
+
+  # Used by VACUUM, CREATE INDEX and the Liquibase migrations, where a small value turns an index
+  # build into an external merge. Only the autovacuum workers can hold this at once.
+  - option: maintenance_work_mem
+    value: "{{ [(ansible_memtotal_mb / 16) | int, 2048] | min }}MB"
+
+  # Falls back to normal pages if the host has no huge pages reserved, so this is free when unused.
+  - option: huge_pages
+    value: "try"
+
+  # Every database host here is on SSD, and both of these still carry defaults that describe a single
+  # spinning disk: random_page_cost 4.0 tells the planner a random read costs four sequential ones,
+  # which is what pushes it towards sequential scans, and the shipped effective_io_concurrency allows
+  # almost no read-ahead on bitmap heap scans.
+  - option: random_page_cost
+    value: "1.1"
+  - option: effective_io_concurrency
+    value: "200"
+
+  # WAL. The MySQL side sized its redo log at 512M; the equivalent question here is how much WAL may
+  # accumulate between checkpoints, and a small allowance forces frequent checkpoints that turn into
+  # write spikes under load. lz4 needs a server built with --with-lz4, which the Debian and Ubuntu
+  # packages are.
+  - option: min_wal_size
+    value: "1GB"
+  - option: max_wal_size
+    value: "4GB"
+  - option: wal_compression
+    value: "lz4"
+
+  # JIT compilation earns its planning cost on long analytical queries and loses on the short
+  # repeated statements Artemis actually issues, where it shows up as latency on plans that would
+  # otherwise be trivial.
+  - option: jit
+    value: "off"
+
+  # Parallel query, scaled to the host instead of to the 6 vCPUs pgtune was given.
+  - option: max_worker_processes
+    value: "{{ ansible_processor_vcpus }}"
+  - option: max_parallel_workers
+    value: "{{ ansible_processor_vcpus }}"
+  - option: max_parallel_workers_per_gather
+    value: "{{ [ansible_processor_vcpus // 2, 1] | max }}"
+  - option: max_parallel_maintenance_workers
+    value: "{{ [ansible_processor_vcpus // 2, 1] | max }}"
+
+  # Autovacuum. pgtune tunes memory, the planner and WAL, and leaves autovacuum alone, so these are
+  # the shipped defaults unless set here. At this database's size that is the wrong place to leave
+  # them: the 20% dead-tuple threshold lets millions of dead rows pile up in Artemis' churn tables
+  # (submissions, results, build jobs) before a vacuum even starts, and the shipped cost limit of 200
+  # then throttles that vacuum to a few MB/s of dirty pages, which is a brake calibrated for the same
+  # spinning disk as the I/O defaults above rather than for the SSD these hosts have. The result is
+  # not an outage but steady bloat, ending in an anti-wraparound vacuum at a time nobody chose.
+  #
+  # The analyze threshold is lowered for the same reason on the planner side: at 10% of a large table,
+  # statistics go stale for millions of rows, and stale statistics are what turn a correct index plan
+  # into a sequential scan.
+  #
+  # autovacuum_max_workers stays at its default of 3 on purpose. The cost limit is shared out among
+  # the running workers, so more workers would divide the throughput just raised here rather than add
+  # to it. Individual hot tables can get their own ALTER TABLE ... SET (autovacuum_*) later; this is
+  # the cluster-wide floor.
+  - option: autovacuum_vacuum_scale_factor
+    value: "0.05"
+  - option: autovacuum_analyze_scale_factor
+    value: "0.025"
+  - option: autovacuum_vacuum_cost_limit
+    value: "2000"
+
+  # Query statistics. The slow query threshold below only catches statements that individually cross
+  # 5 seconds, which is the wrong shape for the workload this migration produces: Hibernate emits
+  # different SQL against Postgres than against MySQL, so the queries worth finding afterwards are
+  # the ones that are fast individually and executed constantly. pg_stat_statements aggregates by
+  # normalised statement, which is what makes those visible at all. postgresql-contrib is already in
+  # the role's package list, so the library only needs preloading, and track_io_timing is what lets
+  # its numbers separate a query that is slow from a query that was waiting on the disk.
+  #
+  # Preloading takes a restart, which the role performs, and the view needs
+  # "CREATE EXTENSION pg_stat_statements;" once in the database - this role has no task for that.
+  - option: shared_preload_libraries
+    value: "pg_stat_statements"
+  - option: track_io_timing
+    value: "on"
+
+  # The counterpart of the MySQL slow query log, with the same 5 second threshold. The Debian
+  # packaging already collects the server's stderr into /var/log/postgresql, so this needs no
+  # further logging setup.
+  - option: log_min_duration_statement
+    value: "5000"
+
+##############################################################################
+# pg_hba.conf
+##############################################################################
+# Postgres has no per-user host pattern the way MySQL does, so the host restrictions that lived in
+# mysql_users are expressed here instead. fcfe::a:0/112 is the node network that "fcfe::a:%" matched.
+postgresql_hba_entries:
+  - {type: local, database: all, user: postgres, auth_method: peer}
+  - {type: local, database: all, user: all, auth_method: peer}
+  - {type: host, database: all, user: all, address: "127.0.0.1/32", auth_method: "{{ postgresql_auth_method }}"}
+  - {type: host, database: all, user: all, address: "::1/128", auth_method: "{{ postgresql_auth_method }}"}
+  - {type: host, database: "{{ artemis_database_dbname }}", user: "{{ artemis_database_username }}", address: "fcfe:0:0:0:0:0:a:0/112", auth_method: "{{ postgresql_auth_method }}"}
+
+##############################################################################
+# Databases
+##############################################################################
+postgresql_databases:
+  - name: "{{ artemis_database_dbname }}"
+    encoding: "{{ artemis_database_encoding }}"
+    owner: "{{ artemis_database_username }}"
+
+##############################################################################
+# Users
+##############################################################################
+# The Artemis role owns the database rather than holding blanket privileges on the cluster, which is
+# what "*.*:ALL" amounted to under MySQL. Ownership is what Liquibase needs, and it stops short of
+# the rest of the cluster.
+postgresql_users:
+  - name: "{{ artemis_database_username }}"
+    password: "{{ artemis_database_password }}"
+    role_attr_flags: "LOGIN,NOSUPERUSER,NOCREATEROLE,CREATEDB"
+
+  # The MySQL remoteAdmin account held ALL on everything, and the closest equivalent to that is
+  # superuser. It stays reachable over loopback only, per the hba entries above.
+  - name: "remoteAdmin"
+    password: "{{ artemis_remote_admin_database_password }}"
+    role_attr_flags: "LOGIN,SUPERUSER"
+
+  - name: "remoteAdminRO"
+    password: "{{ artemis_remote_admin_ro_database_password }}"
+    role_attr_flags: "LOGIN,NOSUPERUSER,NOCREATEDB,NOCREATEROLE"
+
+# MySQL's "SELECT,SHOW VIEW" was a single grant covering everything, present and future. Postgres
+# grants per object, so read-only access needs the schema, the objects that exist now, and a default
+# privilege so that tables a later Liquibase migration creates are readable too.
+postgresql_privs:
+  - db: "{{ artemis_database_dbname }}"
+    roles: "remoteAdminRO"
+    type: database
+    objs: "{{ artemis_database_dbname }}"
+    privs: CONNECT
+  - db: "{{ artemis_database_dbname }}"
+    roles: "remoteAdminRO"
+    type: schema
+    objs: public
+    privs: USAGE
+  - db: "{{ artemis_database_dbname }}"
+    roles: "remoteAdminRO"
+    type: table
+    objs: ALL_IN_SCHEMA
+    schema: public
+    privs: SELECT
+  - db: "{{ artemis_database_dbname }}"
+    roles: "remoteAdminRO"
+    type: sequence
+    objs: ALL_IN_SCHEMA
+    schema: public
+    privs: SELECT
+  - db: "{{ artemis_database_dbname }}"
+    roles: "remoteAdminRO"
+    type: default_privs
+    objs: TABLES
+    schema: public
+    privs: SELECT
+    target_roles: "{{ artemis_database_username }}"
+  - db: "{{ artemis_database_dbname }}"
+    roles: "remoteAdminRO"
+    type: default_privs
+    objs: SEQUENCES
+    schema: public
+    privs: SELECT
+    target_roles: "{{ artemis_database_username }}"
