@@ -4,6 +4,9 @@ roles:
 
   - src: geerlingguy.certbot
 
+  - src: geerlingguy.mysql
+    version: 6.2.0
+
   - src: geerlingguy.postgresql
     version: 4.1.0
 
