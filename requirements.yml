@@ -22,3 +22,8 @@ collections:
   - name: https://github.com/ls1intum/artemis-ansible-collection.git
     type: git
     version: main
+
+  - name: ansible.posix
+  - name: community.postgresql
+  - name: community.docker
+  - name: community.crypto
