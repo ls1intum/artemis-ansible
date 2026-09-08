@@ -1,0 +1,346 @@
+---
+# In-place PostgreSQL major-version upgrade for the prod-like database hosts.
+#
+# geerlingguy.postgresql installs packages and manages config, but it never moves data
+# between major versions: raising postgresql_version just leaves the old cluster's data
+# behind an empty new cluster. This playbook performs the migration with Debian's
+# pg_upgradecluster, and is written to be re-run for every future jump (16 -> 18,
+# 18 -> 19, ...): the target version defaults to whatever postgresql_version resolves
+# to for the host, the source version is detected from the running cluster, and a host
+# that is already on the target version is skipped.
+#
+# It only touches the database host. Artemis on the app nodes MUST be stopped first,
+# otherwise writes made during the dump are lost:
+#
+#   ansible-playbook playbooks/artemis-staging1/nodes-stop-artemis.yml
+#   ansible-playbook playbooks/artemis-staging1/db.yml            # installs postgresql-<target>
+#   ansible-playbook playbooks/postgres-major-upgrade.yml -e postgres_upgrade_target=artemis_staging1_db
+#   ansible-playbook playbooks/artemis-staging1/db.yml            # reapply tuned postgresql.conf on the new cluster
+#   ansible-playbook playbooks/artemis-staging1/nodes-start-artemis.yml
+#
+# Useful extra vars:
+#   -e postgres_upgrade_target=artemis_staging2_db   (required: inventory host or group to act on)
+#   -e pg_target_version=19                          (override; default: the host's postgresql_version)
+#   -e pg_upgrade_method=pg_upgrade_link             (dump | pg_upgrade | pg_upgrade_link; default dump)
+#   -e pg_drop_old_cluster=true                      (remove the old cluster once done; default keep it stopped)
+#   -e pg_upgrade_confirmed=true                     (skip the interactive confirmation prompt)
+#   -e pg_ignore_active_connections=true             (proceed even if clients are still connected)
+
+- name: Check the upgrade target was given
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Require postgres_upgrade_target
+      ansible.builtin.assert:
+        that: postgres_upgrade_target is defined and (postgres_upgrade_target | string | length > 0)
+        fail_msg: >-
+          Pass the host or group to act on, e.g.
+          -e postgres_upgrade_target=artemis_staging1_db
+
+- name: Upgrade PostgreSQL to a new major version
+  hosts: "{{ postgres_upgrade_target | default('postgres_upgrade_target_undefined') }}"
+  serial: 1
+  any_errors_fatal: true
+  become: true
+
+  vars:
+    # Target major version. Resolves from group_vars (artemis_prod_like_postgres sets
+    # postgresql_version) so a plain run upgrades to whatever the role would install.
+    pg_target_version: "{{ postgresql_version | default('') }}"
+    # Cluster name. geerlingguy.postgresql always uses 'main'.
+    pg_cluster_name: "{{ (postgresql_data_dir | default('/main')) | basename }}"
+    # Explicit source version; leave empty to auto-detect the one non-target cluster.
+    pg_source_version: ""
+
+    pg_upgrade_method: dump
+    # Short option forms only: older postgresql-common builds wire up "-v"/"-m"/"-k"
+    # but not their long aliases (e.g. --target-version is rejected as unknown).
+    _pg_upgrade_method_args:
+      dump: ["-m", "dump"]
+      pg_upgrade: ["-m", "upgrade"]
+      pg_upgrade_link: ["-m", "upgrade", "-k"]
+
+    pg_backup_dir: /var/lib/postgresql/upgrade-backups
+    pg_drop_old_cluster: false
+    pg_upgrade_confirmed: false
+    pg_ignore_active_connections: false
+
+  tasks:
+    - name: Assert this is a Debian-family host
+      ansible.builtin.assert:
+        that: ansible_os_family == "Debian"
+        fail_msg: "This playbook relies on Debian's postgresql-common (pg_upgradecluster); host is {{ ansible_os_family }}."
+
+    - name: Assert a target version is known
+      ansible.builtin.assert:
+        that: pg_target_version | string | length > 0
+        fail_msg: "pg_target_version is empty. Add the host to a group that sets postgresql_version, or pass -e pg_target_version=<major>."
+
+    - name: Assert a valid upgrade method
+      ansible.builtin.assert:
+        that: pg_upgrade_method in _pg_upgrade_method_args
+        fail_msg: "pg_upgrade_method must be one of: {{ _pg_upgrade_method_args.keys() | list | join(', ') }}."
+
+    - name: Ensure the target PostgreSQL server package is installed
+      ansible.builtin.stat:
+        path: "/usr/lib/postgresql/{{ pg_target_version }}/bin/pg_ctl"
+      register: pg_target_bin
+
+    - name: Assert the target packages are present
+      ansible.builtin.assert:
+        that: pg_target_bin.stat.exists
+        fail_msg: "postgresql-{{ pg_target_version }} is not installed. Run this environment's db.yml playbook first."
+
+    - name: List existing clusters
+      ansible.builtin.command: pg_lsclusters -h
+      changed_when: false
+      register: pg_lsclusters_raw
+
+    - name: Parse the cluster list
+      ansible.builtin.set_fact:
+        pg_clusters: >-
+          {{ pg_clusters | default([]) + [{
+            "version": item.split()[0],
+            "name": item.split()[1],
+            "port": item.split()[2] | int,
+            "status": item.split()[3]
+          }] }}
+      loop: "{{ pg_lsclusters_raw.stdout_lines }}"
+      when: item | trim | length > 0
+
+    - name: Locate the target and candidate source clusters
+      ansible.builtin.set_fact:
+        pg_target_present: >-
+          {{ (pg_clusters | default([])
+              | selectattr("name", "equalto", pg_cluster_name)
+              | selectattr("version", "equalto", pg_target_version | string)
+              | list | length) > 0 }}
+        pg_source_candidates: >-
+          {{ pg_clusters | default([])
+             | selectattr("name", "equalto", pg_cluster_name)
+             | rejectattr("version", "equalto", pg_target_version | string)
+             | list }}
+
+    - name: Inspect the target cluster's data directory
+      ansible.builtin.find:
+        paths: "/var/lib/postgresql/{{ pg_target_version }}/{{ pg_cluster_name }}/base"
+        file_type: directory
+      register: pg_target_base_dirs
+      when: pg_target_present | bool
+
+    - name: Decide whether an upgrade is still needed
+      ansible.builtin.set_fact:
+        # A freshly initdb'd cluster has exactly the three template/postgres databases
+        # under base/ (OIDs 1, 4, 5). More than that means real data is already there.
+        pg_target_has_data: "{{ (pg_target_present | bool) and ((pg_target_base_dirs.files | default([]) | length) > 3) }}"
+
+    - name: Report and stop if the target already holds data
+      when: pg_target_has_data | bool
+      block:
+        - name: Nothing to do
+          ansible.builtin.debug:
+            msg: "{{ pg_target_version }}/{{ pg_cluster_name }} already contains databases on {{ inventory_hostname }}; skipping."
+        - name: End play for this host
+          ansible.builtin.meta: end_host
+
+    - name: Narrow down the source cluster
+      ansible.builtin.set_fact:
+        pg_source_list: >-
+          {{ pg_source_candidates
+             | selectattr("version", "equalto", pg_source_version | string) | list
+             if (pg_source_version | string | length > 0)
+             else pg_source_candidates }}
+
+    - name: Assert exactly one source cluster
+      ansible.builtin.assert:
+        that: (pg_source_list | length) == 1
+        fail_msg: >-
+          Expected one '{{ pg_cluster_name }}' cluster to upgrade from, found {{ pg_source_list | length }}:
+          {{ pg_source_list }}. Disambiguate with -e pg_source_version=<major>.
+
+    - name: Set the resolved source version
+      ansible.builtin.set_fact:
+        pg_source_resolved: "{{ pg_source_list[0].version }}"
+
+    - name: Count client connections on the source cluster
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "--cluster={{ pg_source_resolved }}/{{ pg_cluster_name }}"
+          - "-tAc"
+          - "SELECT count(*) FROM pg_stat_activity WHERE backend_type = 'client backend' AND pid <> pg_backend_pid()"
+      become: true
+      become_user: postgres
+      changed_when: false
+      register: pg_client_conns
+
+    - name: Assert no application is still connected
+      ansible.builtin.assert:
+        that: (pg_client_conns.stdout | int) == 0
+        fail_msg: >-
+          {{ pg_client_conns.stdout }} client connection(s) still open on {{ pg_source_resolved }}/{{ pg_cluster_name }}.
+          Stop Artemis on the app nodes first. Override with -e pg_ignore_active_connections=true.
+      when: not (pg_ignore_active_connections | bool)
+
+    - name: Confirm the upgrade
+      ansible.builtin.pause:
+        prompt: >-
+          Upgrade {{ pg_source_resolved }}/{{ pg_cluster_name }} -> {{ pg_target_version }} on {{ inventory_hostname }}
+          using method '{{ pg_upgrade_method }}'. A full pg_dumpall backup is taken first.
+          Press ENTER to proceed, or Ctrl-C then A to abort
+      when: not (pg_upgrade_confirmed | bool)
+
+    - name: Create the backup directory
+      ansible.builtin.file:
+        path: "{{ pg_backup_dir }}"
+        state: directory
+        owner: postgres
+        group: postgres
+        mode: "0700"
+
+    - name: Measure the source data directory
+      ansible.builtin.command: "du -sb /var/lib/postgresql/{{ pg_source_resolved }}/{{ pg_cluster_name }}"
+      changed_when: false
+      register: pg_src_size
+
+    - name: Measure free space at the backup location
+      ansible.builtin.command: "df -B1 --output=avail {{ pg_backup_dir }}"
+      changed_when: false
+      register: pg_backup_avail
+
+    - name: Assert there is room for the backup
+      ansible.builtin.assert:
+        that: (pg_backup_avail.stdout_lines[1] | int) > (pg_src_size.stdout.split()[0] | int)
+        fail_msg: >-
+          Only {{ pg_backup_avail.stdout_lines[1] | int }} bytes free at {{ pg_backup_dir }}, need more than the
+          {{ pg_src_size.stdout.split()[0] | int }} byte data directory. Free space or point pg_backup_dir elsewhere.
+
+    - name: Note the disk cost of a non-link upgrade
+      ansible.builtin.debug:
+        msg: >-
+          Method '{{ pg_upgrade_method }}' rebuilds the data into a second cluster and needs roughly another
+          {{ pg_src_size.stdout.split()[0] | int }} bytes on /var/lib/postgresql. Use -e pg_upgrade_method=pg_upgrade_link
+          for a large database to hard-link instead of copy.
+      when: pg_upgrade_method != "pg_upgrade_link"
+
+    - name: Record the database list before the upgrade
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "--cluster={{ pg_source_resolved }}/{{ pg_cluster_name }}"
+          - "-tAc"
+          - "SELECT datname FROM pg_database WHERE NOT datistemplate ORDER BY 1"
+      become: true
+      become_user: postgres
+      changed_when: false
+      register: pg_dbs_before
+
+    - name: Compose the backup file path
+      ansible.builtin.set_fact:
+        pg_backup_file: "{{ pg_backup_dir }}/{{ inventory_hostname }}-pg{{ pg_source_resolved }}-{{ ansible_date_time.iso8601_basic_short }}.sql.gz"
+
+    - name: Take a full logical backup of the source cluster
+      ansible.builtin.shell:
+        cmd: >-
+          set -o pipefail && umask 077 &&
+          pg_dumpall --cluster {{ pg_source_resolved }}/{{ pg_cluster_name }} | gzip > {{ pg_backup_file }}
+        creates: "{{ pg_backup_file }}"
+      args:
+        executable: /bin/bash
+      become: true
+      become_user: postgres
+
+    - name: Report the backup location
+      ansible.builtin.debug:
+        msg: "Backup written to {{ pg_backup_file }}"
+
+    - name: Assert the empty target cluster has no data before removing it
+      ansible.builtin.assert:
+        that: (pg_target_base_dirs.files | default([]) | length) <= 3
+        fail_msg: "{{ pg_target_version }}/{{ pg_cluster_name }} unexpectedly holds data. Inspect it manually before continuing."
+      when: pg_target_present | bool
+
+    - name: Remove the empty target cluster created by package installation
+      ansible.builtin.command:
+        argv: ["pg_dropcluster", "--stop", "{{ pg_target_version }}", "{{ pg_cluster_name }}"]
+      changed_when: true
+      when: pg_target_present | bool
+
+    - name: Run pg_upgradecluster
+      ansible.builtin.command:
+        argv: >-
+          {{ ["pg_upgradecluster", "-v", pg_target_version | string]
+             + _pg_upgrade_method_args[pg_upgrade_method]
+             + [pg_source_resolved | string, pg_cluster_name] }}
+      changed_when: true
+      register: pg_upgradecluster_run
+
+    - name: Re-read the cluster list
+      ansible.builtin.command: pg_lsclusters -h
+      changed_when: false
+      register: pg_lsclusters_after
+
+    - name: Assert the target cluster is online
+      ansible.builtin.assert:
+        that: >-
+          pg_lsclusters_after.stdout_lines
+          | select("match", "^" ~ pg_target_version ~ "\\s+" ~ pg_cluster_name ~ "\\s+\\d+\\s+online")
+          | list | length == 1
+        fail_msg: "Target cluster {{ pg_target_version }}/{{ pg_cluster_name }} is not online:\n{{ pg_lsclusters_after.stdout }}"
+
+    - name: Assert the upgraded cluster kept the port the app expects
+      ansible.builtin.assert:
+        that: >-
+          pg_lsclusters_after.stdout_lines
+          | select("match", "^" ~ pg_target_version ~ "\\s+" ~ pg_cluster_name ~ "\\s+" ~ (artemis_database_port | string) ~ "\\s+online")
+          | list | length == 1
+        fail_msg: >-
+          Upgraded cluster is not listening on {{ artemis_database_port }} (pg_upgradecluster copies the port from the
+          old cluster's config). Fix listen port/config and restart before starting Artemis:\n{{ pg_lsclusters_after.stdout }}
+      when: artemis_database_port is defined
+
+    - name: Record the database list after the upgrade
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "--cluster={{ pg_target_version }}/{{ pg_cluster_name }}"
+          - "-tAc"
+          - "SELECT datname FROM pg_database WHERE NOT datistemplate ORDER BY 1"
+      become: true
+      become_user: postgres
+      changed_when: false
+      register: pg_dbs_after
+
+    - name: Assert the database set is unchanged
+      ansible.builtin.assert:
+        that: (pg_dbs_before.stdout_lines | sort) == (pg_dbs_after.stdout_lines | sort)
+        fail_msg: >-
+          Database list changed across the upgrade.
+          before={{ pg_dbs_before.stdout_lines | sort }} after={{ pg_dbs_after.stdout_lines | sort }}
+
+    - name: Rebuild optimizer statistics (not carried across a major upgrade)
+      ansible.builtin.command:
+        argv:
+          - vacuumdb
+          - "--cluster={{ pg_target_version }}/{{ pg_cluster_name }}"
+          - "--all"
+          - "--analyze-in-stages"
+          - "--jobs={{ ansible_processor_vcpus | default(2) }}"
+      become: true
+      become_user: postgres
+      changed_when: true
+
+    - name: Drop the old cluster
+      ansible.builtin.command:
+        argv: ["pg_dropcluster", "--stop", "{{ pg_source_resolved }}", "{{ pg_cluster_name }}"]
+      changed_when: true
+      when: pg_drop_old_cluster | bool
+
+    - name: Summary
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}: upgraded {{ pg_source_resolved }} -> {{ pg_target_version }}.
+          {{ "Old cluster dropped." if (pg_drop_old_cluster | bool)
+             else "Old cluster " ~ pg_source_resolved ~ "/" ~ pg_cluster_name ~ " kept (stopped, manual start). Remove later with: pg_dropcluster --stop " ~ pg_source_resolved ~ " " ~ pg_cluster_name ~ " && apt-get purge postgresql-" ~ pg_source_resolved ~ "." }}
+          pg_upgradecluster carried over the OLD cluster's postgresql.conf, so re-run this environment's db.yml
+          to reapply the tuned settings, then start Artemis.

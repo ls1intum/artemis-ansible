@@ -111,6 +111,32 @@ The `<version>` variable can be set to a specific [GitHub release tag](https://g
 
 > **YAML quoting (important for 2-segment tags):** when recording a 2-segment version inside a `group_vars` or `host_vars` file, always quote it: `artemis_version: "9.2"`. Without quotes YAML parses `9.2` as a float and `9.10` silently becomes `9.1`. Passing `-e artemis_version=9.2` on the command line (`key=value` form) is string-safe, but inline JSON/YAML-form extra-vars (`-e '{"artemis_version": 9.2}'`) still need explicit quoting.
 
+### Upgrading PostgreSQL to a New Major Version
+
+The `geerlingguy.postgresql` role installs packages and manages configuration but never
+moves data between major versions. The pinned version lives in
+`group_vars/artemis_prod_like_postgres.yml` (`postgresql_version` and the matching
+`postgresql_*` path variables); the PGDG apt repository that provides it is added by each
+environment's `db.yml`.
+
+To move an existing database host to the pinned version, stop Artemis first, then run the
+reusable migration playbook (Debian `pg_upgradecluster` under the hood; it takes a full
+`pg_dumpall` backup into `/var/lib/postgresql/upgrade-backups` before touching anything):
+
+```sh
+ansible-playbook playbooks/artemis-staging1/nodes-stop-artemis.yml
+ansible-playbook playbooks/artemis-staging1/db.yml                                   # install the new server packages
+ansible-playbook playbooks/postgres-major-upgrade.yml -e postgres_upgrade_target=artemis_staging1_db
+ansible-playbook playbooks/artemis-staging1/db.yml                                   # reapply the tuned postgresql.conf on the new cluster
+ansible-playbook playbooks/artemis-staging1/nodes-start-artemis.yml
+```
+
+The playbook auto-detects the source version and skips a host that is already on the
+target. Useful extra vars: `-e pg_target_version=<major>` (override the pin),
+`-e pg_upgrade_method=pg_upgrade_link` (hard-link instead of copy, for a large database),
+`-e pg_drop_old_cluster=true` (remove the old cluster instead of leaving it stopped),
+`-e pg_upgrade_confirmed=true` (skip the interactive prompt).
+
 ### Updating Artemis Configuration on a Host
 
 Modify the necessary variables in `host_var` or `group_var`, then apply the changes.

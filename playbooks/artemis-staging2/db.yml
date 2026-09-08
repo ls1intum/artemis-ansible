@@ -2,6 +2,30 @@
 - name: Setup
   hosts: artemis_staging2_db
 
+  # geerlingguy.postgresql only installs the distribution's PostgreSQL packages, and no
+  # Debian/Ubuntu release ships PostgreSQL 18 yet. The PGDG apt repository has to be in
+  # place before the role's "Ensure PostgreSQL packages are installed" task runs, so it
+  # is added here rather than as a role dependency.
+  pre_tasks:
+    - name: Add the PGDG apt repository
+      ansible.builtin.deb822_repository:
+        name: pgdg
+        types: [deb]
+        uris: "https://apt.postgresql.org/pub/repos/apt"
+        suites: "{{ ansible_distribution_release }}-pgdg"
+        components: [main]
+        signed_by: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+        state: present
+      become: true
+      notify: Update apt cache
+      tags: postgresql
+
+  handlers:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+      become: true
+
   roles:
     - role: geerlingguy.postgresql
       become: true
