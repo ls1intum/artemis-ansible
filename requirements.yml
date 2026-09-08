@@ -24,6 +24,8 @@ collections:
     version: main
 
   - name: ansible.posix
-  - name: community.postgresql
-  - name: community.docker
   - name: community.crypto
+  - name: community.docker
+  - name: community.general
+  - name: community.mysql
+  - name: community.postgresql
