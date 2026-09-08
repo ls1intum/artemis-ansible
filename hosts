@@ -141,7 +141,7 @@ broker.staging1.artemis.cit.tum.de
 [artemis_staging1_registry]
 registry.staging1.artemis.cit.tum.de
 
-[artemis_staging1_redis]
+[artemis_staging1_valkey]
 redis.staging1.artemis.cit.tum.de
 
 [artemis_staging1_storage]
@@ -155,7 +155,7 @@ artemis_staging1_nodes
 artemis_staging1_db
 artemis_staging1_broker
 artemis_staging1_registry
-artemis_staging1_redis
+artemis_staging1_valkey
 artemis_staging1_storage
 artemis_staging1_proxy
 
@@ -179,7 +179,7 @@ db.staging2.artemis.cit.tum.de
 [artemis_staging2_broker]
 broker.staging2.artemis.cit.tum.de
 
-[artemis_staging2_redis]
+[artemis_staging2_valkey]
 redis.staging2.artemis.cit.tum.de
 
 [artemis_staging2_storage]
@@ -192,7 +192,7 @@ proxy.staging2.artemis.cit.tum.de
 artemis_staging2_nodes
 artemis_staging2_db
 artemis_staging2_broker
-artemis_staging2_redis
+artemis_staging2_valkey
 artemis_staging2_storage
 artemis_staging2_proxy
 
