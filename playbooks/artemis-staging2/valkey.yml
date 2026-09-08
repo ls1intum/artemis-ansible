@@ -1,0 +1,9 @@
+---
+- name: Setup
+  hosts: artemis_staging2_valkey
+
+  roles:
+    - role: ls1intum.artemis.valkey
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall

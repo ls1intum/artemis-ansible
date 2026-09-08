@@ -6,7 +6,8 @@ artemis_version: 9.9.1
 var_vault_group: "test/staging2"
 
 # No JHipster registry on staging2. Eureka exists in Artemis only to locate Hazelcast members, and this
-# environment runs the Redis distributed data provider, so nothing reads the registry: the application forces
+# environment runs Valkey as the distributed data provider (Artemis still names the provider "Redis"
+# internally - it speaks the same protocol), so nothing reads the registry: the application forces
 # eureka.client.enabled=false and spring.cloud.discovery.enabled=false whenever the provider is Redis.
 # Overriding registry.url from artemis_prod_like_common.yml leaves artemis_eureka_urls empty, so no registry
 # address is rendered into the node configuration either.
@@ -85,7 +86,9 @@ activemq_version: 2.44.0
 broker:
   username: brokeruser
 
-redis:
+# The `redis_*` Vault keys are the names of the secrets in HashiCorp Vault and are left unchanged;
+# only the Ansible-side dictionary was renamed from `redis` to `valkey`.
+valkey:
   host: "fcfe:0:0:0:0:0:b:3"
   port: 6379
   username: artemis
@@ -93,7 +96,7 @@ redis:
   admin_username: admin
   admin_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('redis_admin_password') }}"
 
-artemis_redis_client_name: "artemis-{{ node_id }}"
+artemis_valkey_client_name: "artemis-{{ node_id }}"
 
 ##############################################################################
 # Sentry Env-specific Configuration

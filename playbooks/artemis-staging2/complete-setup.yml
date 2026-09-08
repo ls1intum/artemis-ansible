@@ -14,8 +14,8 @@
 # Cluster Broker
 - import_playbook: broker.yml
 
-# Cluster Redis
-- import_playbook: redis.yml
+# Cluster Valkey
+- import_playbook: valkey.yml
 
 # Cluster Proxy
 - import_playbook: proxy.yml
