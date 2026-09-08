@@ -4,3 +4,6 @@
 
   roles:
     - role: ls1intum.artemis.valkey
+
+    - role: ls1intum.artemis.firewall
+      tags: firewall
