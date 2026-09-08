@@ -21,12 +21,38 @@ postgresql_locales:
   - "en_US.UTF-8"
 
 ##############################################################################
+# PostgreSQL version
+##############################################################################
+# geerlingguy.postgresql derives every path below from an OS vars file keyed to the version the
+# distribution ships (PG 15 on Debian 12, PG 16 on Ubuntu 24). PG 18 only comes from the PGDG apt
+# repo, which the db playbooks add in a pre_task, so each of these has to be pinned here to match
+# the packages that repo installs. The role applies them because each of its set_fact tasks is
+# guarded with "when: <var> is not defined".
+#
+# postgresql-contrib is deliberately not in the package list: since PG 10 the contrib extensions
+# (pg_stat_statements among them, which shared_preload_libraries below needs) ship inside the
+# versioned postgresql-18 package, and the unversioned postgresql-contrib metapackage would drag
+# in the distribution's default-version server as a second, unwanted cluster.
+postgresql_version: "18"
+postgresql_packages:
+  - postgresql-18
+  - libpq-dev
+postgresql_data_dir: "/var/lib/postgresql/18/main"
+postgresql_bin_path: "/usr/lib/postgresql/18/bin"
+postgresql_config_path: "/etc/postgresql/18/main"
+# Instantiated systemd unit for this one cluster, on both Debian and Ubuntu. The role's Ubuntu
+# default is the plain "postgresql" wrapper target, which is fine for start/enable but cannot be
+# restarted the way the role's handlers expect.
+postgresql_daemon: "postgresql@18-main"
+
+##############################################################################
 # postgresql.conf
 ##############################################################################
 # Values follow pgtune for a web workload on SSD. Anything pgtune lists that already equals the
 # server default (default_statistics_target, checkpoint_completion_target, wal_buffers,
-# password_encryption) is left out rather than restated, and io_method is left out because it only
-# exists in PostgreSQL 18 while this role installs the version the distribution ships.
+# password_encryption) is left out rather than restated. io_method is a PostgreSQL 18 setting and
+# is now reachable (see the version pin above), but its default of "worker" is already the async
+# I/O path pgtune would pick, so it too is left at the default rather than restated here.
 #
 # The role reads unix_socket_directories and log_directory back out of this list, so both entries
 # have to stay here even though they only repeat the role defaults.
