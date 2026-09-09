@@ -5,13 +5,16 @@
   roles:
     - role: ls1intum.artemis.proxy
       vars:
+        # node1 also runs the scheduling profile, and with it the singleton build queue broadcast, so an equal
+        # share of requests leaves it doing strictly more work: measured 48.3% busy against 32.8% and 31.9%.
+        # 3:4:4 levels that out to within 2.5 points. See the pull request for the profile this came from.
         proxy_available_nodes:
           - hostname: "[fcfe::a:1]"
-            weight: 1
+            weight: 3
           - hostname: "[fcfe::a:2]"
-            weight: 1
+            weight: 4
           - hostname: "[fcfe::a:3]"
-            weight: 1
+            weight: 4
         proxy_ssh_proxy_protocol: true
 
     - role: ls1intum.artemis.firewall
