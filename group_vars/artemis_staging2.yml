@@ -97,7 +97,11 @@ sentry:
   dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
   send_default_pii: true
   environment: staging2
-  traces_sample_rate: 1.0
+  # Performance tracing samples whole requests, serialises them and ships them over HTTPS. At 1.0 that was
+  # 14-19% of the on-CPU samples on the Artemis nodes during a 1000-user benchmark, most of it in the
+  # SentryAsyncConnection threads and the TLS handshakes they cause. Error reporting is a separate setting
+  # (sentry.sample-rate, still 1.0) and is unaffected; this only thins out Sentry Performance.
+  traces_sample_rate: 0.05
 
 theia:
   portal_url: https://theia-staging.artemis.cit.tum.de
