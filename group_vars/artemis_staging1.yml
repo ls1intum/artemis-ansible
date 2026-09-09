@@ -79,6 +79,14 @@ proxy_rate_limit_exempt_ips:
   - ip: "2a09:80c0:89::112"
     comment: "Benchmark server (IPv6)"
 
+# Artemis has its own per-address limiter, separate from nginx's zones above, and the benchmark server has
+# to be exempt from both or a run measures the limiter rather than Artemis.
+artemis_rate_limit:
+  exempt_addresses:
+    - "131.159.89.112"
+    - "2a09:80c0:89::112"
+
+
 ##############################################################################
 # Broker and Registry Configuration
 ##############################################################################
