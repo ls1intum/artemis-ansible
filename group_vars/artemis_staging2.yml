@@ -77,6 +77,26 @@ redirects:
 firewall_hostgroup: default
 proxy_forward_ssh: true
 
+# IPs exempt from the git and login rate limits (benchmark servers).
+# artemis-performance-test0.artemis.cit.tum.de is dual-stack, and the exemption matches whichever
+# address nginx sees, so both families have to be listed or an IPv6 run is silently throttled.
+#
+# Without this a benchmark run does not fail, it quietly measures almost nothing: a 500-user run drives
+# every login from one address within seconds, so 489 of 500 students were answered 429 by the loginlimit
+# zone and dropped, and the tool still reported a finished run - of 6,785 requests instead of ~350,000.
+proxy_rate_limit_exempt_ips:
+  - ip: "131.159.89.112"
+    comment: "Benchmark server"
+  - ip: "2a09:80c0:89::112"
+    comment: "Benchmark server (IPv6)"
+
+# Artemis has its own per-address limiter, separate from nginx's zones above, and the benchmark server has
+# to be exempt from both or a run measures the limiter rather than Artemis.
+artemis_rate_limit:
+  exempt_addresses:
+    - "131.159.89.112"
+    - "2a09:80c0:89::112"
+
 ##############################################################################
 # Broker and Registry Configuration
 ##############################################################################
