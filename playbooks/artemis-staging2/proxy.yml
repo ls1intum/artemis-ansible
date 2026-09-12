@@ -6,15 +6,24 @@
     - role: ls1intum.artemis.proxy
       vars:
         # node1 also runs the scheduling profile, and with it the singleton build queue broadcast, so an equal
-        # share of requests leaves it doing strictly more work: measured 48.3% busy against 32.8% and 31.9%.
-        # 3:4:4 levels that out to within 2.5 points. See the pull request for the profile this came from.
+        # share of requests leaves it doing strictly more work. 3:4:4 was set from a profile that measured it at
+        # 48.3% busy against 32.8% and 31.9%.
+        #
+        # That overcorrected once the virtual thread carrier ceiling was raised and the Redis-backed caches were
+        # removed, because both of those took work off every node rather than off node1 in particular. At 3:4:4 a
+        # 3000 student exam left node1 at 16.9% CPU while node2 and node3 sat at 25.1% and 30.4%, and node3 served
+        # 161 ms against node1's 23 ms. 5:6:6 moves node1 from 27.3% to 29.4% of requests and levels the cluster to
+        # 22.0%, 20.6% and 21.0% busy, with per-node latency at 18, 24 and 27 ms.
+        #
+        # The ratio still favours the other two, because node1's scheduling overhead is real; it is just smaller
+        # than it was when the queue broadcast had a saturated node underneath it.
         proxy_available_nodes:
           - hostname: "[fcfe::a:1]"
-            weight: 3
+            weight: 5
           - hostname: "[fcfe::a:2]"
-            weight: 4
+            weight: 6
           - hostname: "[fcfe::a:3]"
-            weight: 4
+            weight: 6
         proxy_ssh_proxy_protocol: true
 
     - role: ls1intum.artemis.firewall
