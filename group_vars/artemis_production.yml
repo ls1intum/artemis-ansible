@@ -11,6 +11,8 @@ registry_external_host: registry.production.artemis.cit.tum.de
 
 artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPNnP9Eew/8keXo5+3tc0cP1GsRYizBG69tK+7ozAdgj artemis@xcit.tum.de"
 
+artemis_database_host: "fcfe:0:0:0:0:0:d:2"
+
 ##############################################################################
 # External Systems Configuration
 ##############################################################################
@@ -31,6 +33,15 @@ weaviate:
   open_ai_base_url: https://logos.aet.cit.tum.de:8080/
   gpu_api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
   api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('weaviate_apikey') }}"
+
+# No JHipster registry on staging2. Eureka exists in Artemis only to locate Hazelcast members, and this
+# environment runs Valkey as the distributed data provider (Artemis still names the provider "Redis"
+# internally - it speaks the same protocol), so nothing reads the registry: the application forces
+# eureka.client.enabled=false and spring.cloud.discovery.enabled=false whenever the provider is Redis.
+# Overriding registry.url from artemis_prod_like_common.yml leaves artemis_eureka_urls empty, so no registry
+# address is rendered into the node configuration either.
+registry:
+  url: null
 
 ##############################################################################
 # Proxy Configuration

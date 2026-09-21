@@ -212,13 +212,16 @@ artemis_production_core
 artemis_production_buildagent
 
 [artemis_production_db]
-db.production.artemis.cit.tum.de
+postgres.production.artemis.cit.tum.de
 
 [artemis_production_broker]
 broker.production.artemis.cit.tum.de
 
 [artemis_production_registry]
 registry.production.artemis.cit.tum.de
+
+[artemis_production_valkey]
+valkey.production.artemis.cit.tum.de
 
 [artemis_production_storage]
 storage.production.artemis.cit.tum.de
@@ -231,6 +234,7 @@ artemis_production_nodes
 artemis_production_db
 artemis_production_broker
 artemis_production_registry
+artemis_production_valkey
 artemis_production_storage
 artemis_production_proxy
 
@@ -244,10 +248,8 @@ artemis_production_core
 artemis_staging1_core
 artemis_staging2_core
 
-[artemis_prod_like_mysql:children]
-artemis_production
-
 [artemis_prod_like_postgres:children]
+artemis_production
 artemis_staging1
 artemis_staging2
 

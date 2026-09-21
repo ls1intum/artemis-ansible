@@ -18,3 +18,9 @@ artemis_internal_ip_allowlist:
   - "2a09:80c0:89::/64" # il01_7
   - "131.159.89.128/25" # il01_8
   - "2a09:80c0:89:1::/64" # il01_8
+
+proxy_allowed_ranges: []
+#  - "172.24.152.0/24" # AET VPN ipv4
+#  - "2a09:80c0:ac18:9800::/64" # AET VPN ipv6
+#  - "172.24.70.0/25" # il01_2 ipv4
+#  - "2a09:80c0:ac18:4600::/64" # il01_2 ipv6
