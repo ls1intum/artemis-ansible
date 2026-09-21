@@ -103,6 +103,16 @@ artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_grou
 artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('registry_password') }}"
 artemis_eureka_instance_id: "{{ node_id }}"
 
+valkey:
+  host: "fcfe:0:0:0:0:0:b:3"
+  port: 6379
+  username: artemis
+  password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('valkey_password') }}"
+  admin_username: admin
+  admin_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('valkey_admin_password') }}"
+
+artemis_valkey_client_name: "artemis-{{ node_id }}"
+
 ##############################################################################
 # Sentry Common Configuration
 ##############################################################################
