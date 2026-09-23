@@ -38,3 +38,40 @@
 
     - role: ls1intum.artemis.firewall
       tags: firewall
+
+  post_tasks:
+    # The postgres_exporter on this host connects as "exporter", a role that is set up outside this
+    # repository, and reads pg_stat_statements, whose functions live in schema public. The public schema
+    # of this database grants USAGE only to its owner, so without this grant every exporter query fails
+    # with "function pg_stat_statements(boolean) does not exist". Skipped where the role does not exist.
+    - name: Check whether the metrics exporter can use schema public
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-d"
+          - "{{ artemis_database_dbname }}"
+          - "-tAc"
+          - >-
+            SELECT CASE
+            WHEN NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'exporter') THEN 'absent'
+            WHEN has_schema_privilege('exporter', 'public', 'USAGE') THEN 'granted'
+            ELSE 'missing' END
+      become: true
+      become_user: postgres
+      changed_when: false
+      register: exporter_schema_usage
+      tags: monitoring
+
+    - name: Let the metrics exporter use schema public
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-d"
+          - "{{ artemis_database_dbname }}"
+          - "-c"
+          - "GRANT USAGE ON SCHEMA public TO exporter"
+      become: true
+      become_user: postgres
+      changed_when: true
+      when: exporter_schema_usage.stdout == 'missing'
+      tags: monitoring
