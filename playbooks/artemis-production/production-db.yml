@@ -59,6 +59,8 @@
       become: true
       become_user: postgres
       changed_when: false
+      # Read-only, so it also runs in check mode; otherwise the condition below has no stdout to test.
+      check_mode: false
       register: exporter_schema_usage
       tags: monitoring
 

@@ -5,7 +5,7 @@ artemis_database_encoding: UTF8
 artemis_database_host: "fcfe:0:0:0:0:0:d:1"
 
 # 4 core nodes with a HikariCP pool of 30 each (120), plus room for everything else that connects:
-# the metrics exporter, the backup dump, admin sessions (psql, remoteAdmin/remoteAdminRO from a client),
+# the metrics exporter, the backup dump, admin sessions (psql, remoteAdmin/remoteAdminRO over an SSH tunnel),
 # and a pool that reconnects while its broken connections have not been closed yet. With 125, the four
 # full pools left two slots, so a single admin session or the exporter already hit "remaining connection
 # slots are reserved". 30 is the default of the Artemis role's artemis_database_max_pool_size, so raising
