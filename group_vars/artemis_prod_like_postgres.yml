@@ -4,11 +4,15 @@ artemis_database_port: 5432
 artemis_database_encoding: UTF8
 artemis_database_host: "fcfe:0:0:0:0:0:d:1"
 
-# 4 core nodes with a HikariCP pool of 30 each, plus a small margin. 30 is the default of the
-# Artemis role's artemis_database_max_pool_size, so raising the pool there means raising this too.
+# 4 core nodes with a HikariCP pool of 30 each (120), plus room for everything else that connects:
+# the metrics exporter, the backup dump, admin sessions (psql, remoteAdmin/remoteAdminRO over an SSH tunnel),
+# and a pool that reconnects while its broken connections have not been closed yet. With 125, the four
+# full pools left two slots, so a single admin session or the exporter already hit "remaining connection
+# slots are reserved". 30 is the default of the Artemis role's artemis_database_max_pool_size, so raising
+# the pool there means raising this too.
 # Declared here because max_connections and work_mem both derive from it, and a work_mem sized against a different ceiling
 # than the server enforces is how a host ends up promising more sort memory than it has.
-artemis_database_max_connections: 125
+artemis_database_max_connections: 200
 
 # md5 is only still the role default for backwards compatibility. Every client here is either the
 # JDBC driver or psql, both of which speak SCRAM, and PostgreSQL stores SCRAM hashes by default
@@ -74,8 +78,8 @@ postgresql_global_config_options:
   # answer rather than a larger number here, because work_mem is charged per sort against it.
   #
   # Note that this is the total, not the number available to Artemis: superuser_reserved_connections
-  # holds back 3 slots, so 122 are open to the nodes. Four fully saturated pools of 30 leave 2 of
-  # those free, which is enough for remoteAdmin and the backup dump but not for much beside them.
+  # holds back 3 slots, so 197 are open to the nodes and all other clients. Four fully saturated pools
+  # of 30 leave 77 of those free. Changing max_connections takes a restart, which the role performs.
   - option: max_connections
     value: "{{ artemis_database_max_connections }}"
 
@@ -187,11 +191,18 @@ postgresql_global_config_options:
   - option: track_io_timing
     value: "on"
 
-  # The counterpart of the MySQL slow query log, with the same 5 second threshold. The Debian
-  # packaging already collects the server's stderr into /var/log/postgresql, so this needs no
-  # further logging setup.
+  # The counterpart of the MySQL slow query log. 5 seconds only caught statements that were already
+  # a problem; 1 second shows the ones on their way there, without logging the normal traffic. The
+  # Debian packaging already collects the server's stderr into /var/log/postgresql, so this needs no
+  # further logging setup. Note that the logged statements carry their literal values.
   - option: log_min_duration_statement
-    value: "5000"
+    value: "1000"
+
+  # Logs a statement that waited longer than deadlock_timeout (1 s) for a lock, with the process holding
+  # it. Lock waits are what turns a fast statement into a slow one under concurrency, and they would
+  # otherwise only show up as unexplained entries in the slow statement log.
+  - option: log_lock_waits
+    value: "on"
 
 ##############################################################################
 # pg_hba.conf
