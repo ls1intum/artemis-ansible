@@ -10,8 +10,6 @@ roles:
   - src: geerlingguy.postgresql
     version: 4.1.0
 
-  - src: geerlingguy.postgresql
-
   - src: mrlesmithjr.nfs-server
 
   - src: mrlesmithjr.netplan
