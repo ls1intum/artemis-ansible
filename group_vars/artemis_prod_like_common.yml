@@ -13,8 +13,9 @@ artemis_tmp_directory: "/opt/artemis/tmp"
 
 artemis_ssh_priv_key_value: "none"
 
-artemis_operator_name: "Technical University of Munich"
+artemis_operator_name: "Research group of Applied Education Technologies"
 artemis_operator_admin_name: "Stephan Krusche"
+artemis_university_name: "Technical University of Munich"
 
 artemis_database_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('db_password') }}"
 artemis_remote_admin_database_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('db_remoteadmin_password') }}"
