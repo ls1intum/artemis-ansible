@@ -112,7 +112,7 @@ jenkins-test.artemis.cit.tum.de
 
 [hermes]
 hermes-prod.artemis.cit.tum.de var_hermes_environment=production hermes_apns_prod_environment=true
-hermes-staging.artemis.cit.tum.de var_hermes_environment=test hermes_apns_prod_environment=false
+hermes-staging.artemis.cit.tum.de var_hermes_environment=test hermes_apns_prod_environment=false hermes_apns_fallback_environment_enabled=true
 
 [weaviate]
 weaviate-prod.artemis.cit.tum.de var_instance_name=weaviate
