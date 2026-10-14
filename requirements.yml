@@ -4,9 +4,6 @@ roles:
 
   - src: geerlingguy.certbot
 
-  - src: geerlingguy.mysql
-    version: 6.2.0
-
   - src: geerlingguy.postgresql
     version: 4.1.0
 
@@ -26,4 +23,10 @@ collections:
   - name: community.docker
   - name: community.general
   - name: community.mysql
+  # 5.0.0 for the `memberships` parameter of postgresql_membership, used by the
+  # postgres_exporter role of the Artemis collection.
   - name: community.postgresql
+    version: ">=5.0.0"
+  # Provides the postgres_exporter role that ls1intum.artemis.postgres_exporter wraps -
+  # the maintained successor of the archived cloudalchemy exporter roles.
+  - name: prometheus.prometheus

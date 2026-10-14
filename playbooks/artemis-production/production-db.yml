@@ -28,7 +28,12 @@
 
   roles:
     - role: geerlingguy.postgresql
+      tags: database
       become: true
+
+    - role: ls1intum.artemis.postgres_exporter
+      become: true
+      tags: monitoring
 
     - role: ls1intum.artemis.db_backup
       tags: backup

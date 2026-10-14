@@ -6,8 +6,7 @@ no_proxy: "localhost,127.0.0.1/8,::1,131.159.0.0/16,2a09:80c0::/29,172.16.0.0/12
 shared_monitoring_host_v4: "131.159.89.160"
 shared_monitoring_host_v6: "2a09:80c0:89:1::32"
 
-mysql_exporter_password: "{{ lookup('hashi_vault', 'kv/data/artemis/production/prometheus').get('mysql_exporter') }}"
-mysql_disable_log_bin: true
+postgres_exporter_db_password: "{{ lookup('hashi_vault', 'artemis/data/production/prometheus').get('postgres_exporter') }}"
 
 artemis_email: "artemis@xcit.tum.de"
 

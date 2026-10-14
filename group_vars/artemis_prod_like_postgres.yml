@@ -285,3 +285,29 @@ postgresql_privs:
     schema: public
     privs: SELECT
     target_roles: "{{ artemis_database_username }}"
+
+##############################################################################
+# Prometheus exporter
+##############################################################################
+# The exporter scrapes the Artemis database rather than "postgres". The cluster-wide views
+# (pg_stat_database, pg_stat_bgwriter, replication, locks) read the same from either, but the
+# per-relation collectors and pg_stat_statements only ever see the database of the connection,
+# and those are the ones that say whether the tuning above is right.
+#
+# It holds one connection open, which comes out of the two slots the max_connections comment
+# above leaves free beyond the node pools - the same two remoteAdmin and the backup dump use.
+postgres_exporter_db_name: "{{ artemis_database_dbname }}"
+postgres_exporter_db_port: "{{ artemis_database_port }}"
+
+# This is the one-off "CREATE EXTENSION pg_stat_statements" that the shared_preload_libraries
+# comment above says no role performs - the exporter is what makes the view worth having, so
+# it creates it. The library itself is already preloaded, which is the part that needs a restart.
+postgres_exporter_pg_stat_statements: true
+
+# Both of these are off in the exporter's defaults. "postmaster" is the cheaper of the two and
+# exports nothing but pg_postmaster_start_time_seconds, which is what the PostgresRestarted
+# alert in the monitoring repository compares against time() - without it that alert has no
+# series to evaluate and silently never fires.
+postgres_exporter_collectors:
+  - stat_statements
+  - postmaster
