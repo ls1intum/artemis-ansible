@@ -24,8 +24,10 @@
         weaviate_traefik_memory_limit: "512M"
 
         weaviate_cpu_limit: "6"
-        weaviate_memory_limit: "12G"
+        weaviate_memory_limit: "{{ var_weaviate_memory_limit | default('12G') }}"
+        weaviate_gomemlimit: "{{ var_weaviate_gomemlimit | default('') }}"
 
+        weaviate_enable_multi2vec: "{{ var_weaviate_enable_multi2vec | default(true) }}"
         weaviate_multi2vec_cpu_limit: "3"
         weaviate_multi2vec_memory_limit: "6G"
 

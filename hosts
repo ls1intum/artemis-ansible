@@ -115,7 +115,7 @@ hermes-prod.artemis.cit.tum.de var_hermes_environment=production hermes_apns_pro
 hermes-staging.artemis.cit.tum.de var_hermes_environment=test hermes_apns_prod_environment=false hermes_apns_fallback_environment_enabled=true
 
 [weaviate]
-weaviate-prod.artemis.cit.tum.de var_instance_name=weaviate
+weaviate-prod.artemis.cit.tum.de var_instance_name=weaviate var_weaviate_memory_limit=20G var_weaviate_gomemlimit=16GiB var_weaviate_enable_multi2vec=false
 weaviate-test.artemis.cit.tum.de var_instance_name=weaviate-test
 weaviate-staging.artemis.cit.tum.de var_instance_name=weaviate-test
 
