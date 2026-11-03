@@ -192,11 +192,11 @@ postgresql_global_config_options:
     value: "on"
 
   # The counterpart of the MySQL slow query log. 5 seconds only caught statements that were already
-  # a problem; 1 second shows the ones on their way there, without logging the normal traffic. The
+  # a problem; 2 seconds shows the ones on their way there, without logging the normal traffic. The
   # Debian packaging already collects the server's stderr into /var/log/postgresql, so this needs no
   # further logging setup. Note that the logged statements carry their literal values.
   - option: log_min_duration_statement
-    value: "1000"
+    value: "2000"
 
   # Logs a statement that waited longer than deadlock_timeout (1 s) for a lock, with the process holding
   # it. Lock waits are what turns a fast statement into a slow one under concurrency, and they would
