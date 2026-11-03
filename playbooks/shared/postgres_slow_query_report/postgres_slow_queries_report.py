@@ -24,6 +24,7 @@ import gzip
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
 from collections import defaultdict
@@ -54,7 +55,7 @@ def fetch_statistics(database, ignored_users):
     sql = f"""
         SELECT json_build_object(
             'stats_reset', (SELECT stats_reset FROM pg_stat_statements_info),
-            'threshold', current_setting('log_min_duration_statement'),
+            'threshold', (SELECT setting FROM pg_settings WHERE name = 'log_min_duration_statement'),
             'queries', (SELECT coalesce(json_agg(t), '[]'::json) FROM (
                 SELECT s.queryid::text AS queryid,
                        sum(s.calls)::bigint AS calls,
@@ -112,11 +113,11 @@ def window_delta(stats, snapshot):
         if calls > 0:
             result.append({**q, "calls": calls, "total_ms": total, "mean_ms": total / calls})
     if usable:
-        description = f"since the previous report ({snapshot['taken_at'][:16]})"
+        description = f"since the previous report on {snapshot['taken_at'][:16]}"
     elif snapshot is None:
-        description = f"everything since statistics were last reset ({stats['stats_reset']}), first report"
+        description = f"since statistics were last reset on {stats['stats_reset'][:16]} (first report)"
     else:
-        description = f"everything since statistics were last reset ({stats['stats_reset']}), counters were reset"
+        description = f"since statistics were last reset on {stats['stats_reset'][:16]} (reset since the previous report)"
     return result, description
 
 
@@ -179,10 +180,10 @@ def build_report(args, now):
     groups, log = scan_log(since, args.ignore_users)
 
     lines = [
-        "PostgreSQL slow query report for the Artemis production database",
+        f"PostgreSQL slow query report for the Artemis database on {socket.gethostname()}",
         "",
         "What this report looked at:",
-        f"  pg_stat_statements: {len(queries)} statements executed {window}",
+        f"  pg_stat_statements: {len(queries)} statements with calls {window}",
         f"  server log: {log['files']} file(s) since {since:%Y-%m-%d %H:%M}, "
         f"slow statement threshold log_min_duration_statement = {stats['threshold']} ms",
         f"  {log['seen']} slow log entries, {log['skipped']} skipped because they ran as {args.ignore_users}"
