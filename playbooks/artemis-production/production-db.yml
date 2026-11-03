@@ -82,3 +82,7 @@
       changed_when: true
       when: exporter_schema_usage.stdout == 'missing'
       tags: monitoring
+
+    - name: Install the weekly slow query report
+      ansible.builtin.import_tasks: ../shared/postgres_slow_query_report/tasks.yml
+      tags: slow-query-report

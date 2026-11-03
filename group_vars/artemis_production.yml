@@ -87,3 +87,8 @@ theia:
       Python: "python-latest"
     rust:
       Rust: "rust-latest"
+
+# Weekly PostgreSQL slow query report, see group_vars/artemis_prod_like_postgres.yml.
+slow_query_report_recipients:
+  - artemis@xcit.tum.de
+  - ls1.itg@in.tum.de

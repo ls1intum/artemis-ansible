@@ -311,3 +311,14 @@ postgres_exporter_pg_stat_statements: true
 postgres_exporter_collectors:
   - stat_statements
   - postmaster
+
+##############################################################################
+# Slow query report
+##############################################################################
+# Mail recipients of the weekly report (playbooks/shared/postgres_slow_query_report). Empty means the report
+# script is installed but not scheduled; production sets the list in group_vars/artemis_production.yml.
+slow_query_report_recipients: []
+
+# Roles whose statements are left out of the report: the nightly dump (a COPY of every table, always slow)
+# and the metrics exporter.
+slow_query_report_ignored_users: "postgres,exporter"
