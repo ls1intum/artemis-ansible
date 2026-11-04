@@ -192,11 +192,11 @@ postgresql_global_config_options:
     value: "on"
 
   # The counterpart of the MySQL slow query log. 5 seconds only caught statements that were already
-  # a problem; 1 second shows the ones on their way there, without logging the normal traffic. The
+  # a problem; 2 seconds shows the ones on their way there, without logging the normal traffic. The
   # Debian packaging already collects the server's stderr into /var/log/postgresql, so this needs no
   # further logging setup. Note that the logged statements carry their literal values.
   - option: log_min_duration_statement
-    value: "1000"
+    value: "2000"
 
   # Logs a statement that waited longer than deadlock_timeout (1 s) for a lock, with the process holding
   # it. Lock waits are what turns a fast statement into a slow one under concurrency, and they would
@@ -311,3 +311,14 @@ postgres_exporter_pg_stat_statements: true
 postgres_exporter_collectors:
   - stat_statements
   - postmaster
+
+##############################################################################
+# Slow query report
+##############################################################################
+# Mail recipients of the weekly report (playbooks/shared/postgres_slow_query_report). Empty means the report
+# script is installed but not scheduled; production sets the list in group_vars/artemis_production.yml.
+slow_query_report_recipients: []
+
+# Roles whose statements are left out of the report: the nightly dump (a COPY of every table, always slow)
+# and the metrics exporter.
+slow_query_report_ignored_users: "postgres,exporter"

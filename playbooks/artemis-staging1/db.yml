@@ -28,7 +28,13 @@
 
   roles:
     - role: geerlingguy.postgresql
+      tags: database
       become: true
 
     - role: ls1intum.artemis.firewall
       tags: firewall
+
+  post_tasks:
+    - name: Install the slow query report
+      ansible.builtin.import_tasks: ../shared/postgres_slow_query_report/tasks.yml
+      tags: slow-query-report
