@@ -76,17 +76,14 @@ theia:
   portal_url: https://theia.artemis.cit.tum.de
   images:
     java:
-      Java-17: "java-17-latest"
+      Java-17: "java-17"
+      Java-25: "java-25"
     c:
-      C: "c-latest"
+      C: "c"
     javascript:
-      Javascript: "javascript-latest"
-    ocaml:
-      Ocaml: "ocaml-latest"
+      Javascript: "javascript"
     python:
-      Python: "python-latest"
-    rust:
-      Rust: "rust-latest"
+      Python: "python"
 
 # Weekly PostgreSQL slow query report, see group_vars/artemis_prod_like_postgres.yml.
 slow_query_report_recipients:
