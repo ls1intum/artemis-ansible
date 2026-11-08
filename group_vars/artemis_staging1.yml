@@ -60,4 +60,3 @@ artemis_rate_limit:
   exempt_addresses:
     - "131.159.89.112"
     - "2a09:80c0:89::112"
-
