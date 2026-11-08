@@ -110,6 +110,14 @@ artemistest4
 artemistest5
 artemistest6
 
+[artemistests_metis:children]
+artemistest1
+artemistest2
+artemistest3
+artemistest4
+artemistest5
+artemistest6
+
 [artemistests_theia:children]
 artemistest1
 artemistest2
