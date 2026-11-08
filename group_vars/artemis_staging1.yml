@@ -1,11 +1,11 @@
 ---
 artemis_server_url: "https://staging1.artemis.cit.tum.de"
 
-artemis_version: 9.9.1
+artemis_version: "10.6"
 
 var_vault_group: "test/staging1"
 
-registry_external_host: registry.staging1.artemis.cit.tum.de
+var_artemis_localvc_ssh_url: "ssh://git@staging1.artemis.cit.tum.de:7921/"
 
 is_testserver: true
 
@@ -17,61 +17,20 @@ artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFSjFr1
 
 artemis_email: artemis-staging.aet@xcit.tum.de
 
-version_control:
-  localvc:
-    repo_storage_base_path: /mnt/storage/local-vcs-repos
-    ssh_url: "ssh://git@staging1.artemis.cit.tum.de:7921/"
-
-continuous_integration:
-  localci:
-    url: "{{ artemis_server_url }}"
-    concurrent_build_size: 2
-    image_cleanup:
-      enabled: true
-      expiry_days: 7
-      schedule_time: "0 0 3 * * *"
-
-# TODO
-# athena:
-#   url: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('url') }}"
-#   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
-
 weaviate:
-  enabled: true
   http_host: weaviate-staging.artemis.cit.tum.de
-  http_port: 443
-  grpc_port: 50051
-  scheme: https
   collection_prefix: "Artemis_staging1_"
-  vectorizer_module: text2vec-openai
-  open_ai_embedding_model: "Qwen/Qwen3-Embedding-8B"
-  open_ai_base_url: https://logos.aet.cit.tum.de:8080/
-  gpu_api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
-  api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('weaviate_apikey') }}"
 
-artemis_oidc:
-  enabled: true
-  button_label: "TUM Login"
-  client_id: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('oidc_client_id') }}"
-  client_secret: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('oidc_client_secret') }}"
-  issuer_uri: "https://tumidp.lrz.de/idp/shibboleth"
-  authorization_uri: "https://login.tum.de/idp/profile/oidc/authorize"
-  token_uri: "https://login.tum.de/idp/profile/oidc/token"
-  user_info_uri: "https://login.tum.de/idp/profile/oidc/userinfo"
-  jwk_set_uri: "https://login.tum.de/idp/profile/oidc/keyset"
-  scopes: ["openid", "profile", "email", "imMatrikelNr"]
-  mappings:
-    username: "preferred_username"
-    matriculation_number: "imMatrikelNr"
-    first_name: "given_name"
-    last_name: "family_name"
-    email: "email"
-
+theia:
+  portal_url: https://staging.eduide.student.k8s.aet.cit.tum.de
+  images:
+    java:
+      Java-17: "java-17"
+      Java-25: "java-25"
 
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
-proxy_generate_dh_param: false
 
 servers:
   - name: "staging1.artemis.cit.tum.de"
@@ -85,9 +44,6 @@ redirects:
     ssl_certificate_key_path: /etc/pira-client/live/host:f:aetvm165.cit.tum.de.privkey.pem
     default_server: true
     to: "{{ artemis_server_url }}"
-
-firewall_hostgroup: default
-proxy_forward_ssh: true
 
 # IPs exempt from the git and login rate limits (benchmark servers).
 # artemis-performance-test0.artemis.cit.tum.de is dual-stack, and the exemption matches whichever
@@ -105,32 +61,3 @@ artemis_rate_limit:
     - "131.159.89.112"
     - "2a09:80c0:89::112"
 
-
-##############################################################################
-# Broker and Registry Configuration
-##############################################################################
-
-activemq_version: 2.44.0
-
-broker:
-  username: brokeruser
-
-##############################################################################
-# Sentry Env-specific Configuration
-##############################################################################
-sentry:
-  dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
-  send_default_pii: true
-  environment: staging1
-  # Performance tracing samples whole requests, serialises them and ships them over HTTPS. At 1.0 that was
-  # 14-19% of the on-CPU samples on the Artemis nodes during a 1000-user benchmark, most of it in the
-  # SentryAsyncConnection threads and the TLS handshakes they cause. Error reporting is a separate setting
-  # (sentry.sample-rate, still 1.0) and is unaffected; this only thins out Sentry Performance.
-  traces_sample_rate: 0.05
-
-theia:
-  portal_url: https://staging.eduide.student.k8s.aet.cit.tum.de
-  images:
-    java:
-      Java-17: "java-17"
-      Java-25: "java-25"

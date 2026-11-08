@@ -35,6 +35,24 @@ ldap:
   base: "ou=users,ou=data,ou=prod,ou=iauth,dc=tum,dc=de"
   password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('ldap_password') }}"
 
+artemis_oidc:
+  enabled: true
+  button_label: "TUM Login"
+  client_id: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('oidc_client_id') }}"
+  client_secret: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('oidc_client_secret') }}"
+  issuer_uri: "https://tumidp.lrz.de/idp/shibboleth"
+  authorization_uri: "https://login.tum.de/idp/profile/oidc/authorize"
+  token_uri: "https://login.tum.de/idp/profile/oidc/token"
+  user_info_uri: "https://login.tum.de/idp/profile/oidc/userinfo"
+  jwk_set_uri: "https://login.tum.de/idp/profile/oidc/keyset"
+  scopes: ["openid", "profile", "email", "imMatrikelNr"]
+  mappings:
+    username: "preferred_username"
+    matriculation_number: "imMatrikelNr"
+    first_name: "given_name"
+    last_name: "family_name"
+    email: "email"
+
 mail:
   hostname: "postout.lrz.de"
   port: "587"
@@ -61,7 +79,6 @@ version_control:
     # message sent to users who still use a password, passwords are not rejected on that day.
     password_authentication_end_date: "2026-12-15"
 
-
 artemis_ssh_key_path: "/tmp"
 
 apollon_url: "https://apollon.aet.cit.tum.de"
@@ -86,6 +103,18 @@ spring_ai:
     temperature: 1.0
     microsoft_foundry: false
 
+weaviate:
+  # http_host and collection_prefix are confiugured in the environment-specific group_vars file, because they differ between environments.
+  enabled: true
+  http_port: 443
+  grpc_port: 50051
+  scheme: https
+  vectorizer_module: text2vec-openai
+  open_ai_embedding_model: "Qwen/Qwen3-Embedding-8B"
+  open_ai_base_url: https://logos.aet.cit.tum.de/
+  gpu_api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
+  api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('weaviate_apikey') }}"
+
 artemis_global_search_enabled: false
 
 artemis_rate_limit:
@@ -93,7 +122,15 @@ artemis_rate_limit:
   authentication_rpm: 30
 
 ##############################################################################
-# Broker and Registry Configuration
+# Proxy Configuration
+##############################################################################
+
+proxy_generate_dh_param: false
+firewall_hostgroup: default
+proxy_forward_ssh: true
+
+##############################################################################
+# Broker and Valkey Configuration
 ##############################################################################
 
 is_multinode_install: true
@@ -103,12 +140,7 @@ broker:
   username: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('broker_username') }}"
   password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('broker_password') }}"
 
-registry:
-  url: "[fcfe:0:0:0:0:0:b:2]" # Registry hostname (Only used in the Artemis role)
-
 artemis_jhipster_jwt: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('jhipster_jwt') }}"
-artemis_jhipster_registry_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('registry_password') }}"
-artemis_eureka_instance_id: "{{ node_id }}"
 
 valkey:
   host: "fcfe:0:0:0:0:0:b:3"
@@ -119,13 +151,6 @@ valkey:
   admin_password: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('valkey_admin_password') }}"
 
 artemis_valkey_client_name: "artemis-{{ node_id }}"
-
-##############################################################################
-# Sentry Common Configuration
-##############################################################################
-sentry:
-  dsn: https://e52d0b9b6b61769f50b088634b4bc781@sentry.aet.cit.tum.de/2
-  send_default_pii: true
 
 ##############################################################################
 # Deployment User

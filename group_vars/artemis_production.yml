@@ -1,13 +1,11 @@
 ---
 artemis_server_url: "https://artemis.tum.de"
 
-artemis_version: "9.9"
+artemis_version: "10.6"
 
 var_vault_group: "production"
 
 var_artemis_localvc_ssh_url: "ssh://git@artemis.tum.de:7921/"
-
-registry_external_host: registry.production.artemis.cit.tum.de
 
 artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPNnP9Eew/8keXo5+3tc0cP1GsRYizBG69tK+7ozAdgj artemis@xcit.tum.de"
 
@@ -22,32 +20,25 @@ athena:
   secret: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('athena_secret') }}"
 
 weaviate:
-  enabled: true
   http_host: weaviate-prod.artemis.cit.tum.de
-  http_port: 443
-  grpc_port: 50051
-  scheme: https
   collection_prefix: "Artemis_prod_"
-  vectorizer_module: text2vec-openai
-  open_ai_embedding_model: "Qwen/Qwen3-Embedding-8B"
-  open_ai_base_url: https://logos.aet.cit.tum.de:8080/
-  gpu_api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
-  api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('weaviate_apikey') }}"
 
-# No JHipster registry on staging2. Eureka exists in Artemis only to locate Hazelcast members, and this
-# environment runs Valkey as the distributed data provider (Artemis still names the provider "Redis"
-# internally - it speaks the same protocol), so nothing reads the registry: the application forces
-# eureka.client.enabled=false and spring.cloud.discovery.enabled=false whenever the provider is Redis.
-# Overriding registry.url from artemis_prod_like_common.yml leaves artemis_eureka_urls empty, so no registry
-# address is rendered into the node configuration either.
-registry:
-  url: null
+theia:
+  portal_url: https://theia.artemis.cit.tum.de
+  images:
+    java:
+      Java-17: "java-17"
+      Java-25: "java-25"
+    c:
+      C: "c"
+    javascript:
+      Javascript: "javascript"
+    python:
+      Python: "python"
 
 ##############################################################################
 # Proxy Configuration
 ##############################################################################
-
-proxy_generate_dh_param: false
 
 servers:
   - name: "artemis.tum.de"
@@ -62,28 +53,9 @@ redirects:
     default_server: false
     to: "{{ artemis_server_url }}"
 
-firewall_hostgroup: default
-proxy_forward_ssh: true
-
 ##############################################################################
-# Sentry Env-specific Configuration
+# Database Configuration
 ##############################################################################
-sentry:
-  environment: prod
-  traces_sample_rate: 0.2
-
-theia:
-  portal_url: https://theia.artemis.cit.tum.de
-  images:
-    java:
-      Java-17: "java-17"
-      Java-25: "java-25"
-    c:
-      C: "c"
-    javascript:
-      Javascript: "javascript"
-    python:
-      Python: "python"
 
 # Weekly PostgreSQL slow query report, see group_vars/artemis_prod_like_postgres.yml.
 slow_query_report_recipients:
