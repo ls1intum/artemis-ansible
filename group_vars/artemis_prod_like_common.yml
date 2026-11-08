@@ -104,7 +104,7 @@ spring_ai:
     microsoft_foundry: false
 
 weaviate:
-  # http_host and collection_prefix are confiugured in the environment-specific group_vars file, because they differ between environments.
+  # http_host and collection_prefix are configured in the environment-specific group_vars file, because they differ between environments.
   enabled: true
   http_port: 443
   grpc_port: 50051
