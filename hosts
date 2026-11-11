@@ -138,9 +138,6 @@ db.staging1.artemis.cit.tum.de
 [artemis_staging1_broker]
 broker.staging1.artemis.cit.tum.de
 
-[artemis_staging1_registry]
-registry.staging1.artemis.cit.tum.de
-
 [artemis_staging1_valkey]
 redis.staging1.artemis.cit.tum.de
 
@@ -154,7 +151,6 @@ proxy.staging1.artemis.cit.tum.de
 artemis_staging1_nodes
 artemis_staging1_db
 artemis_staging1_broker
-artemis_staging1_registry
 artemis_staging1_valkey
 artemis_staging1_storage
 artemis_staging1_proxy
@@ -217,9 +213,6 @@ postgres.production.artemis.cit.tum.de
 [artemis_production_broker]
 broker.production.artemis.cit.tum.de
 
-[artemis_production_registry]
-registry.production.artemis.cit.tum.de
-
 [artemis_production_valkey]
 valkey.production.artemis.cit.tum.de
 
@@ -233,7 +226,6 @@ proxy.production.artemis.cit.tum.de
 artemis_production_nodes
 artemis_production_db
 artemis_production_broker
-artemis_production_registry
 artemis_production_valkey
 artemis_production_storage
 artemis_production_proxy
@@ -247,6 +239,11 @@ artemis_staging2
 artemis_production_core
 artemis_staging1_core
 artemis_staging2_core
+
+[artemis_prod_like_buildagent:children]
+artemis_production_buildagent
+artemis_staging1_agents
+artemis_staging2_agents
 
 [artemis_prod_like_postgres:children]
 artemis_production

@@ -5,7 +5,7 @@ roles:
   - src: geerlingguy.certbot
 
   - src: geerlingguy.postgresql
-    version: 4.1.0
+    version: 4.3.0
 
   - src: mrlesmithjr.nfs-server
 
