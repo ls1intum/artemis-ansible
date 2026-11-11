@@ -103,6 +103,14 @@ spring_ai:
     temperature: 1.0
     microsoft_foundry: false
 
+# Smart Quizzes: the question pool uses only this self-hosted model, with a Logos key that sees nothing else.
+hyperion_quiz_pool:
+  base_url: "https://logos.aet.cit.tum.de/v1"
+  api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_quiz_pool_apikey') }}"
+  generator_model: "openai/gpt-oss-120b"
+  judge_model: "openai/gpt-oss-120b"
+  allowed_models: ["openai/gpt-oss-120b"]
+
 weaviate:
   # http_host and collection_prefix are configured in the environment-specific group_vars file, because they differ between environments.
   enabled: true
