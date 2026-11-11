@@ -93,8 +93,6 @@ artemis_local_llm_deployment_enabled: true
 
 artemis_hyperion_enabled: true
 
-tum_live_base_url: "https://tum.live/api/v2"
-
 spring_ai:
   azure_openai:
     api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
