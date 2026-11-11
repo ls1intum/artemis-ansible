@@ -1,0 +1,30 @@
+---
+##############################################################################
+# Multi-Node Docker Configuration
+# Two Artemis containers sharing their state through Valkey, see
+# deployment/docker/test-server-multi-node-postgresql-localci.yml in Artemis.
+##############################################################################
+is_multinode_install: true
+# Must match the number of artemis-app-node-* services in the compose file.
+artemis_node_count: 2
+
+# A test server has 7.7 GB. Each node is about 2 GB resident at a 1 GB heap,
+# which leaves about 2.3 GB for the build containers after Postgres, the
+# broker, Valkey and nginx.
+artemis_docker_heap_mb: 1024
+artemis_docker_initial_heap_mb: 512
+
+# Credentials live in each server's own secret (artemis-test1 -> artemistest1).
+# The broker and Valkey run as containers next to the nodes, so the hosts are
+# their container names. The compose file sets the Redis host, user and client
+# names itself; Ansible only has to supply the password (REDIS_PASSWORD).
+broker:
+  url: artemis-activemq-broker
+  username: artemis
+  password: "{{ lookup('hashi_vault', 'artemis/data/test/' + var_testserver_name | replace('-', '')).get('broker_password') }}"
+
+valkey:
+  host: artemis-redis
+  port: 6379
+  username: artemis
+  password: "{{ lookup('hashi_vault', 'artemis/data/test/' + var_testserver_name | replace('-', '')).get('valkey_password') }}"
