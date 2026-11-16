@@ -17,6 +17,11 @@ artemis_deployment_user_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFSjFr1
 
 artemis_email: artemis-staging.aet@xcit.tum.de
 
+atlas:
+  enabled: true
+  atlasllm:
+    enabled: true
+
 weaviate:
   http_host: weaviate-staging.artemis.cit.tum.de
   collection_prefix: "Artemis_staging1_"
