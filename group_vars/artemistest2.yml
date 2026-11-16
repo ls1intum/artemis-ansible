@@ -15,6 +15,19 @@ athena:
 
 theia:
   portal_url: https://test2.eduide.student.k8s.aet.cit.tum.de
+  # Test2 offers every IDE image edition (EduIDE chart 3.0.0). Merged with the
+  # Java images from artemistests_theia.yml.
+  images:
+    c:
+      C: "c"
+    javascript:
+      Javascript: "javascript"
+    python:
+      Python: "python"
+    rust:
+      Rust: "rust"
+    go:
+      Go: "go"
 
 llm_api_key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistest2').get('llm_api_key') }}"
 
