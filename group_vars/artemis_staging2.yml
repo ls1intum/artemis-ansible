@@ -22,6 +22,10 @@ atlas:
   atlasllm:
     enabled: true
 
+athena:
+  url: "https://athena-staging.aet.cit.tum.de"
+  secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
+
 weaviate:
   http_host: weaviate-staging.artemis.cit.tum.de
   collection_prefix: "Artemis_staging2_"
