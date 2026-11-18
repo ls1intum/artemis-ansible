@@ -1,0 +1,39 @@
+---
+# Starts PostgreSQL after the units in postgresql_after_units, imported by the production, staging1 and
+# staging2 db playbooks.
+#
+# listen_addresses names the WireGuard address of the host. wg-quick@wg0 waits for network-online.target,
+# which can take two minutes on these hosts, while PostgreSQL starts within seconds of boot. It then cannot
+# bind the WireGuard address ("could not bind IPv6 address ... Cannot assign requested address"), keeps
+# running on localhost only, and never retries, so every Artemis node fails to connect until someone restarts
+# PostgreSQL by hand.
+#
+# The drop-in only orders the units. It does not restart PostgreSQL: the order takes effect at the next boot.
+- name: Ensure the PostgreSQL drop-in directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/postgresql@.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Order PostgreSQL after the units that bring up its listen address
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/postgresql@.service.d/10-after-units.conf
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      # Ansible managed: Do not make changes here - they will be overwritten.
+      # Ordering only, no dependency: a unit that does not exist on this host is ignored.
+      [Unit]
+      After={{ postgresql_after_units }}
+  become: true
+  register: postgres_after_units_dropin
+
+- name: Reload systemd so the PostgreSQL ordering is known
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  become: true
+  when: postgres_after_units_dropin is changed
