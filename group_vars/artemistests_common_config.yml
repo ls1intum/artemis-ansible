@@ -52,6 +52,32 @@ artemis_rate_limit:
   account_management_rpm: 5
   authentication_rpm: 30
 
+# LLM catalog and preset assignments of Artemis 10.8 (https://docs.artemis.tum.de/admin/llm-configuration), for every test server:
+# Ansible does not merge a variable across groups, so the catalog lives here once. Assignments of modules that are off on a server
+# are not read there. Artemis 10.7 ignores both and keeps using spring_ai, deimos.llm and the Weaviate open_ai_* values.
+# llm_api_key is defined per test server; artemistestmigration has none and runs no LLM module.
+artemis_llm:
+  endpoints:
+    logos:
+      base-url: https://logos.aet.cit.tum.de/v1
+      api-key: "{{ llm_api_key | default('') }}"
+    logosdeimos:
+      base-url: https://logos.aet.cit.tum.de/v1
+      api-key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('deimos_llm_key') }}"
+  presets:
+    large: { endpoint: logos, model: gpt-6.1-terra, api: responses, reasoning-effort: medium }
+    atlas: { endpoint: logos, model: gpt-6-luna, api: responses, reasoning-effort: high }
+    atlaschat: { endpoint: logos, model: gpt-5.6-terra, api: chat-completions, reasoning-effort: none }
+    embed: { endpoint: logos, model: Qwen/Qwen3-Embedding-8B, api: embeddings }
+    deimos: { endpoint: logosdeimos, model: openai/gpt-oss-120b, api: chat-completions, temperature: 0.3, timeout: 90s }
+
+artemis_llm_assignments:
+  hyperion.llm-presets.default: large
+  atlas.atlasllm.llm-presets.default: atlas
+  atlas.atlasllm.llm-presets.chat: atlaschat
+  weaviate.embedding-llm-preset: embed
+  deimos.llm-preset: deimos
+
 deimos:
   llm:
     base_url: https://logos.aet.cit.tum.de/v1
