@@ -52,10 +52,10 @@ artemis_rate_limit:
   account_management_rpm: 5
   authentication_rpm: 30
 
-# LLM catalog and preset assignments of Artemis 10.8 (https://docs.artemis.tum.de/admin/llm-configuration), for every test server:
-# Ansible does not merge a variable across groups, so the catalog lives here once. Assignments of modules that are off on a server
-# are not read there. Artemis 10.7 ignores both and keeps using spring_ai, deimos.llm and the Weaviate open_ai_* values.
-# llm_api_key is defined per test server; artemistestmigration has none and runs no LLM module.
+# LLM catalog and preset assignments of Artemis 10.8 (https://docs.artemis.tum.de/admin/llm-configuration), for every test server,
+# kept in one place. Assignments of modules that are off on a server are not read there. Artemis 10.7 ignores both and keeps
+# using spring_ai, deimos.llm and the Weaviate open_ai_* values.
+# llm_api_key is defined per test server; artemistestmigration has none, and its only LLM module, Deimos, uses logosdeimos.
 artemis_llm:
   endpoints:
     logos:
