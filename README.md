@@ -168,6 +168,15 @@ After review, run the same command without `--check` to apply the changes.
 
 > **Warning:** This will restart and redeploy the Docker containers.
 
+The Atlas agent on test and staging instances also requires a compatible Artemis
+version and a Logos configuration supporting the configured chat and Responses
+models, including reasoning replay. Verify model access for each instance before
+deployment. After deployment, an administrator must enable **Atlas Agent** on
+each instance's Features screen. Automatic updates additionally require course
+opt-in and a scheduling node. Remove any externally managed
+`artemis.atlas.orchestrator.max-atlasml-calls-per-run` setting before upgrading;
+it prevents startup on versions that removed AtlasML.
+
 ### Connecting to Services
 
 #### Registry Access

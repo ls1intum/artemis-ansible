@@ -1,0 +1,14 @@
+---
+##############################################################################
+# Metis Comprehension Checks
+# Same model as Deimos, with the per-server Logos key (llm_api_key).
+# gpt-oss-120b runs on Logos' own hardware, hence LOCAL.
+##############################################################################
+metis:
+  llm:
+    base_url: https://logos.aet.cit.tum.de/v1
+    api_key: "{{ llm_api_key }}"
+    model: openai/gpt-oss-120b
+    hosting: LOCAL
+  generation:
+    enable_delay_minutes: 0 # Testers should not have to wait for generated checks

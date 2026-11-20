@@ -14,8 +14,8 @@
 # Cluster Broker
 - import_playbook: production-broker.yml
 
-# Cluster Registry
-- import_playbook: production-registry.yml
+# Cluster Valkey
+- import_playbook: production-valkey.yml
 
 # Cluster Proxy
 - import_playbook: production-proxy.yml

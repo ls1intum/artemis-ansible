@@ -1,0 +1,65 @@
+---
+# Weekly PostgreSQL slow query report, imported by the production, staging1 and staging2 db playbooks.
+# It replaces the MySQL-era slow_queries_notifier, which parsed a MySQL log and so reported "no slow
+# queries" whatever PostgreSQL did. See the header of postgres_slow_queries_report.py for what it reports.
+#
+# The log threshold (log_min_duration_statement) and the pg_stat_statements preload are set in
+# group_vars/artemis_prod_like_postgres.yml and applied by the geerlingguy.postgresql role (tag "database").
+#
+# Without slow_query_report_recipients the script is installed but not scheduled, so it can be tried by hand:
+#   ssh <db host> "sudo /usr/local/bin/postgres_slow_queries_report --stdout"
+# --stdout prints the report and keeps no snapshot, so it does not disturb the first scheduled report.
+
+# The view only exists once the extension is created in the database. On production the metrics exporter
+# does this as well; both are idempotent. Read-only, so it also runs in check mode.
+- name: Check whether pg_stat_statements exists in the Artemis database
+  ansible.builtin.command:
+    argv: [psql, "-d", "{{ artemis_database_dbname }}", "-tAc",
+           "SELECT count(*) FROM pg_extension WHERE extname = 'pg_stat_statements'"]
+  become: true
+  become_user: postgres
+  changed_when: false
+  check_mode: false
+  register: slow_query_report_extension
+
+- name: Create the pg_stat_statements extension
+  ansible.builtin.command:
+    argv: [psql, "-d", "{{ artemis_database_dbname }}", "-c", "CREATE EXTENSION pg_stat_statements"]
+  become: true
+  become_user: postgres
+  changed_when: true
+  when: slow_query_report_extension.stdout == '0'
+
+- name: Install the slow query report script
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../shared/postgres_slow_query_report/postgres_slow_queries_report.py"
+    dest: /usr/local/bin/postgres_slow_queries_report
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Create the snapshot directory of the slow query report
+  ansible.builtin.file:
+    path: /var/lib/postgres-slow-queries
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+  become: true
+
+# Monday morning like the MySQL report. The server log rotates weekly on Sunday night and the script also
+# reads the rotated file, so the whole week is covered.
+- name: Schedule the slow query report
+  ansible.builtin.cron:
+    name: "postgres_slow_queries_report"
+    state: "{{ 'present' if slow_query_report_recipients | length > 0 else 'absent' }}"
+    weekday: "1"
+    hour: "7"
+    minute: "55"
+    job: >-
+      /usr/local/bin/postgres_slow_queries_report
+      --database {{ artemis_database_dbname }}
+      --ignore-users {{ slow_query_report_ignored_users }}
+      {% for recipient in slow_query_report_recipients %}--mail {{ recipient }} {% endfor %}
+  become: true
