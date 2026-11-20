@@ -52,13 +52,33 @@ artemis_rate_limit:
   account_management_rpm: 5
   authentication_rpm: 30
 
-deimos:
-  llm:
-    base_url: https://logos.aet.cit.tum.de/v1
-    api_key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('deimos_llm_key') }}"
-    model: openai/gpt-oss-120b
-    completions_path: /chat/completions
-    temperature: 0.3
+# LLM catalog and preset assignments (https://docs.artemis.tum.de/admin/llm-configuration), for every test server,
+# kept in one place. Assignments of modules that are off on a server are not read there.
+# llm_api_key is defined per test server; artemistestmigration has none, and its only LLM module, Deimos, uses logosdeimos.
+artemis_llm:
+  endpoints:
+    logos:
+      base-url: https://logos.aet.cit.tum.de/v1
+      api-key: "{{ llm_api_key | default('') }}"
+    logosdeimos:
+      base-url: https://logos.aet.cit.tum.de/v1
+      api-key: "{{ lookup('hashi_vault', 'artemis/data/test/artemistestcommon').get('deimos_llm_key') }}"
+  presets:
+    large: { endpoint: logos, model: gpt-6.1-terra, api: responses, reasoning-effort: medium }
+    atlas: { endpoint: logos, model: gpt-6-luna, api: responses, reasoning-effort: high }
+    atlaschat: { endpoint: logos, model: gpt-5.6-terra, api: chat-completions, reasoning-effort: none }
+    embed: { endpoint: logos, model: Qwen/Qwen3-Embedding-8B, api: embeddings }
+    deimos: { endpoint: logosdeimos, model: openai/gpt-oss-120b, api: chat-completions, temperature: 0.3, timeout: 90s }
+
+artemis_llm_assignments:
+  hyperion.llm-presets.default: large
+  atlas.atlasllm.llm-presets.default: atlas
+  atlas.atlasllm.llm-presets.chat: atlaschat
+  weaviate.embedding-llm-preset: embed
+  deimos.llm-preset: deimos
+
+# Enables Deimos; its model is the deimos preset above.
+deimos: {}
 
 mail:
   hostname: "postout.lrz.de"

@@ -93,13 +93,25 @@ artemis_local_llm_deployment_enabled: true
 
 artemis_hyperion_enabled: true
 
-spring_ai:
-  azure_openai:
-    api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
-    endpoint: "https://logos.aet.cit.tum.de/v1"
-    deployment_name: "gpt-5.4-mini"
-    temperature: 1.0
-    microsoft_foundry: false
+# LLM catalog and preset assignments (https://docs.artemis.tum.de/admin/llm-configuration).
+# Logos reports the cost of each call, so no price list is needed.
+artemis_llm:
+  endpoints:
+    logos:
+      base-url: https://logos.aet.cit.tum.de/v1
+      api-key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
+  presets:
+    large: { endpoint: logos, model: gpt-6.1-terra, api: responses, reasoning-effort: medium }
+    atlas: { endpoint: logos, model: gpt-6-luna, api: responses, reasoning-effort: high }
+    atlaschat: { endpoint: logos, model: gpt-5.6-terra, api: chat-completions, reasoning-effort: none }
+    embed: { endpoint: logos, model: Qwen/Qwen3-Embedding-8B, api: embeddings }
+
+# Assignments of modules that are off on a server are not read there.
+artemis_llm_assignments:
+  hyperion.llm-presets.default: large
+  atlas.atlasllm.llm-presets.default: atlas
+  atlas.atlasllm.llm-presets.chat: atlaschat
+  weaviate.embedding-llm-preset: embed
 
 weaviate:
   # http_host and collection_prefix are configured in the environment-specific group_vars file, because they differ between environments.
@@ -108,9 +120,6 @@ weaviate:
   grpc_port: 50051
   scheme: https
   vectorizer_module: text2vec-openai
-  open_ai_embedding_model: "Qwen/Qwen3-Embedding-8B"
-  open_ai_base_url: https://logos.aet.cit.tum.de/
-  gpu_api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('logos_apikey') }}"
   api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('weaviate_apikey') }}"
 
 artemis_global_search_enabled: false
