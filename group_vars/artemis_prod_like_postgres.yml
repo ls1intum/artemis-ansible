@@ -49,6 +49,11 @@ postgresql_config_path: "/etc/postgresql/18/main"
 # restarted the way the role's handlers expect.
 postgresql_daemon: "postgresql@18-main"
 
+# Units PostgreSQL is started after. listen_addresses below contains the WireGuard address of the host,
+# which only exists once wg-quick@wg0 has finished; a PostgreSQL that starts earlier listens on localhost
+# only and does not retry. Ordering only, no dependency. Applied by playbooks/shared/postgres_after_wireguard.
+postgresql_after_units: wg-quick@wg0.service
+
 ##############################################################################
 # postgresql.conf
 ##############################################################################
