@@ -3,3 +3,5 @@
 continuous_integration:
   localci:
     concurrent_build_size: 2
+    # The queue store by its name, so that the check of the build containers also covers its IPv4 address
+    network_isolation_check_targets: ["redis.staging1.artemis.cit.tum.de:6379"]
