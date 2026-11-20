@@ -29,12 +29,6 @@ artemis_internal_admin_password: "{{ lookup('hashi_vault', 'artemis/data/' + var
 
 push_notification_relay: "https://hermes-prod.artemis.cit.tum.de"
 
-# TUM Live integration for production and staging, each with the key of its own vault group
-tum_live:
-  api_base_url: https://live.rbg.tum.de/api/v2
-  web_base_url: https://live.rbg.tum.de
-  api_key: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('tumlive_secret') }}"
-
 ldap:
   url: "ldaps://iauth.tum.de:636"
   user_dn: "cn=TUINI01-Artemis,ou=bindDNs,ou=iauth,dc=tum,dc=de"
