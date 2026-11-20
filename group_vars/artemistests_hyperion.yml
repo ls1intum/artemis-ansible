@@ -1,19 +1,6 @@
 ---
 ##############################################################################
-# Hyperion Profile Activation + Spring AI Azure OpenAI Configuration
-# Define 'hyperion: {}' to enable the spring profile. Configure model under spring_ai.
+# Hyperion Activation
+# Its models are the hyperion.llm-presets.* assignments in artemistests_common_config.yml.
 ##############################################################################
 artemis_hyperion_enabled: true
-
-spring_ai:
-  azure_openai:
-    api_key: "{{ llm_api_key }}"
-    endpoint: "https://logos.aet.cit.tum.de/v1"
-    deployment_name: "gpt-5.4-mini"
-    temperature: 1.0
-    microsoft_foundry: false
-
-artemis_llm_cost:
-  gpt-5-mini:
-    input_cost_per_million_eur: 0.23
-    output_cost_per_million_eur: 1.84
