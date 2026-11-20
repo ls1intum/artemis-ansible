@@ -2,6 +2,9 @@
 artemis_passkey_enabled: true
 artemis_passkey_require_for_administrator_features: true
 
+# Personal access tokens and the MCP endpoint for the coding agents of instructors. The collection leaves it off. Changing it needs a restart of the core nodes.
+artemis_agent_access_enabled: true
+
 continuous_integration:
   localci:
     is_core_node: true
