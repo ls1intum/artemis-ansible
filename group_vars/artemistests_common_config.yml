@@ -16,7 +16,7 @@ artemis_repo_basepath: "/opt/artemis/data"
 artemis_tmp_directory: "/tmp"
 
 push_notification_relay: "https://hermes-staging.artemis.cit.tum.de"
-tum_live_base_url: "https://tum.live/api/v2"
+# No tum_live: the test servers keep the TUM Live integration off (the Artemis default)
 
 artemis_ssh_key_password:
 artemis_ssh_key_path: # "/opt/artemis/sshkeys"
