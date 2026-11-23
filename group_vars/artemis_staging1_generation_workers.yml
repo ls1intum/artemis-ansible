@@ -1,6 +1,7 @@
 ---
-# The isolated AI Worker VM of staging1. It needs its own Docker daemon (geerlingguy.docker) and reaches only
-# Valkey over WireGuard, Logos and the container registry; it needs no database, file storage or inbound port.
+# The isolated AI Worker VM of staging1, deployed with the ai_worker role of the collection. It needs its own Docker
+# daemon (geerlingguy.docker) and reaches only Valkey over WireGuard, Logos and the container registry; it needs no
+# database, file storage or inbound port.
 ai_worker_dedicated_host: true
 ai_worker_id: staging1-generation-1
 ai_worker_slots: 2
