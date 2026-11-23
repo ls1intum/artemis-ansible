@@ -11,3 +11,6 @@
       tags: firewall
 
     - role: ls1intum.artemis.ai_worker
+      vars:
+        # The dedicated VM reaches Valkey over its IPv6 WireGuard interface.
+        ai_worker_network_mode: host
