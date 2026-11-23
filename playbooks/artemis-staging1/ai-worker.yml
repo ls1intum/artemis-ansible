@@ -6,4 +6,8 @@
   gather_facts: false
 
   roles:
+    # First, like on the other staging1 hosts: a changed rule set can restart Docker, which must not hit a running worker.
+    - role: ls1intum.artemis.firewall
+      tags: firewall
+
     - role: ls1intum.artemis.ai_worker
