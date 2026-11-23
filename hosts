@@ -163,8 +163,12 @@ storage.staging1.artemis.cit.tum.de
 [artemis_staging1_proxy]
 proxy.staging1.artemis.cit.tum.de
 
+[artemis_staging1_generation_workers]
+# The isolated AI Worker VM with its own Docker daemon, for example generation01.staging1.artemis.cit.tum.de.
+
 [artemis_staging1:children]
 artemis_staging1_nodes
+artemis_staging1_generation_workers
 artemis_staging1_db
 artemis_staging1_broker
 artemis_staging1_valkey
