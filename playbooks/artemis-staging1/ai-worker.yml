@@ -1,0 +1,13 @@
+---
+# Deploy the isolated AI Worker of staging1 with the same artemis_version as the core nodes,
+# for example: ansible-playbook playbooks/artemis-staging1/ai-worker.yml -e artemis_version=<version>
+- name: Deploy the isolated AI Worker
+  hosts: artemis_staging1_generation_workers
+  gather_facts: false
+
+  roles:
+    # First, like on the other staging1 hosts: a changed rule set can restart Docker, which must not hit a running worker.
+    - role: ls1intum.artemis.firewall
+      tags: firewall
+
+    - role: ls1intum.artemis.ai_worker
