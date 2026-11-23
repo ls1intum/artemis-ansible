@@ -68,10 +68,13 @@ artemis_llm:
     atlas: { endpoint: logos, model: gpt-6-luna, api: responses, reasoning-effort: high }
     atlaschat: { endpoint: logos, model: gpt-5.6-terra, api: chat-completions, reasoning-effort: none }
     embed: { endpoint: logos, model: Qwen/Qwen3-Embedding-8B, api: embeddings }
+    quizpool: { endpoint: logos, model: Qwen/Qwen3.8-27B, api: chat-completions }
     deimos: { endpoint: logosdeimos, model: openai/gpt-oss-120b, api: chat-completions, temperature: 0.3, timeout: 90s }
 
 artemis_llm_assignments:
   hyperion.llm-presets.default: large
+  hyperion.quiz-pool.generator-llm-preset: quizpool
+  hyperion.quiz-pool.judge-llm-preset: quizpool
   atlas.atlasllm.llm-presets.default: atlas
   atlas.atlasllm.llm-presets.chat: atlaschat
   weaviate.embedding-llm-preset: embed
