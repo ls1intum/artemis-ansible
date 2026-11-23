@@ -94,7 +94,9 @@ def load_snapshot():
 
 def save_snapshot(stats, now):
     SNAPSHOT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    counters = {q["queryid"]: {"calls": q["calls"], "total_ms": q["total_ms"]} for q in stats["queries"]}
+    counters = {q["queryid"]: {"calls": q["calls"], "total_ms": q["total_ms"], "max_ms": q["max_ms"],
+                                 "rows": q["rows"]}
+                for q in stats["queries"]}
     SNAPSHOT_FILE.write_text(json.dumps({"taken_at": now.isoformat(), "stats_reset": stats["stats_reset"],
                                          "queries": counters}))
 
@@ -106,12 +108,26 @@ def window_delta(stats, snapshot):
     result = []
     for q in stats["queries"]:
         old = previous.get(q["queryid"])
-        calls, total = q["calls"], q["total_ms"]
+        calls, total, rows = q["calls"], q["total_ms"], q["rows"]
         # A counter that went backwards means the entry was evicted and re-created: count it from zero.
-        if old and calls >= old["calls"] and total >= old["total_ms"]:
+        continued = old and calls >= old["calls"] and total >= old["total_ms"]
+        if continued:
             calls, total = calls - old["calls"], total - old["total_ms"]
+            # Rows must be windowed like calls, or rows/call is inflated. A snapshot from before rows were stored
+            # (None) cannot tell.
+            rows = rows - old["rows"] if "rows" in old and rows >= old["rows"] else None
+        # PostgreSQL keeps the maximum until the next reset, so it cannot be windowed like calls and time.
+        # A maximum above the stored one was reached in this window; otherwise it may be older. A snapshot
+        # from before maxima were stored (None) cannot tell.
+        if not continued:
+            new_max = True
+        elif "max_ms" not in old:
+            new_max = None
+        else:
+            new_max = q["max_ms"] > old["max_ms"]
         if calls > 0:
-            result.append({**q, "calls": calls, "total_ms": total, "mean_ms": total / calls})
+            result.append({**q, "calls": calls, "total_ms": total, "mean_ms": total / calls,
+                           "rows": rows, "new_max": new_max})
     if usable:
         description = f"since the previous report on {snapshot['taken_at'][:16]}"
     elif snapshot is None:
@@ -201,6 +217,12 @@ def build_report(args, now):
     by_mean = sorted(slow, key=lambda q: q["mean_ms"], reverse=True)[:args.top]
     lines += format_statements(by_mean) or ["  none"]
 
+    lines += ["", f"== Top {args.top} statements by max time (max above {args.min_max_ms} ms, "
+                  "since reset, not limited to this window) =="]
+    spiky = [q for q in queries if q["max_ms"] > args.min_max_ms]
+    by_max = sorted(spiky, key=lambda q: q["max_ms"], reverse=True)[:args.top]
+    lines += format_statements(by_max, mark_max=True) or ["  none"]
+
     lines += ["", f"== Slowest statements in the server log (literals removed, top {args.top}) =="]
     worst = sorted(groups.items(), key=lambda item: item[1]["max_ms"], reverse=True)[:args.top]
     for sql, group in worst:
@@ -212,12 +234,15 @@ def build_report(args, now):
     return "\n".join(lines) + "\n", stats
 
 
-def format_statements(queries):
+def format_statements(queries, mark_max=False):
     lines = []
     for q in queries:
-        per_call = q["rows"] / q["calls"] if q["calls"] else 0
+        per_call = f"{q['rows'] / q['calls']:.1f}" if q["rows"] is not None else "n/a"
+        marker = ""
+        if mark_max and q["new_max"] is not None:
+            marker = " [new maximum in this window]" if q["new_max"] else " [maximum from before this window]"
         lines += [f"  {q['total_ms'] / 1000:.1f} s total, {q['calls']} calls, {q['mean_ms']:.0f} ms mean, "
-                  f"{q['max_ms']:.0f} ms max (since reset), {per_call:.1f} rows/call",
+                  f"{q['max_ms']:.0f} ms max (since reset){marker}, {per_call} rows/call",
                   f"    {shorten(normalise(q['query']))}", ""]
     return lines
 
@@ -236,6 +261,7 @@ def main():
     parser.add_argument("--top", type=int, default=15)
     parser.add_argument("--min-calls", type=int, default=5)
     parser.add_argument("--min-mean-ms", type=int, default=200)
+    parser.add_argument("--min-max-ms", type=int, default=0, help="statements whose max time is above this are ranked by max")
     parser.add_argument("--mail", action="append", default=[], help="recipient, may be repeated")
     parser.add_argument("--stdout", action="store_true", help="print instead of mailing, and keep the snapshot")
     args = parser.parse_args()
