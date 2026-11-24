@@ -38,6 +38,21 @@ theia:
       Java-25: "java-25"
 
 ##############################################################################
+# Hyperion Exercise Generation (AI Worker)
+##############################################################################
+
+# Generation runs on the isolated AI Worker of artemis_staging1_generation_workers. Every exercise-writing
+# node needs the generation guard; the core nodes coordinate the worker.
+artemis_hyperion_exercise_generation_enabled: true
+artemis_aiworker_ids: ["staging1-generation-1"]
+
+# Worker ownership lives in Valkey and has to survive a restart of the store (checked by the artemis role).
+# Apply with playbooks/artemis-staging1/valkey.yml before enabling generation.
+valkey_appendonly: true
+valkey_appendfsync: always
+valkey_maxmemory_policy: noeviction
+
+##############################################################################
 # Proxy Configuration
 ##############################################################################
 

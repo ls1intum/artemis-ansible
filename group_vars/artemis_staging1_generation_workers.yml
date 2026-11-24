@@ -1,0 +1,6 @@
+---
+# The dedicated AI Worker VM of staging1 needs its own Docker daemon. The deployment in #132 defines its Valkey
+# peer and the network access required for Logos and the container registry.
+ai_worker_dedicated_host: true
+ai_worker_id: staging1-generation-1
+ai_worker_slots: 2
