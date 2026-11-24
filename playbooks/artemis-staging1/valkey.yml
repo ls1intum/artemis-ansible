@@ -7,3 +7,8 @@
 
     - role: ls1intum.artemis.firewall
       tags: firewall
+      vars:
+        firewall_wireguard_ipv6_restricted_sources: >-
+          {{ dict(groups.artemis_staging1_generation_workers
+             | map('extract', hostvars, 'wireguard_interface_address')
+             | product([valkey.port])) }}

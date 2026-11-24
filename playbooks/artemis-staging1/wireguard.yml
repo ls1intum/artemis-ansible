@@ -6,4 +6,11 @@
     - role: ls1intum.artemis.wireguard
       become: true
       vars:
-        wireguard_hostgroup: "{{ groups.artemis_staging1 }}"
+        # Workers and Valkey are mutual peers. Every other host keeps the
+        # existing mesh with worker hosts excluded.
+        wireguard_hostgroup: >-
+          {{ groups.artemis_staging1_valkey
+             if inventory_hostname in groups.artemis_staging1_generation_workers
+             else groups.artemis_staging1
+             if inventory_hostname in groups.artemis_staging1_valkey
+             else groups.artemis_staging1 | reject('in', groups.artemis_staging1_generation_workers) | list }}
