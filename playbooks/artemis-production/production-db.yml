@@ -53,6 +53,10 @@
       ansible.builtin.import_tasks: ../shared/postgres_oom_policy/tasks.yml
       tags: database
 
+    - name: Limit the memory of PostgreSQL and its host
+      ansible.builtin.import_tasks: ../shared/postgres_memory_limits/tasks.yml
+      tags: database
+
     # The postgres_exporter on this host connects as "exporter", a role that is set up outside this
     # repository, and reads pg_stat_statements, whose functions live in schema public. The public schema
     # of this database grants USAGE only to its owner, so without this grant every exporter query fails

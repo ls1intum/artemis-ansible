@@ -1,0 +1,136 @@
+---
+# Two limits that turn memory exhaustion on a database host into an error for one statement instead of a
+# kernel OOM kill, imported by the production, staging1 and staging2 db playbooks.
+#
+# 1. Strict overcommit (vm.overcommit_memory=2). With the kernel default a process is promised more memory than
+#    exists and the OOM killer sorts it out afterwards, by killing a process that is often not the one that asked
+#    for too much: a backend maps the whole of shared_buffers, so the killer sees every backend as a large process
+#    even when it holds almost nothing of its own. With strict accounting the allocation that would cross the limit
+#    fails, and PostgreSQL reports "out of memory" for that statement alone. This is what the PostgreSQL manual
+#    recommends for a dedicated database host.
+#    The limit is swap + vm.overcommit_ratio percent of the memory. The ratio is derived so that the limit is
+#    artemis_database_commit_limit_share of the memory, because the default of 50 would refuse allocations while
+#    the memory budget of postgresql_global_config_options is still within what the host has.
+#    The setting is only applied where that is demonstrably safe, otherwise the play says why it skipped it:
+#    - the derived ratio is at least the kernel default of 50, which hosts whose swap is a large part of their
+#      memory do not reach,
+#    - the worst case of the memory options fits below the limit with 1 GiB to spare,
+#    - the memory committed right now is at most 70% of the new limit, so that the change cannot be the thing that
+#      makes the running database fail.
+# 2. A hard memory limit on the PostgreSQL unit (MemoryMax), so that if memory does run out the kernel works inside
+#    the unit and the rest of the host (sshd, the exporters, this playbook) keeps running. MemoryHigh is left alone
+#    on purpose: the page cache of the database counts towards the unit and always fills what it is allowed, so a
+#    soft limit would keep reclaim running all the time.
+- name: Read how much memory is committed right now
+  ansible.builtin.command: awk '/^Committed_AS:/ {print $2}' /proc/meminfo
+  register: postgres_committed_as_kb
+  changed_when: false
+  check_mode: false
+
+- name: Work out the limits for this host
+  ansible.builtin.set_fact:
+    postgres_memory_limits_ratio: >-
+      {{ (((ansible_facts.memtotal_mb * artemis_database_commit_limit_share) - ansible_facts.swaptotal_mb)
+          * 100 / ansible_facts.memtotal_mb) | int }}
+    postgres_memory_limits_options: >-
+      {{ postgresql_global_config_options | items2dict(key_name='option', value_name='value') }}
+
+- name: Work out whether strict overcommit is safe on this host
+  ansible.builtin.set_fact:
+    postgres_commit_limit_mb: >-
+      {{ (ansible_facts.swaptotal_mb + (ansible_facts.memtotal_mb * postgres_memory_limits_ratio | int / 100)) | int }}
+    postgres_worst_case_mb: >-
+      {{ (postgres_memory_limits_options.shared_buffers | regex_replace('MB$', '') | int)
+         + ((postgres_memory_limits_options.work_mem | regex_replace('MB$', '') | int) * 3 * (postgres_memory_limits_options.max_connections | int))
+         + ((postgres_memory_limits_options.autovacuum_work_mem | regex_replace('MB$', '') | int) * 3)
+         + (postgres_memory_limits_options.maintenance_work_mem | regex_replace('MB$', '') | int) }}
+
+- name: Decide on strict overcommit
+  ansible.builtin.set_fact:
+    postgres_strict_overcommit_reasons: >-
+      {{ [] +
+         (['the derived vm.overcommit_ratio of ' ~ postgres_memory_limits_ratio ~ ' is below the kernel default of 50'] if (postgres_memory_limits_ratio | int) < 50 else []) +
+         (['the worst case of the memory options (' ~ postgres_worst_case_mb ~ ' MB) leaves less than 1 GiB below the commit limit of ' ~ postgres_commit_limit_mb ~ ' MB'] if (postgres_worst_case_mb | int) > ((postgres_commit_limit_mb | int) - 1024) else []) +
+         (['the memory committed right now (' ~ ((postgres_committed_as_kb.stdout | int) / 1024) | int ~ ' MB) is more than 70% of the commit limit of ' ~ postgres_commit_limit_mb ~ ' MB'] if ((postgres_committed_as_kb.stdout | int) / 1024) > ((postgres_commit_limit_mb | int) * 0.7) else []) }}
+
+- name: Say why strict overcommit is not applied
+  ansible.builtin.debug:
+    msg: "Strict overcommit is not applied on {{ inventory_hostname }}: {{ postgres_strict_overcommit_reasons | join('; ') }}."
+  when:
+    - artemis_database_strict_overcommit | bool
+    - postgres_strict_overcommit_reasons | length > 0
+
+# The ratio and the reserve go first, so that the limit is already the intended one at the moment strict
+# accounting starts. vm.admin_reserve_kbytes keeps memory back for root, so that someone can still log in and
+# act on a host that is at its limit.
+- name: Set the overcommit ratio
+  ansible.posix.sysctl:
+    name: vm.overcommit_ratio
+    value: "{{ postgres_memory_limits_ratio | int }}"
+    sysctl_file: /etc/sysctl.d/60-postgresql-memory.conf
+    sysctl_set: true
+    reload: true
+    state: present
+  become: true
+  when:
+    - artemis_database_strict_overcommit | bool
+    - postgres_strict_overcommit_reasons | length == 0
+
+- name: Keep memory back for root
+  ansible.posix.sysctl:
+    name: vm.admin_reserve_kbytes
+    value: "262144"
+    sysctl_file: /etc/sysctl.d/60-postgresql-memory.conf
+    sysctl_set: true
+    reload: true
+    state: present
+  become: true
+  when:
+    - artemis_database_strict_overcommit | bool
+    - postgres_strict_overcommit_reasons | length == 0
+
+- name: Turn on strict overcommit
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: "2"
+    sysctl_file: /etc/sysctl.d/60-postgresql-memory.conf
+    sysctl_set: true
+    reload: true
+    state: present
+  become: true
+  when:
+    - artemis_database_strict_overcommit | bool
+    - postgres_strict_overcommit_reasons | length == 0
+
+- name: Limit the memory of the PostgreSQL unit
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/postgresql@.service.d/30-memory-limit.conf
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      # Ansible managed: Do not make changes here - they will be overwritten.
+      [Service]
+      MemoryMax={{ (ansible_facts.memtotal_mb * artemis_database_memory_max_share) | int }}M
+  become: true
+  register: postgres_memory_limit_dropin
+  when: (artemis_database_memory_max_share | float) > 0
+
+- name: Reload systemd so the memory limit is known
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  become: true
+  when: postgres_memory_limit_dropin is changed
+
+- name: Read the memory limit systemd applies to the PostgreSQL unit
+  ansible.builtin.command:
+    argv:
+      - systemctl
+      - show
+      - "{{ postgresql_daemon }}"
+      - --property=MemoryMax
+      - --value
+  register: postgres_memory_max
+  changed_when: false
+  failed_when: postgres_memory_max.stdout != ((ansible_facts.memtotal_mb * artemis_database_memory_max_share) | int * 1048576) | string
+  when: (artemis_database_memory_max_share | float) > 0
