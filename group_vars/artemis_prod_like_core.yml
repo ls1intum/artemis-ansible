@@ -5,6 +5,11 @@ artemis_passkey_require_for_administrator_features: true
 # Personal access tokens and the MCP endpoint for the coding agents of instructors. The collection leaves it off. Changing it needs a restart of the core nodes.
 artemis_agent_access_enabled: true
 
+# The migrations run on a connection of their own with this statement_timeout, longer than the one the database sets for the application
+# sessions (artemis_database_statement_timeout), because a migration can run a single statement for minutes on a large table.
+# Needs a version of Artemis that opens that connection without a connection pool (ls1intum/Artemis#14796), and takes effect when a core node restarts.
+artemis_database_liquibase_statement_timeout: "30min"
+
 continuous_integration:
   localci:
     is_core_node: true
