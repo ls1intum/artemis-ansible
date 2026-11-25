@@ -55,6 +55,26 @@ postgresql_daemon: "postgresql@18-main"
 postgresql_after_units: wg-quick@wg0.service
 
 ##############################################################################
+# Memory limits of the host
+##############################################################################
+# See playbooks/shared/postgres_memory_limits/tasks.yml for what each of them does and when strict overcommit
+# is skipped on its own.
+#
+# Strict overcommit makes the kernel refuse an allocation that would cross the commit limit, so that the
+# statement asking for it fails with "out of memory" instead of the OOM killer ending some process. Set to
+# false to leave the kernel default on a host.
+artemis_database_strict_overcommit: true
+
+# The commit limit (swap plus vm.overcommit_ratio percent of the memory) as a share of the memory. It has to
+# stay above the worst case of the memory options of this file, which is 85% of the memory of the 16 GB
+# production host, and below 1 so that the kernel refuses before the host is actually out of memory.
+artemis_database_commit_limit_share: 0.92
+
+# Hard limit of the PostgreSQL unit (MemoryMax) as a share of the memory, so that memory exhaustion happens
+# inside the unit and not to the rest of the host. 0 sets no limit.
+artemis_database_memory_max_share: 0.92
+
+##############################################################################
 # postgresql.conf
 ##############################################################################
 # Values follow pgtune for a web workload on SSD. Anything pgtune lists that already equals the
