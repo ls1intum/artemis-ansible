@@ -39,6 +39,10 @@
       ansible.builtin.import_tasks: ../shared/postgres_after_wireguard/tasks.yml
       tags: database
 
+    - name: Keep PostgreSQL running after the OOM killer ended a backend
+      ansible.builtin.import_tasks: ../shared/postgres_oom_policy/tasks.yml
+      tags: database
+
     - name: Install the slow query report
       ansible.builtin.import_tasks: ../shared/postgres_slow_query_report/tasks.yml
       tags: slow-query-report

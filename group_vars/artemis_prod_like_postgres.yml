@@ -108,15 +108,32 @@ postgresql_global_config_options:
   - option: effective_cache_size
     value: "{{ (ansible_memtotal_mb * 0.75) | int }}MB"
 
-  # Per sort or hash node, not per connection, and one statement can open several. The budget is
-  # what is left once shared_buffers is deducted, divided across the connection ceiling above.
+  # Per sort or hash node, not per connection, and one statement can open several. The pool is sized for
+  # the worst case: every one of the max_connections sessions running a statement with three such nodes at
+  # the same time. Half of the host's memory goes to it, a quarter to shared_buffers above, and the last
+  # quarter stays for the kernel, the page cache and the per-connection overhead of the backends. pgtune
+  # gives the pool 75%, which together with shared_buffers is all of the memory and leaves the kernel
+  # nothing to work with once the pool is used up.
+  # On a 16 GB host this is 13 MB, and the worst case adds up to 7.8 GB for work_mem, 4 GB for
+  # shared_buffers, 0.75 GB for three autovacuum workers and 1 GB for one index build: 13.5 of 15.9 GB.
   - option: work_mem
-    value: "{{ ((ansible_memtotal_mb * 0.75) / (artemis_database_max_connections * 3)) | int }}MB"
+    value: "{{ ((ansible_memtotal_mb * 0.5) / (artemis_database_max_connections * 3)) | int }}MB"
 
-  # Used by VACUUM, CREATE INDEX and the Liquibase migrations, where a small value turns an index
-  # build into an external merge. Only the autovacuum workers can hold this at once.
+  # Hash based nodes (hash joins, hash aggregates, Memoize) may use work_mem times this factor. The
+  # default of 2 would double the pool above for exactly the nodes that dominate a large query, so it is
+  # 1 here: a hash node that does not fit in work_mem spills to disk, which is slower but bounded.
+  - option: hash_mem_multiplier
+    value: "1.0"
+
+  # Used by manual VACUUM, CREATE INDEX and the Liquibase migrations, where a small value turns an index
+  # build into an external merge. Autovacuum workers have their own limit below.
   - option: maintenance_work_mem
     value: "{{ [(ansible_memtotal_mb / 16) | int, 2048] | min }}MB"
+
+  # Autovacuum workers use this instead of maintenance_work_mem, and up to autovacuum_max_workers (3 by
+  # default) of them run at the same time, next to the sessions above.
+  - option: autovacuum_work_mem
+    value: "{{ [(ansible_memtotal_mb / 64) | int, 1024] | min }}MB"
 
   # Falls back to normal pages if the host has no huge pages reserved, so this is free when unused.
   - option: huge_pages

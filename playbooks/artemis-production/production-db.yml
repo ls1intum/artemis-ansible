@@ -49,6 +49,10 @@
       ansible.builtin.import_tasks: ../shared/postgres_after_wireguard/tasks.yml
       tags: database
 
+    - name: Keep PostgreSQL running after the OOM killer ended a backend
+      ansible.builtin.import_tasks: ../shared/postgres_oom_policy/tasks.yml
+      tags: database
+
     # The postgres_exporter on this host connects as "exporter", a role that is set up outside this
     # repository, and reads pg_stat_statements, whose functions live in schema public. The public schema
     # of this database grants USAGE only to its owner, so without this grant every exporter query fails

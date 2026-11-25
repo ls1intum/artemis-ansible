@@ -1,0 +1,52 @@
+---
+# Keeps PostgreSQL running when the kernel's OOM killer ends one of its processes, imported by the production,
+# staging1 and staging2 db playbooks.
+#
+# systemd's default OOMPolicy is "stop": as soon as the OOM killer kills any process of a service, systemd stops
+# the whole unit, and the PostgreSQL unit has no Restart= to bring it back. A killed backend is something
+# PostgreSQL recovers from on its own: the postmaster notices, terminates the other backends and replays the WAL,
+# which takes a moment. With the default policy systemd stops the service before that and the database stays down
+# until someone starts it by hand. With "continue" systemd only logs the event and PostgreSQL does what it is
+# built for. The postmaster itself is protected from the OOM killer by the OOMScoreAdjust of the package's unit.
+#
+# A daemon reload is enough, the service is not restarted. The last task fails if systemd does not report the new
+# policy afterwards.
+- name: Ensure the PostgreSQL drop-in directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/postgresql@.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Do not stop PostgreSQL when the OOM killer ends one of its processes
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/postgresql@.service.d/20-oom-policy.conf
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      # Ansible managed: Do not make changes here - they will be overwritten.
+      [Service]
+      OOMPolicy=continue
+  become: true
+  register: postgres_oom_policy_dropin
+
+- name: Reload systemd so the OOM policy is known
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  become: true
+  when: postgres_oom_policy_dropin is changed
+
+- name: Read the OOM policy systemd applies to the PostgreSQL unit
+  ansible.builtin.command:
+    argv:
+      - systemctl
+      - show
+      - "{{ postgresql_daemon }}"
+      - --property=OOMPolicy
+      - --value
+  register: postgres_oom_policy
+  changed_when: false
+  failed_when: postgres_oom_policy.stdout != "continue"
