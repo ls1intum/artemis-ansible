@@ -14,6 +14,24 @@ artemis_database_host: "fcfe:0:0:0:0:0:d:1"
 # than the server enforces is how a host ends up promising more sort memory than it has.
 artemis_database_max_connections: 200
 
+# The longest a single statement may run before PostgreSQL cancels it with "canceling statement due to
+# statement timeout". It is a safety net for a query that has lost its plan, not a tuning knob: without it
+# such a query keeps its connection, a CPU core and its sort and hash memory for as long as it likes, even
+# after the client that asked for it has given up, so a few of them are enough to occupy a whole pool.
+# What the application runs in normal operation (requests, data migrations, admin reports) finishes within
+# about half a minute, so this leaves a wide margin.
+#
+# It applies to every session of the cluster, with three consequences worth knowing:
+# - The nightly pg_dump is not affected, because pg_dump sets statement_timeout to 0 for its own session.
+# - A maintenance session in psql that needs longer runs "SET statement_timeout = 0;" first.
+# - Liquibase migrations run as the application role, so a changeset that needs longer than this has to be
+#   deployed with a larger value, e.g. -e artemis_database_statement_timeout=30min, applied before the new
+#   version starts, and set back afterwards.
+# PostgreSQL itself applies a new value on a reload, but geerlingguy.postgresql restarts the service
+# whenever an option in postgresql.conf changes, so roll it out when a few seconds without the database
+# are acceptable. "0" disables the limit.
+artemis_database_statement_timeout: "120s"
+
 # md5 is only still the role default for backwards compatibility. Every client here is either the
 # JDBC driver or psql, both of which speak SCRAM, and PostgreSQL stores SCRAM hashes by default
 # since 14, so there is no reason to keep the weaker method in pg_hba.conf.
@@ -87,6 +105,10 @@ postgresql_global_config_options:
   # of 30 leave 77 of those free. Changing max_connections takes a restart, which the role performs.
   - option: max_connections
     value: "{{ artemis_database_max_connections }}"
+
+  # See artemis_database_statement_timeout above for what it protects and what it does not touch.
+  - option: statement_timeout
+    value: "{{ artemis_database_statement_timeout }}"
 
   # Memory, sized from the database host's own memory rather than hardcoded. One fixed value was
   # shared by every environment in this group, whose hosts differ in size by a factor of four, so a
