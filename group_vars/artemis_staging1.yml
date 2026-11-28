@@ -26,6 +26,12 @@ athena:
   url: "https://athena-staging.aet.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'kv/data/artemis/common/athena-staging').get('secret') }}"
 
+# Route Course Home welcomes according to the student's Local AI or Cloud AI choice.
+artemis_course_home_ai_enabled: true
+artemis_llm_assignments:
+  course-home.ai.local-llm-preset: quizpool
+  course-home.ai.cloud-llm-preset: atlaschat
+
 weaviate:
   http_host: weaviate-staging.artemis.cit.tum.de
   collection_prefix: "Artemis_staging1_"
