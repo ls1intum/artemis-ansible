@@ -106,6 +106,7 @@ artemis_llm:
     atlaschat: { endpoint: logos, model: gpt-5.6-terra, api: chat-completions, reasoning-effort: none }
     embed: { endpoint: logos, model: Qwen/Qwen3-Embedding-8B, api: embeddings }
     quizpool: { endpoint: logos, model: Qwen/Qwen3.8-27B, api: chat-completions }
+    coursehomecloud: { endpoint: logos, model: gpt-6.2-sol, api: responses, reasoning-effort: low }
 
 # Assignments of modules that are off on a server are not read there.
 artemis_llm_assignments:

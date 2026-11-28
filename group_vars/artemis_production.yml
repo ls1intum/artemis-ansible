@@ -23,7 +23,7 @@ athena:
 artemis_course_home_ai_enabled: true
 artemis_llm_assignments:
   course-home.ai.local-llm-preset: quizpool
-  course-home.ai.cloud-llm-preset: atlaschat
+  course-home.ai.cloud-llm-preset: coursehomecloud
 
 weaviate:
   http_host: weaviate-prod.artemis.cit.tum.de
