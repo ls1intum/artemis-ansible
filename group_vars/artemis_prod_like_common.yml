@@ -103,10 +103,9 @@ artemis_llm:
   presets:
     large: { endpoint: logos, model: gpt-6.1-terra, api: responses, reasoning-effort: medium }
     atlas: { endpoint: logos, model: gpt-6-luna, api: responses, reasoning-effort: high }
-    atlaschat: { endpoint: logos, model: gpt-5.6-terra, api: chat-completions, reasoning-effort: none }
+    atlaschat: { endpoint: logos, model: gpt-6.1-terra, api: chat-completions, reasoning-effort: none }
     embed: { endpoint: logos, model: Qwen/Qwen3-Embedding-8B, api: embeddings }
     quizpool: { endpoint: logos, model: Qwen/Qwen3.8-27B, api: chat-completions }
-    coursehomecloud: { endpoint: logos, model: gpt-6.2-sol, api: responses, reasoning-effort: low }
 
 # Assignments of modules that are off on a server are not read there.
 artemis_llm_assignments:
