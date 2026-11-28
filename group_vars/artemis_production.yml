@@ -19,6 +19,12 @@ athena:
   url: "https://athena.aet.cit.tum.de"
   secret: "{{ lookup('hashi_vault', 'artemis/data/' + var_vault_group + '/nodes').get('athena_secret') }}"
 
+# Generate Course Home welcomes using the locally hosted Qwen model through Logos.
+artemis_course_home_ai_enabled: true
+artemis_course_home_ai_location: LOCAL
+artemis_llm_assignments:
+  course-home.ai.llm-preset: quizpool
+
 weaviate:
   http_host: weaviate-prod.artemis.cit.tum.de
   collection_prefix: "Artemis_prod_"
